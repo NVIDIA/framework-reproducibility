@@ -51,7 +51,8 @@ def _patch():
   if tf_version.startswith('1.14'):
     os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
     _patch_bias_add()
-    _eprint("TensorFlow version %s has been patched using tfdeterminism.patch" % tf_version)
+    print("TensorFlow version %s has been patched using tfdeterminism.patch" %
+          tf_version, file=sys.stderr)
   else:
     raise ValueError("No patch available for version %s of TensorFlow" %
                      tensorflow_version)
@@ -114,6 +115,3 @@ def _new_bias_add_1_14(value, bias, data_format=None, name=None):
           value, array_ops.reshape(bias, broadcast_shape), name=name)
     else: # data_format == 'NHWC' or data_format == None
       return math_ops.add(value, bias, name=name)
-
-def _eprint(*args, **kwargs):
-  print(*args, file=sys.stderr, **kwargs)
