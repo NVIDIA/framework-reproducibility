@@ -1,9 +1,11 @@
 # TensorFlow Determinism
 
 The TensorFlow determinism debug tool described in the GTC 2019 talk
-[_Determinism in Deep Learning_][1] will be released here.
+[_Determinism in Deep Learning_][1] will be released here. Note that the
+features of this tool have not yet been released.
 
-Updates on the status of determinism in deep learning will also be conveyed here.
+Updates on the status of determinism in deep learning will also be conveyed here
+along with dynamic patches for TensorFlow.
 
 ## Deterministic TensorFlow Solutions
 
