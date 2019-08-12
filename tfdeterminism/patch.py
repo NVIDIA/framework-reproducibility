@@ -1,5 +1,5 @@
 # Copyright 2019 The TensorFlow-Determinism Authors. All Rights Reserved
-# 
+#
 # _new_biad_add_1_14() derived from source in
 # https://github/tensorflow/tensorflow and therefore
 # Copyright 2019 The TensorFlow Authors. All Rights Reserved
@@ -36,7 +36,7 @@ from tensorflow.python.ops import nn_ops
 
 def _patch():
   """Patches TensorFlow to increase determinism when running on GPUs.
-    
+
     Calling this method either before or after explicitly importing TensorFlow,
     but always before constructing any graphs, will increase the determinsism
     when running on GPUs.
