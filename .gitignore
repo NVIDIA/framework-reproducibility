@@ -1,1 +1,11 @@
+# Compiled
 *.pyc
+
+# Distribution
+build/
+dist/
+*.egg-info
+MANIFEST
+
+# Environments
+venv/

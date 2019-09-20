@@ -7,12 +7,27 @@ features of this tool have not yet been released.
 Updates on the status of determinism in deep learning will also be conveyed here
 along with dynamic patches for TensorFlow.
 
+## Installation
+
+Use `pip` to install:
+
+```
+pip install tensorflow-determinism
+```
+
+This will install a package that can be imported as `tfdeterminism`. The
+installation of `tensorflow-determinism` will not automatically install
+TensorFlow. The intention of this is to allow you to install your chosen
+version of TensorFlow. You will need to install your chosen version of
+TensorFlow before you can import and use `tfdeterminism`.
+
 ## Deterministic TensorFlow Solutions
 
 There are currently two main ways to access GPU-deterministc functionality in
 TensorFlow for most deep learning applications. The first way is to use an
 NVIDIA NGC TensorFlow container. The second way is to use version 1.14.0 of
-pip-installed TensorFlow with the addition of a patch supplied in this repo.
+pip-installed TensorFlow with GPU support plus the application of a patch
+supplied in this repo.
 
 ### NVIDIA NGC TensorFlow Containers
 
@@ -34,13 +49,12 @@ instructions][2].
 
 ### PyPI (pip-installed) TensorFlow
 
-Version 1.14.0 of standard TensorFlow implements a reduced form of GPU
+Version 1.14.0 of stock TensorFlow implements a reduced form of GPU
 determinism, which must be supplemented with a patch provided in this repo.
-The following Python code is running on a machine in which pip package
-tensorflow-gpu=1.14.0 has been installed correctly. The Python code is also
-run in a location from which the `tfdeterminism` package from this repo is
-accessible (either include the `tfdeterminism` package in your project
-directory or add its path using `sys.path.append()`).
+The following Python code is running on a machine in which `pip` package
+`tensorflow-gpu=1.14.0` has been installed correctly and on which
+`tensorflow-determinism` has also been installed (as shown in the
+[installation](#installation) section above).
 
 ```
 import tensorflow as tf
@@ -49,7 +63,7 @@ patch()
 # build your graph and train it
 ```
 
-Tensorflow can be easily installed as follows:
+Tensorflow with GPU support can be installed as follows:
 
 ```
 pip install tensorflow-gpu=1.14.0

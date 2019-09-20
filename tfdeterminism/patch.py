@@ -51,6 +51,7 @@ def _patch():
   if tf_version.startswith('1.14'):
     os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
     _patch_bias_add()
+    # TODO: Display tfdeterminism.__version__ in the following message
     print("TensorFlow version %s has been patched using tfdeterminism.patch" %
           tf_version, file=sys.stderr)
   else:
