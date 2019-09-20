@@ -9,7 +9,7 @@ readme = os.path.join(os.path.dirname(os.path.realpath(__file__)), "README.md")
 with open(readme, "r") as fp:
   long_description = fp.read()
 
-description = "Debugging and patching non-determinism in TensorFlow"
+description = "Tracking, debugging, and patching non-determinism in TensorFlow"
 url = "https://github.com/NVIDIA/tensorflow-determinism"
 install_requires = [] # intentionally not including tensorflow-gpu
 
