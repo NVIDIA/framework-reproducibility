@@ -1,11 +1,20 @@
 # TensorFlow Determinism
 
-The TensorFlow determinism debug tool described in the GTC 2019 talk
-[_Determinism in Deep Learning_][1] will be released here. Note that the
-features of this tool have not yet been released.
+This repository serves three purposes:
 
-Updates on the status of determinism in deep learning will also be conveyed here
-along with dynamic patches for TensorFlow.
+  1. Provide up-to-date information (in this file) about non-determinism
+     sources and solutions in TensorFlow and beyond, with a focus on determinism
+     when running on GPUs.
+  2. Provide a patch to attain various levels of GPU-specific determinism in
+     stock TensorFlow, via the installation of the `tensorflow-determinism` pip
+     package.
+  3. Be the location where a TensorFlow determinism debug tool will be released
+     as part of the `tensorflow-determinism` pip package.
+
+For more information, please watch the video of the GTC 2019 talk
+[_Determinism in Deep Learning_][1]. The desciption under that video also
+includes links to the slides from the talk and to a poster presentation on this
+topic.
 
 ## Installation
 
