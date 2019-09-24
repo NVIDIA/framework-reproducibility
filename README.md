@@ -152,7 +152,7 @@ Unless you are using TensorFlow ops that depend on these files (i.e. ops with
 similar names), then your model will not be affected by these potential sources
 of non-determinism.
 
-Beyond `atomicAdd` There are ten other CUDA [atomic functions][4] whose use
+Beyond `atomicAdd`, there are ten other CUDA [atomic functions][4] whose use
 could lead to the injection of non-determinism, such as `atomicCAS` (the most
 generic, atomic compare and swap). Note also that the word 'atomic' was present
 in 167 files in the TensorFlow repo and some of these may be related to the use
