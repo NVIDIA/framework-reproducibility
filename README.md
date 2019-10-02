@@ -56,7 +56,7 @@ The following table shows which version of TensorFlow each NGC container
 version is based on:
 
  NGC Container Version | TensorFlow Version |
-:---------------------|:-------------------|
+:----------------------|:-------------------|
  19.06                 | 1.13               |
  19.07 - 19.09         | 1.14               |
 
