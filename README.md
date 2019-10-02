@@ -34,17 +34,16 @@ TensorFlow before you can import and use `tfdeterminism`.
 
 There are currently two main ways to access GPU-deterministc functionality in
 TensorFlow for most deep learning applications. The first way is to use an
-NVIDIA NGC TensorFlow container. The second way is to use version 1.14.0 of
+NVIDIA NGC TensorFlow container. The second way is to use version 1.14 of
 stock TensorFlow with GPU support plus the application of a patch supplied in
-this repo.
+this repo. Patch support for versions 1.15 and 2.0 of stock TensorFlow is
+currently in development.
 
 ### NVIDIA NGC TensorFlow Containers
 
-NGC TensorFlow container versions 19.06 (based on TensorFlow 1.13.1) and 19.07
-(based on TensorFlow 1.14.0) both implement GPU-deterministic TensorFlow
-functionality. In Python code running inside the container, this can be enabled
-as follows:
-
+NGC TensorFlow containers, starting with version 19.06, implement
+GPU-deterministic TensorFlow functionality. In Python code running inside the
+container, this can be enabled as follows:
 
 ```
 import tensorflow as tf
@@ -53,12 +52,20 @@ os.environ['TF_DETERMINISTIC_OPS'] = '1'
 # Now build your graph and train it
 ```
 
+The following table shows which version of TensorFlow each NGC container
+version is based on:
+
+ NGC Container Version | TensorFlow Version |
+:---------------------|:-------------------|
+ 19.06                 | 1.13               |
+ 19.07 - 19.09         | 1.14               |
+
 For information about pulling and running the NVIDIA NGC containers, see [these
 instructions][2].
 
 ### Stock TensorFlow
 
-Version 1.14.0 of stock TensorFlow implements a reduced form of GPU
+Version 1.14 of stock TensorFlow implements a reduced form of GPU
 determinism, which must be supplemented with a patch provided in this repo.
 The following Python code is running on a machine in which `pip` package
 `tensorflow-gpu=1.14.0` has been installed correctly and on which
@@ -116,23 +123,24 @@ by default when running on a GPU.
 
 #### Confirmed Current GPU-Specific Sources of Non-Determinism (With Solutions)
 
-Source                                         | NGC 19.06+ Solutions | Stock TF 1.14.0+ Solutions |
-:----------------------------------------------|:---------------------|:---------------------------|
-TF auto-tuning of cuDNN convolution algorithms | TCD or TDO           | TCD or TDP                 |
-cuDNN convolution backprop to weight gradients | TCD or TDO           | TCD or TDP                 |
-cuDNN convolution backprop to data gradients   | TCD or TDO           | TCD or TDP                 |
-cuDNN max-pooling backprop                     | TCD or TDO           | TCD or TDP                 |
-`tf.nn.bias_add` backprop                      | TDO                  | TDP                        |
-`tf.image.resize_bilinear` fwd and bwd         | NS                   | NS                         |
+ Source                                         | NGC 19.06+ | TF 1.14    | TF 1.15 / 2.0 |
+:-----------------------------------------------|:-----------|:-----------|---------------|
+ TF auto-tuning of cuDNN convolution algorithms | TCD or TDO | TCD or TDP | TCD           |
+ cuDNN convolution backprop to weight gradients | TCD or TDO | TCD or TDP | TCD           |
+ cuDNN convolution backprop to data gradients   | TCD or TDO | TCD or TDP | TCD           |
+ cuDNN max-pooling backprop                     | TCD or TDO | TCD or TDP | TCD           |
+ `tf.nn.bias_add` backprop                      | TDO        | TDP        | NS2           |
+ `tf.image.resize_bilinear` fwd and bwd         | NS1        | NS1        | NS1           |
 
 Key to the solutions refenced above:
 
-Solution | Description                                                                                                                                                                                     |
-:--------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-TCD      | Set environment variable `TF_CUDNN_DETERMINISTIC` to '1' or 'true'. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to '0' or 'false'). |
-TDO      | Set environment variable `TF_DETERMINISTIC_OPS` to '1' or 'true'. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to '0' or 'false').   |
-TDP      | Apply `tfdeterminism.patch`. Note that we are currently working on getting solution TDO into stock TensorFlow (see [PR 31465](https://github.com/tensorflow/tensorflow/pull/31465)).            |
-NS       | There is currently no solution available for this, but one is under development.                                                                                                                |
+ Solution | Description                                                                                                                                                                                     |
+:---------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+ TCD      | Set environment variable `TF_CUDNN_DETERMINISTIC` to '1' or 'true'. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to '0' or 'false'). |
+ TDO      | Set environment variable `TF_DETERMINISTIC_OPS` to '1' or 'true'. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to '0' or 'false').   |
+ TDP      | Apply `tfdeterminism.patch`. Note that we are currently working on getting solution TDO into stock TensorFlow (see [PR 31465](https://github.com/tensorflow/tensorflow/pull/31465)).            |
+ NS1      | There is currently no solution available for this, but one is under development.                                                                                                                |
+ NS2      | The patch, TDP (see above), is currently being updated so that it can be applied to TF version 1.15 and 2.0.                                                                                    |
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
 
