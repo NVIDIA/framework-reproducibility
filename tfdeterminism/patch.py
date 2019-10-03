@@ -22,6 +22,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os
+import re
 import sys
 
 import tensorflow as tf
@@ -48,7 +49,7 @@ def _patch():
       TensorFlow.
   """
   tf_version = tf.version.VERSION
-  if tf_version.startswith('1.14'):
+  if re.match("1\.(14|15)", tf_version):
     os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
     _patch_bias_add()
     # TODO: Display tfdeterminism.__version__ in the following message
@@ -56,7 +57,7 @@ def _patch():
           tf_version, file=sys.stderr)
   else:
     raise ValueError("No patch available for version %s of TensorFlow" %
-                     tensorflow_version)
+                     tf_version)
 
 def _patch_bias_add():
   tf.nn.bias_add = _new_bias_add_1_14 # access via public API

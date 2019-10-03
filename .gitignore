@@ -9,3 +9,6 @@ MANIFEST
 
 # Environments
 venv/
+
+# Testing
+*.log
