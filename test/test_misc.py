@@ -1,4 +1,4 @@
-# Copyright 2019 The TensorFlow Determinism Authors. All Rights Reserved
+# Copyright 2019 The TensorFlow-Determinism Authors. All Rights Reserved
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,14 +13,15 @@
 # limitations under the License.
 # ========================================================================
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
+import unittest
 import sys
-
-import tensorflow as tf
-
 sys.path.append('..')
-from tfdeterminism import patch
-patch()
+import tfdeterminism as tfd
+
+class TestMisc(unittest.TestCase):
+
+    def test_version(self):
+        self.assertEqual(tfd.__version__, "0.2.0")
+
+if __name__ == '__main__':
+    unittest.main()
