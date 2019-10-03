@@ -1,6 +1,7 @@
 # Release 0.2.0
 
-* Add patch availability on TF 1.15
+* Add patch availability on TensorFlow version 1.15
+* Print the version of tensorflow-determinism when patch is applied
 * Test that patch will throw exception on non-supported versions of TF
 * Test that patch will throw exception in NGC containers
 

@@ -35,6 +35,8 @@ from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import nn
 from tensorflow.python.ops import nn_ops
 
+from .version import __version__
+
 def _patch():
   """Patches TensorFlow to increase determinism when running on GPUs.
 
@@ -54,9 +56,8 @@ def _patch():
   if re.match("1\.(14|15)", tf_version):
     os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
     _patch_bias_add()
-    # TODO: Display tfdeterminism.__version__ in the following message
-    print("TensorFlow version %s has been patched using tfdeterminism.patch" %
-          tf_version, file=sys.stderr)
+    print("TensorFlow version %s has been patched using tfdeterminism version %s" %
+          (tf_version, __version__), file=sys.stderr)
   else:
     raise Exception("tfdeterminism: No patch available for version %s of TensorFlow" %
                      tf_version)

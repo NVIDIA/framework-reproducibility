@@ -1,4 +1,4 @@
-# Copyright 2019 The TensorFlow-Determinism Authors. All Rights Reserved.
+# Copyright 2019 The TensorFlow Determinism Authors. All Rights Reserved
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,6 +17,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from .patch import _patch as patch
+import sys
 
-from .version import __version__
+import tensorflow as tf
+
+sys.path.append('..')
+from tfdeterminism import patch
+patch()
