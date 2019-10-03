@@ -48,6 +48,8 @@ def _patch():
       ValueError if a patch is not available for the installed version of
       TensorFlow.
   """
+  if os.environ.get('NVIDIA_TENSORFLOW_VERSION'):
+    raise Exception("tfdeterminism: TensorFlow inside NGC containers does not require patching")
   tf_version = tf.version.VERSION
   if re.match("1\.(14|15)", tf_version):
     os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
@@ -56,7 +58,7 @@ def _patch():
     print("TensorFlow version %s has been patched using tfdeterminism.patch" %
           tf_version, file=sys.stderr)
   else:
-    raise ValueError("No patch available for version %s of TensorFlow" %
+    raise Exception("tfdeterminism: No patch available for version %s of TensorFlow" %
                      tf_version)
 
 def _patch_bias_add():

@@ -3,7 +3,7 @@ import os
 # TODO: Get version from package files. Normal package import is problematic
 #       here because TensorFlow may not be installed yet during installation
 #       and this file must be executable during installation. 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
 readme = os.path.join(os.path.dirname(os.path.realpath(__file__)), "README.md")
 with open(readme, "r") as fp:

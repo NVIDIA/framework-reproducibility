@@ -30,7 +30,10 @@ expect () {
 PASS=0
 FAIL=1
 
-expect $FAIL "ValueError: No patch available for version 1.13.1 of TensorFlow" \
+expect $FAIL "Exception: tfdeterminism: TensorFlow inside NGC containers does not require patching" \
+             ./container.sh nvcr.io/nvidia/tensorflow:19.09-py2 test.sh
+
+expect $FAIL "Exception: tfdeterminism: No patch available for version 1.13.1 of TensorFlow" \
              ./container.sh tensorflow/tensorflow:1.13.1-gpu test.sh
 
 expect $PASS "" \
