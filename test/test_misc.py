@@ -13,15 +13,17 @@
 # limitations under the License.
 # ========================================================================
 
-import unittest
 import sys
+import unittest
+
 sys.path.append('..')
 import tfdeterminism as tfd
+from get_version import get_version
 
 class TestMisc(unittest.TestCase):
 
     def test_version(self):
-        self.assertEqual(tfd.__version__, "0.2.0")
+        self.assertEqual(tfd.__version__, get_version())
 
 if __name__ == '__main__':
     unittest.main()

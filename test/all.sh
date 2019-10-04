@@ -42,6 +42,8 @@ expect () {
     fi
 }
 
+version=$(python get_version.py)
+
 PASS=0
 FAIL=1
 
@@ -56,7 +58,7 @@ expect $FAIL "Exception: tfdeterminism: TensorFlow inside NGC containers does no
 expect $FAIL "Exception: tfdeterminism: No patch available for version 1.13.1 of TensorFlow" \
              ./container.sh tensorflow/tensorflow:1.13.1-gpu test_patch_apply.sh
 
-expect $PASS "TensorFlow version 1.14.0 has been patched using tfdeterminism version 0.2.0" \
+expect $PASS "TensorFlow version 1.14.0 has been patched using tfdeterminism version ${version}"  \
              ./container.sh tensorflow/tensorflow:1.14.0-gpu test_patch_apply.sh
 
 expect $PASS "" \
