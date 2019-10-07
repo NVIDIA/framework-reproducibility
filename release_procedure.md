@@ -26,7 +26,7 @@ python setup.py sdist
 
 Upload the archive to the Python Package Index.
 
-The following assumes that $HOME/.pypirc exists and contains the following:
+The following assumes that `$HOME/.pypirc` exists and contains the following:
 
 ```
 distutils]
@@ -63,4 +63,4 @@ Again, review the release online and try installing it.
 ## 5. Create GitHub Release
 
 Finally, on GitHub, create a new release with an appropriate version tag
-(e.g. v0.1.0).
+(e.g. `v0.1.0`).
