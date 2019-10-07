@@ -44,32 +44,32 @@ expect () {
 
 version=$(python get_version.py)
 
-PASS=0
-FAIL=1
+OK=0
+ERROR=1
 
-expect $PASS "Successfully installed tensorflow-determinism" \
-             ./install_package.sh
+expect $OK    "Successfully installed tensorflow-determinism" \
+              ./install_package.sh
 
-expect $FAIL "Exception: tfdeterminism: TensorFlow inside NGC containers does not require patching" \
-             ./container.sh nvcr.io/nvidia/tensorflow:19.09-py2 test_patch_apply.sh
+expect $ERROR "Exception: tfdeterminism: TensorFlow inside NGC containers does not require patching" \
+              ./container.sh nvcr.io/nvidia/tensorflow:19.09-py2 test_patch_apply.sh
 
-expect $FAIL "Exception: tfdeterminism: No patch available for version 1.13.1 of TensorFlow" \
-             ./container.sh tensorflow/tensorflow:1.13.1-gpu test_patch_apply.sh
+expect $ERROR "Exception: tfdeterminism: No patch available for version 1.13.1 of TensorFlow" \
+              ./container.sh tensorflow/tensorflow:1.13.1-gpu test_patch_apply.sh
 
-expect $PASS "TensorFlow version 1.14.0 has been patched using tfdeterminism version ${version}"  \
-             ./container.sh tensorflow/tensorflow:1.14.0-gpu test_patch_apply.sh
+expect $OK    "TensorFlow version 1.14.0 has been patched using tfdeterminism version ${version}"  \
+              ./container.sh tensorflow/tensorflow:1.14.0-gpu test_patch_apply.sh
 
-expect $PASS "" \
-             ./container.sh tensorflow/tensorflow:1.14.0-gpu test_patch.sh
+expect $OK    "" \
+              ./container.sh tensorflow/tensorflow:1.14.0-gpu test_patch.sh
 
-expect $PASS "" \
-             ./container.sh tensorflow/tensorflow:1.14.0-gpu-py3 test_patch.sh
+expect $OK    "" \
+              ./container.sh tensorflow/tensorflow:1.14.0-gpu-py3 test_patch.sh
 
-expect $PASS "" \
-             ./container.sh tensorflow/tensorflow:1.15.0rc2-gpu test_patch.sh
+expect $OK    "" \
+              ./container.sh tensorflow/tensorflow:1.15.0rc2-gpu test_patch.sh
 
-expect $FAIL "Exception: tfdeterminism: No patch available for version 2.0.0 of TensorFlow" \
-             ./container.sh tensorflow/tensorflow:2.0.0-gpu test_patch.sh
+expect $ERROR "Exception: tfdeterminism: No patch available for version 2.0.0 of TensorFlow" \
+              ./container.sh tensorflow/tensorflow:2.0.0-gpu test_patch.sh
 
 echo "${PASS_COUNT} tests passed"
 echo "${FAIL_COUNT} tests failed"

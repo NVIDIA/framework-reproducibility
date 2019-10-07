@@ -12,8 +12,12 @@
 * Test that patch works in Python 3
 * Test that package will install when TensorFlow is not yet installed
 
+Developed by Duncan Riach with special thanks to Nathan Luehr for review.
+
 # Release 0.1.0
 
 This release includes a patch for standard TF 1.14.0 that enables most deep
 learning TF models to train deterministically on GPUs. GPU-determinism support
 in the NVIDIA NGC TF containers is also described.
+
+Developed by Duncan Riach with special thanks to Nathan Luehr for review.
