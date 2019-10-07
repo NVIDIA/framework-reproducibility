@@ -47,8 +47,6 @@ version=$(python get_version.py)
 PASS=0
 FAIL=1
 
-# if false; then
-
 expect $PASS "Successfully installed tensorflow-determinism" \
              ./install_package.sh
 
@@ -72,8 +70,6 @@ expect $PASS "" \
 
 expect $FAIL "Exception: tfdeterminism: No patch available for version 2.0.0 of TensorFlow" \
              ./container.sh tensorflow/tensorflow:2.0.0-gpu test_patch.sh
-
-# fi
 
 echo "${PASS_COUNT} tests passed"
 echo "${FAIL_COUNT} tests failed"

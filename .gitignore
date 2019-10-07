@@ -1,5 +1,6 @@
 # Compiled
 *.pyc
+__pycache__/
 
 # Distribution
 build/

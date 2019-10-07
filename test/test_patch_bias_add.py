@@ -319,6 +319,7 @@ class BiasAddTest(test.TestCase):
       feed_dict = {upstream_gradients: self._random_ndarray(out_shape)}
       self._assert_reproducible(bias_gradients_op, feed_dict=feed_dict)
 
+  @test_util.run_deprecated_v1
   @test_util.run_cuda_only
   def testDeterministicGradients(self):
     for op_binding in (tf.nn.bias_add, nn.bias_add, nn_ops.bias_add):
