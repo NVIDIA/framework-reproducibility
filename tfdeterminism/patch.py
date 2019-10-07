@@ -51,16 +51,18 @@ def _patch():
       TensorFlow.
   """
   if os.environ.get('NVIDIA_TENSORFLOW_VERSION'):
-    raise Exception("tfdeterminism: TensorFlow inside NGC containers does not require patching")
+    raise Exception("tfdeterminism: TensorFlow inside NGC containers does not "
+                    "require patching")
   tf_version = tf.version.VERSION
   if re.match("1\.(14|15)", tf_version):
     os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
     _patch_bias_add()
-    print("TensorFlow version %s has been patched using tfdeterminism version %s" %
+    print("TensorFlow version %s has been patched "
+          "using tfdeterminism version %s" %
           (tf_version, __version__), file=sys.stderr)
   else:
-    raise Exception("tfdeterminism: No patch available for version %s of TensorFlow" %
-                     tf_version)
+    raise Exception("tfdeterminism: No patch available "
+                    "for version %s of TensorFlow" % tf_version)
 
 def _patch_bias_add():
   tf.nn.bias_add = _new_bias_add_1_14 # access via public API
