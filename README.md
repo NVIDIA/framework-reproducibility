@@ -201,6 +201,54 @@ the op injects non-determinism into the computation.
   [pull-request 1130](https://github.com/horovod/horovod/pull/1130) (not yet
   confirmed).
 
+## Relevant Links
+
+This section catalogs relevant links.
+
+### TensorFlow Issues
+
+Number                                                         | Title                                                                                 | Updated    |
+--------------------------------------------------------------:|:--------------------------------------------------------------------------------------|:-----------|
+ [2652](https://github.com/tensorflow/tensorflow/issues/2652)  | Backward pass of broadcasting on GPU is non-deterministic                             | 2019-10-08 |
+ [2732](https://github.com/tensorflow/tensorflow/issues/2732)  | Mention that GPU reductions are nondeterministic in docs                              | 2019-10-08 |
+[13932](https://github.com/tensorflow/tensorflow/issues/13932) | Non-determinism from `tf.data.Dataset.map` with random ops                            |            |
+[16889](https://github.com/tensorflow/tensorflow/issues/16889) | Problems Getting TensorFlow to behave Deterministically                               | 2019-10-08 |
+[18096](https://github.com/tensorflow/tensorflow/issues/18096) | Feature Request: Support for configuring deterministic options of cuDNN conv routines | 2019-10-08 |
+[29101](https://github.com/tensorflow/tensorflow/issues/29101) | Random seed not set in graph context of `Dataset#map`                                 |            |
+
+### TensorFlow Pull Requests
+
+Number                                                        | Title                                                        | Status              | Updated    |
+-------------------------------------------------------------:|:-------------------------------------------------------------|:--------------------|:-----------|
+[10636](https://github.com/tensorflow/tensorflow/pull/10636)  | Non-determinism Docs                                         | closed (not merged) | 2019-10-08 |
+[24273](https://github.com/tensorflow/tensorflow/pull/24273)  | Enable dataset.map to respect seeds from the outer context   | closed (not merged) |            |
+[24747](https://github.com/tensorflow/tensorflow/pull/24747)  | Add cuDNN deterministic env variable (only for convolution). | merged into master  |            |
+[25269](https://github.com/tensorflow/tensorflow/pull/25269)  | Add deterministic cuDNN max-pooling                          | merged into master  |            |
+[25796](https://github.com/tensorflow/tensorflow/pull/25796)  | Added tests for `TF_CUDNN_DETERMINISTIC`                     | merged into master  |            |
+[29667](https://github.com/tensorflow/tensorflow/pull/29667)  | Add release note about `TF_CUDNN_DETERMINISTIC`              | merged into r1.14   |            |
+[31389](https://github.com/tensorflow/tensorflow/pull/31389)  | Enhance release notes related to `TF_CUDNN_DETERMINISTIC`    | merged into r1.14   |            |
+[31465](https://github.com/tensorflow/tensorflow/pull/31465)  | Add GPU-deterministic `tf.nn.bias_add`                       | ready to pull       |            |
+[32979](https://github.com/tensorflow/tensorflow/pull/32979)  | Fix typo in release note                                     | awaiting review     |            |
+
+### Stack Overflow
+
+ Title                                                                       | Updated |
+:----------------------------------------------------------------------------|:--------|
+ Tensorflow: Different results with the same random seed                     |         |
+ Are tensorflow random values guaranteed to be the same inside a single run? |         |
+
+### Miscellaneous
+
+* Keras [issue 12800](https://github.com/keras-team/keras/issues/12800):
+  Unable to get reproducible results using Keras with TF backend on GPU (updated
+  on 2019-10-08)
+* Chainer [PR 2710](https://github.com/chainer/chainer/pull/2710): cuDNN
+  Deterministic mode
+* Stack Overflow: [Tensorflow: Different results with the same random seed]
+  (https://stackoverflow.com/questions/54047654/tensorflow-different-results-with-the-same-random-seed)
+* Stack Overflow: [Are tensorflow random values guaranteed to be the same inside a single run?
+  (comment)](https://stackoverflow.com/questions/52213325/are-tensorflow-random-values-guaranteed-to-be-the-same-inside-a-single-run#comment91376212_52213325)
+
 [1]: http://bit.ly/determinism-in-deep-learning
 [2]: https://ngc.nvidia.com/catalog/containers/nvidia:tensorflow
 [3]: https://www.tensorflow.org/install/gpu
