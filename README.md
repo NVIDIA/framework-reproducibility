@@ -230,13 +230,6 @@ Number                                                        | Title           
 [31465](https://github.com/tensorflow/tensorflow/pull/31465)  | Add GPU-deterministic `tf.nn.bias_add`                       | ready to pull       |            |
 [32979](https://github.com/tensorflow/tensorflow/pull/32979)  | Fix typo in release note                                     | awaiting review     |            |
 
-### Stack Overflow
-
- Title                                                                       | Updated |
-:----------------------------------------------------------------------------|:--------|
- Tensorflow: Different results with the same random seed                     |         |
- Are tensorflow random values guaranteed to be the same inside a single run? |         |
-
 ### Miscellaneous
 
 * Keras [issue 12800](https://github.com/keras-team/keras/issues/12800):
@@ -244,10 +237,12 @@ Number                                                        | Title           
   on 2019-10-08)
 * Chainer [PR 2710](https://github.com/chainer/chainer/pull/2710): cuDNN
   Deterministic mode
-* Stack Overflow: [Tensorflow: Different results with the same random seed]
-  (https://stackoverflow.com/questions/54047654/tensorflow-different-results-with-the-same-random-seed)
-* Stack Overflow: [Are tensorflow random values guaranteed to be the same inside a single run?
-  (comment)](https://stackoverflow.com/questions/52213325/are-tensorflow-random-values-guaranteed-to-be-the-same-inside-a-single-run#comment91376212_52213325)
+* Stack Overflow: [Tensorflow: Different results with the same random seed][501]
+* Stack Overflow: [Are tensorflow random values guaranteed to be the same
+  inside a single run? (comment)][502]
+
+[501]: https://stackoverflow.com/questions/54047654/tensorflow-different-results-with-the-same-random-seed
+[502]: https://stackoverflow.com/questions/52213325/are-tensorflow-random-values-guaranteed-to-be-the-same-inside-a-single-run#comment91376212_52213325
 
 [1]: http://bit.ly/determinism-in-deep-learning
 [2]: https://ngc.nvidia.com/catalog/containers/nvidia:tensorflow
