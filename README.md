@@ -232,9 +232,13 @@ Number                                                        | Title           
 
 ### Miscellaneous
 
+* Two Sigma: [A Workaround for Non-Determinism in
+  TensorFlow](http://bit.ly/two-sigma-determinism)
 * Keras [issue 12800](https://github.com/keras-team/keras/issues/12800):
   Unable to get reproducible results using Keras with TF backend on GPU (updated
   on 2019-10-08)
+* PyTorch [Reproducibility](http://bit.ly/pytorch-determinism) (from the
+  official documentation)
 * Chainer [PR 2710](https://github.com/chainer/chainer/pull/2710): cuDNN
   Deterministic mode
 * Stack Overflow: [Tensorflow: Different results with the same random seed][501]
