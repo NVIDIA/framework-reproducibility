@@ -243,7 +243,7 @@ Number                                                        | Title           
   Deterministic mode
 * Stack Overflow: [Tensorflow: Different results with the same random seed][501]
 * Stack Overflow: [Are tensorflow random values guaranteed to be the same
-  inside a single run? (comment)][502]
+  inside a single run? (comment)][502] (updated 2019-10-10).
 
 [501]: https://stackoverflow.com/questions/54047654/tensorflow-different-results-with-the-same-random-seed
 [502]: https://stackoverflow.com/questions/52213325/are-tensorflow-random-values-guaranteed-to-be-the-same-inside-a-single-run#comment91376212_52213325
