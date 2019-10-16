@@ -1,3 +1,7 @@
+# Release 0.3.0
+
+Add patch availability on TensorFlow version 2.0
+
 # Release 0.2.0
 
 ## New Functionality

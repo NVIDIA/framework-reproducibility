@@ -42,6 +42,8 @@ currently in development.
 The longer-term intention and plan is to upstream all solutions into stock
 TensorFlow.
 
+Determinism is not guaranteed when the XLA JIT compilation is enabled.
+
 ### NVIDIA NGC TensorFlow Containers
 
 NGC TensorFlow containers, starting with version 19.06, implement
@@ -132,7 +134,7 @@ by default when running on a GPU.
  cuDNN convolution backprop to weight gradients | TCD or TDO | TCD or TDP | TCD    |
  cuDNN convolution backprop to data gradients   | TCD or TDO | TCD or TDP | TCD    |
  cuDNN max-pooling backprop                     | TCD or TDO | TCD or TDP | TCD    |
- `tf.nn.bias_add` backprop                      | TDO        | TDP        | NS2    |
+ `tf.nn.bias_add` backprop (see XLA note)       | TDO        | TDP        | NS2    |
  `tf.image.resize_bilinear` fwd and bwd         | NS1        | NS1        | NS1    |
 
 Key to the solutions refenced above:
@@ -144,6 +146,9 @@ Key to the solutions refenced above:
  TDP      | Apply `tfdeterminism.patch`. Note that we are currently working on getting solution TDO into stock TensorFlow (see [PR 31465](https://github.com/tensorflow/tensorflow/pull/31465)).            |
  NS1      | There is currently no solution available for this, but one is under development.                                                                                                                |
  NS2      | The patch, TDP (see above), is currently being updated so that it can be applied to TF version 2.0.                                                                                             |
+
+Notes:
+  * XLA: These solutions will not work when XLA JIT compilation is enabled.
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
 
