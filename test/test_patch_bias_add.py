@@ -99,20 +99,17 @@ class BiasAddTest(test.TestCase):
       self._testBiasNCHW(np_inputs, np_bias, use_gpu=True)
 
   # TODO: Consider using decorator that makes it run on both eager and graph
-  # @test_util.run_deprecated_v1
   def testIntTypes(self):
     for t in [np.int8, np.int16, np.int32, np.int64]:
       self._testAll(
           np.array([[10, 20, 30], [40, 50, 60]]).astype(t),
           np.array([1, 2, 3]).astype(t))
 
-  # @test_util.run_deprecated_v1
   def testFloatTypes(self):
     for t in [np.float16, np.float32, np.float64]:
       self._testAll(
           np.random.rand(4, 3, 3).astype(t), np.random.rand(3).astype(t))
 
-  # @test_util.run_deprecated_v1
   def test4DFloatTypes(self):
     for t in [np.float16, np.float32, np.float64]:
       self._testAll(
@@ -125,7 +122,6 @@ class BiasAddTest(test.TestCase):
           np.random.rand(4, 4, 4, 2048).astype(t),
           np.random.rand(2048).astype(t))
 
-  # @test_util.run_deprecated_v1
   def test5DFloatTypes(self):
     for t in [np.float16, np.float32, np.float64]:
       self._testAll(
@@ -147,7 +143,7 @@ class BiasAddTest(test.TestCase):
         tensor_jacob_n, bias_jacob_n = jacob_n
         # Test gradient of BiasAddGrad
         # Why are we testng the gradient of the gradient function?
-        # The following code is not yet working properly
+        # TODO: Try to get this code working properly
         # with backprop.GradientTape(persistent=True) as t:
         #   t.watch(bias_tensor)
         #   output_tensor = nn_ops.bias_add(input_tensor, bias_tensor,
@@ -195,17 +191,16 @@ class BiasAddTest(test.TestCase):
         tensor_jacob_n, bias_jacob_n, grad_jacob_n = jacob_n
 
       if tf_v2():
-        threshold = 5e-2 # ADDRESS THIS
+        threshold = 5e-2 # TODO: Address this
       else:
         threshold = 5e-3
       if dtype == dtypes.float64:
         threshold = 1e-10
       self.assertAllClose(tensor_jacob_t, tensor_jacob_n, threshold, threshold)
       self.assertAllClose(bias_jacob_t, bias_jacob_n, threshold, threshold)
-      if not tf_v2(): # ADDRESS THIS
+      if not tf_v2(): # TODO: Address this
         self.assertAllClose(grad_jacob_t, grad_jacob_n, threshold, threshold)
 
-  # @test_util.run_deprecated_v1
   def testGradientTensor2D(self):
     for (data_format, use_gpu) in ("NHWC", False), ("NHWC", True):
       for dtype in (dtypes.float16, dtypes.float32, dtypes.float64):
@@ -215,7 +210,6 @@ class BiasAddTest(test.TestCase):
         bias = np.array([1.3, 2.4], dtype=dtype.as_numpy_dtype)
         self._testGradient(np_input, bias, dtype, data_format, use_gpu)
 
-  # @test_util.run_deprecated_v1
   def testGradientTensor3D(self):
     for (data_format, use_gpu) in [("NHWC", False), ("NHWC", True),
                                    ("NCHW", False), ("NCHW", True)]:
@@ -225,7 +219,6 @@ class BiasAddTest(test.TestCase):
         bias = np.array([1.3, 2.4], dtype=dtype.as_numpy_dtype)
         self._testGradient(np_input, bias, dtype, data_format, use_gpu)
 
-  # @test_util.run_deprecated_v1
   def testGradientTensor4D(self):
     for (data_format, use_gpu) in [("NHWC", False)]:
       for dtype in (dtypes.float16, dtypes.float32, dtypes.float64):
@@ -245,7 +238,6 @@ class BiasAddTest(test.TestCase):
                            np.random.rand(64).astype(dtype.as_numpy_dtype),
                            dtype, data_format, use_gpu)
 
-  # @test_util.run_deprecated_v1
   def testGradientTensor5D(self):
     for (data_format, use_gpu) in [("NHWC", False), ("NHWC", True),
                                    ("NCHW", False), ("NCHW", True)]:
@@ -256,15 +248,13 @@ class BiasAddTest(test.TestCase):
         bias = np.array([1.3, 2.4], dtype=dtype.as_numpy_dtype)
         self._testGradient(np_input, bias, dtype, data_format, use_gpu)
 
-  # @test_util.run_deprecated_v1
   def testEmpty(self):
     np.random.seed(7)
     for shape in (0, 0), (2, 0), (0, 2), (4, 3, 0), (4, 0, 3), (0, 4, 3):
       self._testAll(np.random.randn(*shape), np.random.randn(shape[-1]))
 
-  # @test_util.run_deprecated_v1
   def testEmptyGradient(self):
-    if tf_v2(): return # ADDRESS THIS
+    if tf_v2(): return # TODO: Address this
     for (data_format, use_gpu) in ("NHWC", False), ("NHWC", True):
       for shape in (0, 0), (2, 0), (0, 2):
         self._testGradient(
@@ -344,7 +334,7 @@ class BiasAddTest(test.TestCase):
       feed_dict = {upstream_gradients: self._random_ndarray(out_shape)}
       self._assert_reproducible(bias_gradients_op, feed_dict=feed_dict)
 
-  @test_util.run_deprecated_v1
+  @test_util.run_deprecated_v1 # TODO: Remove this and make it work in TF v2.0
   @test_util.run_cuda_only
   def testDeterministicGradients(self):
     for op_binding in (tf.nn.bias_add, nn.bias_add, nn_ops.bias_add):
