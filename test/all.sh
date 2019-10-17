@@ -67,10 +67,10 @@ expect $OK    "" \
 expect $OK    "" \
               ./container.sh tensorflow/tensorflow:1.14.0-gpu-py3 test_patch.sh
 
-fi
-
 expect $OK    "" \
               ./container.sh tensorflow/tensorflow:1.15.0rc2-gpu test_patch.sh
+
+fi
 
 expect $OK    "" \
               ./container.sh tensorflow/tensorflow:2.0.0-gpu test_patch.sh

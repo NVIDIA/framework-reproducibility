@@ -144,15 +144,14 @@ class BiasAddTest(test.TestCase):
         # Test gradient of BiasAddGrad
         # Why are we testng the gradient of the gradient function?
         # TODO: Try to get this code working properly
-        # with backprop.GradientTape(persistent=True) as t:
-        #   t.watch(bias_tensor)
-        #   output_tensor = nn_ops.bias_add(input_tensor, bias_tensor,
-        #                                   data_format=data_format)
-        #   loss = nn_ops.l2_loss(output_tensor)
-        # def bias_add_grad(loss):
-        #   return t.gradient(loss, bias_tensor)
+        # with backprop.GradientTape(persistent=True) as tape:
+        #   tape.watch(bias_tensor)
+        #   output_tensor = bias_add(input_tensor, bias_tensor)
+        # def bias_add_grad(o):
+        #   return tape.gradient(o, bias_tensor)
+        # self.assertIsNotNone(bias_add_grad(output_tensor))
         # grad_jacob_t, grad_jacob_n = gradient_checker_v2.compute_gradient(
-        #     bias_add_grad, [loss])
+        #     bias_add_grad, [output_tensor])
         grad_jacob_t = grad_jacob_n = None
       else:
         output_tensor = nn_ops.bias_add(
