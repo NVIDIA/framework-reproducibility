@@ -223,18 +223,18 @@ Number                                                         | Title          
 
 ### TensorFlow Pull Requests
 
-Number                                                        | Title                                                        | Status                         | Updated    |
--------------------------------------------------------------:|:-------------------------------------------------------------|:-------------------------------|:-----------|
-[10636](https://github.com/tensorflow/tensorflow/pull/10636)  | Non-determinism Docs                                         | closed (not merged)            | 2019-10-08 |
-[24273](https://github.com/tensorflow/tensorflow/pull/24273)  | Enable dataset.map to respect seeds from the outer context   | closed (not merged)            | N/A        |
-[24747](https://github.com/tensorflow/tensorflow/pull/24747)  | Add cuDNN deterministic env variable (only for convolution). | merged into master  (pre-1.14) | N/A        |
-[25269](https://github.com/tensorflow/tensorflow/pull/25269)  | Add deterministic cuDNN max-pooling                          | merged into master  (pre-1.14) | N/A        |
-[25796](https://github.com/tensorflow/tensorflow/pull/25796)  | Added tests for `TF_CUDNN_DETERMINISTIC`                     | merged into master  (pre-1.14) | N/A        |
-[29667](https://github.com/tensorflow/tensorflow/pull/29667)  | Add release note about `TF_CUDNN_DETERMINISTIC`              | merged into r1.14              | N/A        |
-[31389](https://github.com/tensorflow/tensorflow/pull/31389)  | Enhance release notes related to `TF_CUDNN_DETERMINISTIC`    | merged into r1.14              | N/A        |
-[31465](https://github.com/tensorflow/tensorflow/pull/31465)  | Add GPU-deterministic `tf.nn.bias_add`                       | merged into master (pre-2.1)   | N/A        |
-[32979](https://github.com/tensorflow/tensorflow/pull/32979)  | Fix typo in release note                                     | closed (not merged)            | N/A        |
-[33483](https://github.com/tensorflow/tensorflow/pull/33483)  | Fix small typo in v2.0.0 release note                        |                                | N/A        |
+Number                                                        | Title                                                        | Status              | Updated    |
+-------------------------------------------------------------:|:-------------------------------------------------------------|:--------------------|:-----------|
+[10636](https://github.com/tensorflow/tensorflow/pull/10636)  | Non-determinism Docs                                         | closed (not merged) | 2019-10-08 |
+[24273](https://github.com/tensorflow/tensorflow/pull/24273)  | Enable dataset.map to respect seeds from the outer context   | closed (not merged) | N/A        |
+[24747](https://github.com/tensorflow/tensorflow/pull/24747)  | Add cuDNN deterministic env variable (only for convolution). | merged pre-1.14     | N/A        |
+[25269](https://github.com/tensorflow/tensorflow/pull/25269)  | Add deterministic cuDNN max-pooling                          | merged pre-1.14     | N/A        |
+[25796](https://github.com/tensorflow/tensorflow/pull/25796)  | Added tests for `TF_CUDNN_DETERMINISTIC`                     | merged pre-1.14     | N/A        |
+[29667](https://github.com/tensorflow/tensorflow/pull/29667)  | Add release note about `TF_CUDNN_DETERMINISTIC`              | merged into r1.14   | N/A        |
+[31389](https://github.com/tensorflow/tensorflow/pull/31389)  | Enhance release notes related to `TF_CUDNN_DETERMINISTIC`    | merged into r1.14   | N/A        |
+[31465](https://github.com/tensorflow/tensorflow/pull/31465)  | Add GPU-deterministic `tf.nn.bias_add`                       | merged pre-2.1      | N/A        |
+[32979](https://github.com/tensorflow/tensorflow/pull/32979)  | Fix typo in release note                                     | closed (not merged) | N/A        |
+[33483](https://github.com/tensorflow/tensorflow/pull/33483)  | Fix small typo in v2.0.0 release note                        |                     | N/A        |
 
 ### Miscellaneous
 
