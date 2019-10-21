@@ -139,8 +139,8 @@ class BiasAddTest(test.TestCase):
                                  data_format=data_format)
         jacob_t, jacob_n = gradient_checker_v2.compute_gradient(
             bias_add, [input_tensor, bias_tensor])
-        tensor_jacob_t, bias_jacob_t = jacob_t
-        tensor_jacob_n, bias_jacob_n = jacob_n
+        input_jacob_t, bias_jacob_t = jacob_t
+        input_jacob_n, bias_jacob_n = jacob_n
         # Test gradient of BiasAddGrad
         # Why are we testng the gradient of the gradient function?
         # TODO: Try to get this code working properly
@@ -156,7 +156,7 @@ class BiasAddTest(test.TestCase):
       else:
         output_tensor = nn_ops.bias_add(
             input_tensor, bias_tensor, data_format=data_format)
-        tensor_jacob_t, tensor_jacob_n = gradient_checker.compute_gradient(
+        input_jacob_t, input_jacob_n = gradient_checker.compute_gradient(
             input_tensor, np_input.shape, output_tensor, np_input.shape)
         bias_jacob_t, bias_jacob_n = gradient_checker.compute_gradient(
             bias_tensor, bias.shape, output_tensor, np_input.shape)
@@ -166,8 +166,8 @@ class BiasAddTest(test.TestCase):
         grad_jacob_t, grad_jacob_n = gradient_checker.compute_gradient(
             output_tensor, np_input.shape, bias_add_grad, bias.shape)
 
-      return ((tensor_jacob_t, bias_jacob_t, grad_jacob_t),
-              (tensor_jacob_n, bias_jacob_n, grad_jacob_n))
+      return ((input_jacob_t, bias_jacob_t, grad_jacob_t),
+              (input_jacob_n, bias_jacob_n, grad_jacob_n))
 
 
   def _testGradient(self, np_input, bias, dtype, data_format, use_gpu):
@@ -176,8 +176,8 @@ class BiasAddTest(test.TestCase):
         np_input = self._NHWCToNCHW(np_input)
       jacob_t, jacob_n = self._computeGradient(np_input, bias, dtype,
                                                data_format)
-      tensor_jacob_t, bias_jacob_t, grad_jacob_t = jacob_t
-      tensor_jacob_n, bias_jacob_n, grad_jacob_n = jacob_n
+      input_jacob_t, bias_jacob_t, grad_jacob_t = jacob_t
+      input_jacob_n, bias_jacob_n, grad_jacob_n = jacob_n
 
       if dtype == np.float16:
         # Compare fp16 analytical gradients to fp32 numerical gradients,
@@ -187,7 +187,7 @@ class BiasAddTest(test.TestCase):
         # the op itself, only its gradient).
         _, jacob_n = self._computeGradient(np_input, bias, np.float32,
                                            data_format)
-        tensor_jacob_n, bias_jacob_n, grad_jacob_n = jacob_n
+        input_jacob_n, bias_jacob_n, grad_jacob_n = jacob_n
 
       if tf_v2():
         threshold = 5e-2 # TODO: Address this
@@ -195,7 +195,7 @@ class BiasAddTest(test.TestCase):
         threshold = 5e-3
       if dtype == dtypes.float64:
         threshold = 1e-10
-      self.assertAllClose(tensor_jacob_t, tensor_jacob_n, threshold, threshold)
+      self.assertAllClose(input_jacob_t, input_jacob_n, threshold, threshold)
       self.assertAllClose(bias_jacob_t, bias_jacob_n, threshold, threshold)
       if not tf_v2(): # TODO: Address this
         self.assertAllClose(grad_jacob_t, grad_jacob_n, threshold, threshold)
