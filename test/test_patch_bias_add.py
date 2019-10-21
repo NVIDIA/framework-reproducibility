@@ -313,8 +313,8 @@ class BiasAddTest(test.TestCase):
 
   def _assert_reproducible(self, operation, feed_dict={}):
     with self.cached_session(force_gpu=True):
-      result_a = operation[0].eval(feed_dict=feed_dict)
-      result_b = operation[0].eval(feed_dict=feed_dict)
+      result_a = operation.eval(feed_dict=feed_dict)
+      result_b = operation.eval(feed_dict=feed_dict)
       self.assertAllEqual(result_a, result_b)
 
   def _testDeterministicGradientsCase(self, op_binding, data_layout, data_rank,
@@ -344,7 +344,7 @@ class BiasAddTest(test.TestCase):
     grad_ys = None
     bias_gradients_op = gradients_impl.gradients(
         gradient_injector_op, bias_op, grad_ys=grad_ys,
-        colocate_gradients_with_ops=True)
+        colocate_gradients_with_ops=True)[0]
     for i in range(5):
       feed_dict = {upstream_gradients: self._random_ndarray(out_shape)}
       self._assert_reproducible(bias_gradients_op, feed_dict=feed_dict)
