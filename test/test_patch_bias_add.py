@@ -283,6 +283,7 @@ class BiasAddTest(test.TestCase):
             np.random.randn(*shape),
             np.random.randn(shape[-1]), dtypes.float64, data_format, use_gpu)
 
+
 class BiasAddTestDeterministic(test.TestCase):
 
   def _makeShapeTuple(self, batch_size, channel_count, data_rank, data_dim,
@@ -350,7 +351,6 @@ class BiasAddTestDeterministic(test.TestCase):
       self._assertReproducibleGraph(bias_gradients_op, feed_dict=feed_dict)
 
   def _assertReproducibleEager(self, func, seed):
-    np.random.seed(seed)
     result_a = func(seed)
     result_b = func(seed)
     self.assertAllEqual(result_a, result_b)
@@ -383,21 +383,80 @@ class BiasAddTestDeterministic(test.TestCase):
     for i in range(5):
       self._assertReproducibleEager(calculate_gradient, seed=(seed + i))
 
-  @test_util.run_in_graph_and_eager_modes
+  def _testDeterministicGradientsCase(self, op_binding, data_layout, data_rank,
+                                      data_type):
+    seed = (hash(data_layout) % 256 +
+            hash(data_rank) % 256 +
+            hash(data_type) % 256)
+    np.random.seed(seed)
+    batch_size = 10;
+    channel_count = 8;
+    data_dim = 14
+    input_shape = self._makeShapeTuple(batch_size, channel_count, data_rank,
+                                       data_dim, data_layout)
+    bias_shape = (channel_count,)
+    output_shape = input_shape
+    input_val = self._randomDataOp(input_shape, data_type)
+    bias_val = self._randomDataOp(bias_shape, data_type)
+    data_format = self._dataFormatFromDataLayout(data_layout)
+    repeat_count = 5
+    if context.executing_eagerly():
+      def bias_gradients(local_seed):
+        np.random.seed(local_seed)
+        upstream_gradients = self._randomDataOp(output_shape, data_type)
+        with backprop.GradientTape(persistent=True) as tape:
+          tape.watch(bias_val)
+          bias_add_output = op_binding(input_val, bias_val,
+                                       data_format=data_format)
+          gradient_injector_output = bias_add_output * upstream_gradients
+        return tape.gradient(gradient_injector_output, bias_val)
+      for i in range(repeat_count):
+        local_seed = seed + i # select different upstream gradients
+        result_a = bias_gradients(local_seed)
+        result_b = bias_gradients(local_seed)
+        self.assertAllEqual(result_a, result_b)
+    else:
+      upstream_gradients = array_ops.placeholder(data_type, shape=output_shape,
+                                                 name='upstream_gradients')
+      bias_add_output = op_binding(input_val, bias_val, data_format=data_format)
+      gradient_injector_output = bias_add_output * upstream_gradients
+      # The gradient function behaves as if grad_ys is multiplied by the op
+      # gradient result, not passing the upstram gradients through the op's
+      # gradient generation graph. This is the reason for using the
+      # gradient injector
+      bias_gradients = gradients_impl.gradients(
+          gradient_injector_output, bias_val, grad_ys=None,
+          colocate_gradients_with_ops=True)[0]
+      for i in range(repeat_count):
+        feed_dict = {upstream_gradients: self._randomNDArray(output_shape)}
+        with self.session(force_gpu=True):
+          # cached_session is not allowed when also testing eager
+          result_a = bias_gradients.eval(feed_dict=feed_dict)
+          result_b = bias_gradients.eval(feed_dict=feed_dict)
+          self.assertAllEqual(result_a, result_b)
+
+  # @test_util.deprecated_graph_mode_only
+  # def testDetFail(self):
+  #   self._testDeterministicGradientsCase(
+  #       nn.bias_add, 'channels_first', 3, dtypes.float32)
+
   # @test_util.deprecated_graph_mode_only
   # @test_util.run_v2_only
+  @test_util.run_in_graph_and_eager_modes
   @test_util.run_cuda_only
   def testDeterministicGradients(self):
     for op_binding in (tf.nn.bias_add, nn.bias_add, nn_ops.bias_add):
       for data_layout in ('channels_first', 'channels_last'):
+        # With the selected layer configuration, at least in TensorFlow
+        # version 2.0, when data_layout='channels_last', bias_add operates
+        # deterministically by default. I don't know if this is true for
+        # all layer configurations. These cases are still being tested here,
+        # for completeness.
         for data_rank in (1, 2, 3):
           for data_type in (dtypes.float16, dtypes.float32, dtypes.float64):
-            if context.executing_eagerly():
-              self._testDeterministicGradientsCaseEager(
-                  op_binding, data_layout, data_rank, data_type)
-            else:
-              self._testDeterministicGradientsCaseGraph(
-                  op_binding, data_layout, data_rank, data_type)
+            self._testDeterministicGradientsCase(op_binding, data_layout,
+                                                 data_rank, data_type)
+
 
 if __name__ == "__main__":
   import sys
