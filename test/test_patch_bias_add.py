@@ -259,17 +259,11 @@ class BiasAddTest(test.TestCase):
     for shape in (0, 0), (2, 0), (0, 2), (4, 3, 0), (4, 0, 3), (0, 4, 3):
       self._testAll(np.random.randn(*shape), np.random.randn(shape[-1]))
 
+  # There seems to be a bug in gradient_checker_v2.compute_gradient that
+  # prevents this test from working in eager mode. See
+  # repro_eager_issues.py
   @test_util.run_deprecated_v1
   def testEmptyGradient(self):
-    # if tf_v2(): return # TODO: Address this
-    # The following case fails with the original op in TF 2.0 API
-    # self._testGradient(
-    #     np_input=np.random.randn(0, 0),
-    #     bias=np.random.randn(0),
-    #     dtype=dtypes.float64,
-    #     data_format="NHWC",
-    #     use_gpu=False)
-    # return
     for (data_format, use_gpu) in ("NHWC", False), ("NHWC", True):
       for shape in (0, 0), (2, 0), (0, 2):
         self._testGradient(
@@ -357,26 +351,29 @@ class BiasAddTestDeterministic(test.TestCase):
           colocate_gradients_with_ops=True)[0]
       for i in range(repeat_count):
         feed_dict = {upstream_gradients: self._randomNDArray(output_shape)}
-        with self.session(force_gpu=True):
-          # cached_session is not allowed when also testing eager
-          result_a = bias_gradients.eval(feed_dict=feed_dict)
-          result_b = bias_gradients.eval(feed_dict=feed_dict)
-          self.assertAllEqual(result_a, result_b)
+        result_a = bias_gradients.eval(feed_dict=feed_dict)
+        result_b = bias_gradients.eval(feed_dict=feed_dict)
+        self.assertAllEqual(result_a, result_b)
 
   @test_util.run_in_graph_and_eager_modes
   @test_util.run_cuda_only
   def testDeterministicGradients(self):
-    for op_binding in (tf.nn.bias_add, nn.bias_add, nn_ops.bias_add):
-      for data_layout in ('channels_first', 'channels_last'):
-        # With the selected layer configuration, at least in TensorFlow
-        # version 2.0, when data_layout='channels_last', bias_add operates
-        # deterministically by default. I don't know if this is true for
-        # all layer configurations. These cases are still being tested here,
-        # for completeness.
-        for data_rank in (1, 2, 3):
-          for data_type in (dtypes.float16, dtypes.float32, dtypes.float64):
-            self._testDeterministicGradientsCase(op_binding, data_layout,
-                                                 data_rank, data_type)
+    with self.session(force_gpu=True):
+      # There are problems with using force_gpu=True and cached_session with
+      # both eager mode and graph mode in the same test. Using a non-cached
+      # session and putting everything inside the same session context is
+      # a compromise.
+      for op_binding in (tf.nn.bias_add, nn.bias_add, nn_ops.bias_add):
+        for data_layout in ('channels_first', 'channels_last'):
+          # With the selected layer configuration, at least in TensorFlow
+          # version 2.0, when data_layout='channels_last', bias_add operates
+          # deterministically by default. I don't know if this is true for
+          # all layer configurations. These cases are still being tested here,
+          # for completeness.
+          for data_rank in (1, 2, 3):
+            for data_type in (dtypes.float16, dtypes.float32, dtypes.float64):
+              self._testDeterministicGradientsCase(op_binding, data_layout,
+                                                   data_rank, data_type)
 
 
 if __name__ == "__main__":
