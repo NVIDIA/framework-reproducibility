@@ -283,9 +283,9 @@ class BiasAddTest(test.TestCase):
             np.random.randn(*shape),
             np.random.randn(shape[-1]), dtypes.float64, data_format, use_gpu)
 
-  # Deterministic testing starts here
+class BiasAddTestDeterministic(test.TestCase):
 
-  def _make_shape_tuple(self, batch_size, channel_count, data_rank, data_dim,
+  def _makeShapeTuple(self, batch_size, channel_count, data_rank, data_dim,
                         data_layout):
     data_dims = data_rank * (data_dim,)
     if data_layout == 'channels_first':
@@ -296,7 +296,7 @@ class BiasAddTest(test.TestCase):
       raise ValueError("Unknown data format")
     return shape
 
-  def _data_format_from_data_layout(self, data_layout=None):
+  def _dataFormatFromDataLayout(self, data_layout=None):
     if data_layout == 'channels_first':
       return 'NCHW'
     elif data_layout == 'channels_last':
@@ -304,21 +304,21 @@ class BiasAddTest(test.TestCase):
     else:
       raise ValueError("Unknown data_layout")
 
-  def _random_data_op(self, shape, data_type):
-    return constant_op.constant(
-        2 * np.random.random_sample(shape) - 1, dtype=data_type)
-
-  def _random_ndarray(self, shape):
+  def _randomNDArray(self, shape):
     return 2 * np.random.random_sample(shape) - 1
 
-  def _assert_reproducible(self, operation, feed_dict={}):
-    with self.cached_session(force_gpu=True):
+  def _randomDataOp(self, shape, data_type):
+    return constant_op.constant(self._randomNDArray(shape), dtype=data_type)
+
+  def _assertReproducibleGraph(self, operation, feed_dict={}):
+    with self.session(force_gpu=True): # not letting me use cached_session
       result_a = operation.eval(feed_dict=feed_dict)
       result_b = operation.eval(feed_dict=feed_dict)
       self.assertAllEqual(result_a, result_b)
+      # self.assertNotAllEqual(result_a, result_b)
 
-  def _testDeterministicGradientsCase(self, op_binding, data_layout, data_rank,
-                                      data_type):
+  def _testDeterministicGradientsCaseGraph(self, op_binding, data_layout,
+                                           data_rank, data_type):
     seed = (hash(data_layout) % 256 +
             hash(data_rank) % 256 +
             hash(data_type) % 256)
@@ -326,13 +326,13 @@ class BiasAddTest(test.TestCase):
     batch_size = 10
     channel_count = 8
     data_dim = 14
-    in_shape = self._make_shape_tuple(batch_size, channel_count, data_rank,
-                                      data_dim, data_layout)
+    in_shape = self._makeShapeTuple(batch_size, channel_count, data_rank,
+                                    data_dim, data_layout)
     bias_shape = (channel_count,)
     out_shape = in_shape
-    in_op = self._random_data_op(in_shape, data_type)
-    bias_op = self._random_data_op(bias_shape, data_type)
-    data_format = self._data_format_from_data_layout(data_layout)
+    in_op = self._randomDataOp(in_shape, data_type)
+    bias_op = self._randomDataOp(bias_shape, data_type)
+    data_format = self._dataFormatFromDataLayout(data_layout)
     bias_add_op = op_binding(in_op, bias_op, data_format=data_format)
     upstream_gradients = array_ops.placeholder(data_type, shape=out_shape,
                                                name='upstream_gradients')
@@ -346,19 +346,58 @@ class BiasAddTest(test.TestCase):
         gradient_injector_op, bias_op, grad_ys=grad_ys,
         colocate_gradients_with_ops=True)[0]
     for i in range(5):
-      feed_dict = {upstream_gradients: self._random_ndarray(out_shape)}
-      self._assert_reproducible(bias_gradients_op, feed_dict=feed_dict)
+      feed_dict = {upstream_gradients: self._randomNDArray(out_shape)}
+      self._assertReproducibleGraph(bias_gradients_op, feed_dict=feed_dict)
 
-  @test_util.run_deprecated_v1 # TODO: Remove this and make it work in TF v2.0
+  def _assertReproducibleEager(self, func, seed):
+    np.random.seed(seed)
+    result_a = func(seed)
+    result_b = func(seed)
+    self.assertAllEqual(result_a, result_b)
+    # self.assertNotAllEqual(result_a, result_b)
+
+  def _testDeterministicGradientsCaseEager(self, op_binding, data_layout,
+                                           data_rank, data_type):
+    seed = (hash(data_layout) % 256 +
+            hash(data_rank) % 256 +
+            hash(data_type) % 256)
+    np.random.seed(seed)
+    batch_size = 10
+    channel_count = 8
+    data_dim = 14
+    input_shape = self._makeShapeTuple(batch_size, channel_count, data_rank,
+                                       data_dim, data_layout)
+    bias_shape = (channel_count,)
+    output_shape = input_shape
+    input_val = self._randomDataOp(input_shape, data_type)
+    bias_val = self._randomDataOp(bias_shape, data_type)
+    data_format = self._dataFormatFromDataLayout(data_layout)
+    def calculate_gradient(seed):
+      np.random.seed(seed)
+      upstream_gradients = self._randomDataOp(output_shape, data_type)
+      with backprop.GradientTape(persistent=True) as tape:
+        tape.watch(bias_val)
+        bias_add_val = op_binding(input_val, bias_val, data_format=data_format)
+        gradient_injector_output = bias_add_val * upstream_gradients
+      return tape.gradient(gradient_injector_output, bias_val)
+    for i in range(5):
+      self._assertReproducibleEager(calculate_gradient, seed=(seed + i))
+
+  @test_util.run_in_graph_and_eager_modes
+  # @test_util.deprecated_graph_mode_only
+  # @test_util.run_v2_only
   @test_util.run_cuda_only
   def testDeterministicGradients(self):
     for op_binding in (tf.nn.bias_add, nn.bias_add, nn_ops.bias_add):
       for data_layout in ('channels_first', 'channels_last'):
         for data_rank in (1, 2, 3):
           for data_type in (dtypes.float16, dtypes.float32, dtypes.float64):
-            self._testDeterministicGradientsCase(op_binding, data_layout,
-                                                 data_rank, data_type)
-
+            if context.executing_eagerly():
+              self._testDeterministicGradientsCaseEager(
+                  op_binding, data_layout, data_rank, data_type)
+            else:
+              self._testDeterministicGradientsCaseGraph(
+                  op_binding, data_layout, data_rank, data_type)
 
 if __name__ == "__main__":
   import sys
