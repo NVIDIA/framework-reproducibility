@@ -47,7 +47,7 @@ version=$(python get_version.py)
 OK=0
 ERROR=1
 
-if false; then
+# if false; then
 
 expect $OK    "Successfully installed tensorflow-determinism" \
               ./install_package.sh
@@ -72,7 +72,7 @@ expect $OK    "" \
 expect $OK    "" \
               ./container.sh tensorflow/tensorflow:1.15.0-gpu test_patch.sh
 
-fi
+# fi
 
 expect $OK    "" \
               ./container.sh tensorflow/tensorflow:2.0.0-gpu test_patch.sh
