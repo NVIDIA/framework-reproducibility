@@ -85,7 +85,8 @@ class BiasAddTest(test.TestCase):
     np_val = self._npBias(np_inputs, np_bias)
     np_inputs = self._NHWCToNCHW(np_inputs)
     with self.cached_session(use_gpu=use_gpu):
-      tf_val = self.evaluate(nn_ops.bias_add(np_inputs, np_bias, data_format="NCHW"))
+      tf_val = self.evaluate(nn_ops.bias_add(np_inputs, np_bias,
+                                             data_format="NCHW"))
     tf_val = self._NCHWToNHWC(tf_val)
     self.assertAllCloseAccordingToType(self._AtLeast3d(np_val), tf_val)
 
@@ -129,6 +130,9 @@ class BiasAddTest(test.TestCase):
           np.random.rand(4, 3, 2, 3, 4).astype(t),
           np.random.rand(4).astype(t))
 
+  def _random_tensor(self, shape, dtype):
+    return constant_op.constant(2 * np.random.rand(*shape) - 1, dtype=dtype)
+
   def _computeGradient(self, np_input, bias, dtype, data_format):
       input_tensor = constant_op.constant(
           np_input, shape=np_input.shape, dtype=dtype)
@@ -143,17 +147,15 @@ class BiasAddTest(test.TestCase):
         input_jacob_t, bias_jacob_t = jacob_t
         input_jacob_n, bias_jacob_n = jacob_n
         # Test gradient of BiasAddGrad
-        # Why are we testng the gradient of the gradient function?
-        # TODO: Try to get this code working properly
-        # with backprop.GradientTape(persistent=True) as tape:
-        #   tape.watch(bias_tensor)
-        #   output_tensor = bias_add(input_tensor, bias_tensor)
-        # def bias_add_grad(o):
-        #   return tape.gradient(o, bias_tensor)
-        # self.assertIsNotNone(bias_add_grad(output_tensor))
-        # grad_jacob_t, grad_jacob_n = gradient_checker_v2.compute_gradient(
-        #     bias_add_grad, [output_tensor])
-        grad_jacob_t = grad_jacob_n = None
+        def bias_add_grad_function(upstream_gradients):
+          with backprop.GradientTape() as tape:
+            tape.watch(bias_tensor)
+            bias_add_output = bias_add(input_tensor, bias_tensor)
+            gradient_injector_output = bias_add_output * upstream_gradients
+            return tape.gradient(gradient_injector_output, bias_tensor)
+        upstream_tensor = self._random_tensor(np_input.shape, dtype)
+        grad_jacob_t, grad_jacob_n = gradient_checker_v2.compute_gradient(
+            bias_add_grad_function, [upstream_tensor])
       else:
         output_tensor = nn_ops.bias_add(
             input_tensor, bias_tensor, data_format=data_format)
@@ -190,8 +192,12 @@ class BiasAddTest(test.TestCase):
                                            data_format)
         input_jacob_n, bias_jacob_n, grad_jacob_n = jacob_n
 
-      if context.executing_eagerly() and dtype == dtypes.float16:
-        # I don't know why this is different in TF 2.0
+      if (context.executing_eagerly() and
+          np_input.size >= 512 and
+          dtype != dtypes.float64):
+        # This threshold seems to have been marginal and small changes in the
+        # calls to the RNG caused by inplementing eager support pushed the
+        # error over the limit
         threshold = 5e-2
       elif dtype == dtypes.float64:
         threshold = 1e-10
@@ -199,8 +205,7 @@ class BiasAddTest(test.TestCase):
         threshold = 5e-3
       self.assertAllClose(input_jacob_t, input_jacob_n, threshold, threshold)
       self.assertAllClose(bias_jacob_t, bias_jacob_n, threshold, threshold)
-      if not context.executing_eagerly(): # TODO: Address this
-        self.assertAllClose(grad_jacob_t, grad_jacob_n, threshold, threshold)
+      self.assertAllClose(grad_jacob_t, grad_jacob_n, threshold, threshold)
 
   @test_util.run_in_graph_and_eager_modes
   def testGradientTensor2D(self):
@@ -259,9 +264,9 @@ class BiasAddTest(test.TestCase):
     for shape in (0, 0), (2, 0), (0, 2), (4, 3, 0), (4, 0, 3), (0, 4, 3):
       self._testAll(np.random.randn(*shape), np.random.randn(shape[-1]))
 
-  # There seems to be a bug in gradient_checker_v2.compute_gradient that
-  # prevents this test from working in eager mode. See
-  # repro_eager_issues.py
+  # TODO: There seems to be a bug in gradient_checker_v2.compute_gradient that
+  # prevents this test from working in eager mode. See repro_eager_issues.py.
+  # When that has been fixed, this test should also be run in eager mode.
   @test_util.run_deprecated_v1
   def testEmptyGradient(self):
     for (data_format, use_gpu) in ("NHWC", False), ("NHWC", True):

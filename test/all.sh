@@ -47,12 +47,8 @@ version=$(python get_version.py)
 OK=0
 ERROR=1
 
-# if false; then
-
 expect $OK    "Successfully installed tensorflow-determinism" \
               ./install_package.sh
-
-# fi
 
 expect $ERROR "Exception: tfdeterminism: TensorFlow inside NGC containers does not require patching" \
               ./container.sh nvcr.io/nvidia/tensorflow:19.09-py2 python test_patch_apply.py
@@ -63,25 +59,17 @@ expect $ERROR "Exception: tfdeterminism: No patch available for version 1.13.1 o
 expect $OK    "TensorFlow version 1.14.0 has been patched using tfdeterminism version ${version}"  \
               ./container.sh tensorflow/tensorflow:1.14.0-gpu python test_patch_apply.py
 
-# if false; then
-
 expect $OK    "" \
               ./container.sh tensorflow/tensorflow:1.14.0-gpu test_patch.sh
 
 expect $OK    "" \
               ./container.sh tensorflow/tensorflow:1.14.0-gpu-py3 test_patch.sh
 
-# fi
-
 expect $OK    "" \
               ./container.sh tensorflow/tensorflow:1.15.0-gpu test_patch.sh
 
-# fi
-
 expect $OK    "" \
               ./container.sh tensorflow/tensorflow:2.0.0-gpu test_patch.sh
-
-# fi
 
 echo "${PASS_COUNT} tests passed"
 echo "${FAIL_COUNT} tests failed"
