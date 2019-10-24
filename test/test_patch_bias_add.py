@@ -316,8 +316,8 @@ class BiasAddTestDeterministic(test.TestCase):
             hash(data_rank) % 256 +
             hash(data_type) % 256)
     np.random.seed(seed)
-    batch_size = 10;
-    channel_count = 8;
+    batch_size = 10
+    channel_count = 8
     data_dim = 14
     input_shape = self._makeShapeTuple(batch_size, channel_count, data_rank,
                                        data_dim, data_layout)
