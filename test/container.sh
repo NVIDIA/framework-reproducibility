@@ -17,8 +17,11 @@
 
 if [ "$1" == "--help" ]; then
 	echo "Usage:"
+	echo
 	echo "  To run a program in a container:"
-	echo "    ${0} <docker-image> <filename-in-current-directory>"
+	echo "    ${0} <docker_image> <executable> <arguments>"
+	echo "    <executable> may be either python or a file in the current directory"
+	echo
 	echo "  To run an interactive bash session in the default container:"
 	echo "    ${0}"
 	exit 0
@@ -27,9 +30,15 @@ fi
 if [ -z ${2+present} ]; then
   IMAGE=tensorflow/tensorflow:1.14.0-gpu
   ENTRYPOINT=""
+  ENTRYPOINT_ARGUMENTS=bash
 else
   IMAGE=${1}
-  ENTRYPOINT="--entrypoint /mnt/test/${2}"
+  if [ "${2}" == "python" ]; then
+    ENTRYPOINT="--entrypoint python"
+  else
+    ENTRYPOINT="--entrypoint /mnt/test/${2}"
+  fi
+  ENTRYPOINT_ARGUMENTS="${@:3}"
 fi
 
 docker pull ${IMAGE}
@@ -45,4 +54,5 @@ docker run --runtime=nvidia -it        \
            --ulimit memlock=-1         \
            --ulimit stack=67108864     \
            ${ENTRYPOINT}               \
-           ${IMAGE} bash
+           ${IMAGE}                    \
+           ${ENTRYPOINT_ARGUMENTS}

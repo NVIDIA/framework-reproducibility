@@ -54,7 +54,7 @@ def _patch():
     raise Exception("tfdeterminism: TensorFlow inside NGC containers does not "
                     "require patching")
   tf_version = tf.version.VERSION
-  if re.match("1\.(14|15)", tf_version):
+  if re.match("(1\.(14|15)|2\.0)", tf_version):
     os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
     _patch_bias_add()
     print("TensorFlow version %s has been patched "

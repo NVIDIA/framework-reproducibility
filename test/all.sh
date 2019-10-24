@@ -51,13 +51,13 @@ expect $OK    "Successfully installed tensorflow-determinism" \
               ./install_package.sh
 
 expect $ERROR "Exception: tfdeterminism: TensorFlow inside NGC containers does not require patching" \
-              ./container.sh nvcr.io/nvidia/tensorflow:19.09-py2 test_patch_apply.sh
+              ./container.sh nvcr.io/nvidia/tensorflow:19.09-py2 python test_patch_apply.py
 
 expect $ERROR "Exception: tfdeterminism: No patch available for version 1.13.1 of TensorFlow" \
-              ./container.sh tensorflow/tensorflow:1.13.1-gpu test_patch_apply.sh
+              ./container.sh tensorflow/tensorflow:1.13.1-gpu python test_patch_apply.py
 
 expect $OK    "TensorFlow version 1.14.0 has been patched using tfdeterminism version ${version}"  \
-              ./container.sh tensorflow/tensorflow:1.14.0-gpu test_patch_apply.sh
+              ./container.sh tensorflow/tensorflow:1.14.0-gpu python test_patch_apply.py
 
 expect $OK    "" \
               ./container.sh tensorflow/tensorflow:1.14.0-gpu test_patch.sh
@@ -66,9 +66,9 @@ expect $OK    "" \
               ./container.sh tensorflow/tensorflow:1.14.0-gpu-py3 test_patch.sh
 
 expect $OK    "" \
-              ./container.sh tensorflow/tensorflow:1.15.0rc2-gpu test_patch.sh
+              ./container.sh tensorflow/tensorflow:1.15.0-gpu test_patch.sh
 
-expect $ERROR "Exception: tfdeterminism: No patch available for version 2.0.0 of TensorFlow" \
+expect $OK    "" \
               ./container.sh tensorflow/tensorflow:2.0.0-gpu test_patch.sh
 
 echo "${PASS_COUNT} tests passed"

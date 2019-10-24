@@ -34,13 +34,14 @@ TensorFlow before you can import and use `tfdeterminism`.
 
 There are currently two main ways to access GPU-deterministic functionality in
 TensorFlow for most deep learning applications. The first way is to use an
-NVIDIA NGC TensorFlow container. The second way is to use version 1.14 or 1.15
-of stock TensorFlow with GPU support, plus the application of a patch supplied
-in this repo. Patch support for version 2.0 of stock TensorFlow is
-currently in development.
+NVIDIA NGC TensorFlow container. The second way is to use version 1.14, 1.15,
+or 2.0 of stock TensorFlow with GPU support, plus the application of a patch
+supplied in this repo.
 
 The longer-term intention and plan is to upstream all solutions into stock
 TensorFlow.
+
+Determinism is not guaranteed when XLA JIT compilation is enabled.
 
 ### NVIDIA NGC TensorFlow Containers
 
@@ -68,10 +69,10 @@ instructions][2].
 
 ### Stock TensorFlow
 
-Versions 1.14 and 1.15 of stock TensorFlow implement a reduced form of GPU
+Versions 1.14, 1.15, and 2.0 of stock TensorFlow implement a reduced form of GPU
 determinism, which must be supplemented with a patch provided in this repo.
 The following Python code is running on a machine in which `pip` package
-`tensorflow-gpu=1.14.0` has been installed correctly and on which
+`tensorflow-gpu=2.0.0` has been installed correctly and on which
 `tensorflow-determinism` has also been installed (as shown in the
 [installation](#installation) section above).
 
@@ -79,13 +80,13 @@ The following Python code is running on a machine in which `pip` package
 import tensorflow as tf
 from tfdeterminism import patch
 patch()
-# build your graph and train it
+# use tf as normal
 ```
 
 Stock TensorFlow with GPU support can be installed as follows:
 
 ```
-pip install tensorflow-gpu=1.14.0
+pip install tensorflow-gpu=2.0.0
 ```
 
 The TensorFlow project includes [detailed instructions][3] for installing
@@ -126,14 +127,14 @@ by default when running on a GPU.
 
 #### Confirmed Current GPU-Specific Sources of Non-Determinism (With Solutions)
 
- Source                                         | NGC 19.06+ | TF 1.14+   | TF 2.0 |
-:-----------------------------------------------|:-----------|:-----------|--------|
- TF auto-tuning of cuDNN convolution algorithms | TCD or TDO | TCD or TDP | TCD    |
- cuDNN convolution backprop to weight gradients | TCD or TDO | TCD or TDP | TCD    |
- cuDNN convolution backprop to data gradients   | TCD or TDO | TCD or TDP | TCD    |
- cuDNN max-pooling backprop                     | TCD or TDO | TCD or TDP | TCD    |
- `tf.nn.bias_add` backprop                      | TDO        | TDP        | NS2    |
- `tf.image.resize_bilinear` fwd and bwd         | NS1        | NS1        | NS1    |
+ Source                                         | NGC 19.06+ / TF2.1 | TF 1.14, 1.15, 2.0  |
+:-----------------------------------------------|:-------------------|:--------------------|
+ TF auto-tuning of cuDNN convolution algorithms | TCD or TDO         | TCD or TDP          |
+ cuDNN convolution backprop to weight gradients | TCD or TDO         | TCD or TDP          |
+ cuDNN convolution backprop to data gradients   | TCD or TDO         | TCD or TDP          |
+ cuDNN max-pooling backprop                     | TCD or TDO         | TCD or TDP          |
+ `tf.nn.bias_add` backprop (see XLA note)       | TDO                | TDP                 |
+ `tf.image.resize_bilinear` fwd and bwd         | NS1                | NS1                 |
 
 Key to the solutions refenced above:
 
@@ -141,9 +142,11 @@ Key to the solutions refenced above:
 :---------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
  TCD      | Set environment variable `TF_CUDNN_DETERMINISTIC` to '1' or 'true'. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to '0' or 'false'). |
  TDO      | Set environment variable `TF_DETERMINISTIC_OPS` to '1' or 'true'. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to '0' or 'false').   |
- TDP      | Apply `tfdeterminism.patch`. Note that we are currently working on getting solution TDO into stock TensorFlow (see [PR 31465](https://github.com/tensorflow/tensorflow/pull/31465)).            |
+ TDP      | Apply `tfdeterminism.patch`. Note that solution TDO will be in stock TensorFlow v2.1 (see [PR 31465](https://github.com/tensorflow/tensorflow/pull/31465)).                                     |
  NS1      | There is currently no solution available for this, but one is under development.                                                                                                                |
- NS2      | The patch, TDP (see above), is currently being updated so that it can be applied to TF version 2.0.                                                                                             |
+
+Notes:
+  * XLA: These solutions will not work when XLA JIT compilation is enabled.
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
 
@@ -221,14 +224,15 @@ Number                                                         | Title          
 Number                                                        | Title                                                        | Status              | Updated    |
 -------------------------------------------------------------:|:-------------------------------------------------------------|:--------------------|:-----------|
 [10636](https://github.com/tensorflow/tensorflow/pull/10636)  | Non-determinism Docs                                         | closed (not merged) | 2019-10-08 |
-[24273](https://github.com/tensorflow/tensorflow/pull/24273)  | Enable dataset.map to respect seeds from the outer context   | closed (not merged) |            |
-[24747](https://github.com/tensorflow/tensorflow/pull/24747)  | Add cuDNN deterministic env variable (only for convolution). | merged into master  |            |
-[25269](https://github.com/tensorflow/tensorflow/pull/25269)  | Add deterministic cuDNN max-pooling                          | merged into master  |            |
-[25796](https://github.com/tensorflow/tensorflow/pull/25796)  | Added tests for `TF_CUDNN_DETERMINISTIC`                     | merged into master  |            |
-[29667](https://github.com/tensorflow/tensorflow/pull/29667)  | Add release note about `TF_CUDNN_DETERMINISTIC`              | merged into r1.14   |            |
-[31389](https://github.com/tensorflow/tensorflow/pull/31389)  | Enhance release notes related to `TF_CUDNN_DETERMINISTIC`    | merged into r1.14   |            |
-[31465](https://github.com/tensorflow/tensorflow/pull/31465)  | Add GPU-deterministic `tf.nn.bias_add`                       | ready to pull       |            |
-[32979](https://github.com/tensorflow/tensorflow/pull/32979)  | Fix typo in release note                                     | awaiting review     |            |
+[24273](https://github.com/tensorflow/tensorflow/pull/24273)  | Enable dataset.map to respect seeds from the outer context   | closed (not merged) | N/A        |
+[24747](https://github.com/tensorflow/tensorflow/pull/24747)  | Add cuDNN deterministic env variable (only for convolution). | merged pre-1.14     | N/A        |
+[25269](https://github.com/tensorflow/tensorflow/pull/25269)  | Add deterministic cuDNN max-pooling                          | merged pre-1.14     | N/A        |
+[25796](https://github.com/tensorflow/tensorflow/pull/25796)  | Added tests for `TF_CUDNN_DETERMINISTIC`                     | merged pre-1.14     | N/A        |
+[29667](https://github.com/tensorflow/tensorflow/pull/29667)  | Add release note about `TF_CUDNN_DETERMINISTIC`              | merged into r1.14   | N/A        |
+[31389](https://github.com/tensorflow/tensorflow/pull/31389)  | Enhance release notes related to `TF_CUDNN_DETERMINISTIC`    | merged into r1.14   | N/A        |
+[31465](https://github.com/tensorflow/tensorflow/pull/31465)  | Add GPU-deterministic `tf.nn.bias_add`                       | merged pre-2.1      | N/A        |
+[32979](https://github.com/tensorflow/tensorflow/pull/32979)  | Fix typo in release note                                     | closed (not merged) | N/A        |
+[33483](https://github.com/tensorflow/tensorflow/pull/33483)  | Fix small typo in v2.0.0 release note                        |                     | N/A        |
 
 ### Miscellaneous
 

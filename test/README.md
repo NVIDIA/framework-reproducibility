@@ -11,7 +11,3 @@ Requirements:
   * pip install -r requirements.txt
 
 Then you should be able to run `./all.sh` and observe the final message.
-
-## Additional things to test
-
-* Operation in TF 2.0

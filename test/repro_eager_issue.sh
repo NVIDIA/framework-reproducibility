@@ -15,4 +15,4 @@
 # limitations under the License.
 # ========================================================================
 
-python test_patch_apply.py
+./container.sh tensorflow/tensorflow:2.0.0-gpu python repro_eager_issue.py

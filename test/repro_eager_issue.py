@@ -13,4 +13,17 @@
 # limitations under the License.
 # ========================================================================
 
-__version__ = "0.3.0"
+# Reported at https://github.com/tensorflow/tensorflow/issues/33660
+# TODO: See if this bug repros with tf.compat.v1.test.compute_gradient
+#       (in graph mode)
+
+import numpy as np
+import tensorflow as tf
+
+def empty(rank):
+  shape = (0,) * rank
+  return np.array([]).reshape(shape)
+
+# Comment-out the first to run the second
+tf.test.compute_gradient(tf.nn.bias_add, [empty(3), empty(1)])
+tf.test.compute_gradient(tf.linalg.matmul, [empty(2), empty(3)])
