@@ -265,7 +265,7 @@ class BiasAddTest(test.TestCase):
       self._testAll(np.random.randn(*shape), np.random.randn(shape[-1]))
 
   # TODO: There seems to be a bug in gradient_checker_v2.compute_gradient that
-  # prevents this test from working in eager mode. See repro_eager_issues.py.
+  # prevents this test from working in eager mode. See repro_eager_issue.py.
   # When that has been fixed, this test should also be run in eager mode.
   @test_util.run_deprecated_v1
   def testEmptyGradient(self):
