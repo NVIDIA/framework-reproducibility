@@ -14,6 +14,8 @@
 # ========================================================================
 
 # Reported at https://github.com/tensorflow/tensorflow/issues/33660
+# TODO: See if this bug repros with tf.compat.v1.test.compute_gradient
+#       (in graph mode)
 
 import numpy as np
 import tensorflow as tf

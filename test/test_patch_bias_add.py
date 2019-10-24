@@ -142,6 +142,9 @@ class BiasAddTest(test.TestCase):
         def bias_add(input_tensor, bias_tensor):
           return nn_ops.bias_add(input_tensor, bias_tensor,
                                  data_format=data_format)
+        # TODO: See if TF issue 33660 can be worked-around by calling
+        #       compute_gradient twice, once for each input, as is done
+        #       in the graph mode branch below.
         jacob_t, jacob_n = gradient_checker_v2.compute_gradient(
             bias_add, [input_tensor, bias_tensor])
         input_jacob_t, bias_jacob_t = jacob_t
