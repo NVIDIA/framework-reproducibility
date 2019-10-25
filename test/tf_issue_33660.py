@@ -14,22 +14,31 @@
 # ========================================================================
 
 # Reported at https://github.com/tensorflow/tensorflow/issues/33660
-# TODO: See if this bug repros with tf.compat.v1.test.compute_gradient
-#       (in graph mode)
 
 import numpy as np
+import sys
 import tensorflow as tf
+
+def section(msg):
+  print("=======================================================")
+  print(msg)
+  print("-------------------------------------------------------")
 
 def empty(rank):
   shape = (0,) * rank
   return np.array([]).reshape(shape)
 
-def eager_repro():
-  # Comment-out the first to run the second
+def eager_repro_bias_add():
+  section("EAGER REPRO with tf.nn.biad_add")
   tf.test.compute_gradient(tf.nn.bias_add, [empty(3), empty(1)])
+
+def eager_repro_matmul():
+  section("EAGER RERPO with tf.linalg.matmul")
   tf.test.compute_gradient(tf.linalg.matmul, [empty(2), empty(3)])
 
+
 def eager_work_around():
+  section("EAGER WORK-AROUND")
   input_val = empty(3)
   bias_val = empty(1)
 
@@ -46,6 +55,7 @@ def empty_tensor(shape):
   return tf.constant([], shape=shape)
 
 def graph_repro():
+  section("GRAPH MODE REPRO")
   tf.compat.v1.disable_eager_execution()
   input_shape = output_shape = (0, 0, 0)
   bias_shape = (0,)
@@ -62,6 +72,7 @@ def random_tensor(shape):
 
 # Taken from tensorflow/python/ops/gradient_checker_v2_test.py / testEmptyMatMul
 def existing_test_repro():
+  section("EXISTING TEST REPRO")
   def f(x, y):
     return tf.linalg.matmul(x, y)
 
@@ -71,7 +82,6 @@ def existing_test_repro():
   jacobians = tf.test.compute_gradient(f, [x, y])
 
 if __name__ == "__main__":
-  # eager_repro()
-  # eager_work_around()
-  # graph_repro()
-  existing_test_repro()
+  if not tf.__version__.startswith("2.0"):
+    raise("This is designed to run with TensorFlow version 2.0")
+  exec("%s()" % sys.argv[1])

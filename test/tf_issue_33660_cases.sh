@@ -15,4 +15,8 @@
 # limitations under the License.
 # ========================================================================
 
-./container.sh tensorflow/tensorflow:2.0.0-gpu tf_issue_33660_cases.sh
+python tf_issue_33660.py eager_repro_bias_add
+python tf_issue_33660.py eager_repro_matmul
+python tf_issue_33660.py eager_work_around
+python tf_issue_33660.py graph_repro
+python tf_issue_33660.py existing_test_repro

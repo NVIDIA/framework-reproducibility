@@ -166,6 +166,7 @@ class BiasAddTest(test.TestCase):
       else:
         output_tensor = nn_ops.bias_add(
             input_tensor, bias_tensor, data_format=data_format)
+        # TODO: Call compute_gradient only once (see tf_issue_33660.py)
         input_jacob_a, input_jacob_n = gradient_checker.compute_gradient(
             input_tensor, np_input.shape, output_tensor, np_input.shape)
         bias_jacob_a, bias_jacob_n = gradient_checker.compute_gradient(
