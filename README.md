@@ -232,7 +232,7 @@ Number                                                        | Title           
 [31389](https://github.com/tensorflow/tensorflow/pull/31389)  | Enhance release notes related to `TF_CUDNN_DETERMINISTIC`    | merged into r1.14   | N/A        |
 [31465](https://github.com/tensorflow/tensorflow/pull/31465)  | Add GPU-deterministic `tf.nn.bias_add`                       | merged pre-2.1      | N/A        |
 [32979](https://github.com/tensorflow/tensorflow/pull/32979)  | Fix typo in release note                                     | closed (not merged) | N/A        |
-[33483](https://github.com/tensorflow/tensorflow/pull/33483)  | Fix small typo in v2.0.0 release note                        |                     | N/A        |
+[33483](https://github.com/tensorflow/tensorflow/pull/33483)  | Fix small typo in v2.0.0 release note                        | merged pre-2.1      | N/A        |
 
 ### Miscellaneous
 
