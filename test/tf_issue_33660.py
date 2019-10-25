@@ -42,7 +42,36 @@ def eager_work_around():
   input_jacobians = tf.test.compute_gradient(bias_add_1, [input_val])
   bias_jacobians = tf.test.compute_gradient(bias_add_2, [bias_val])
 
+def empty_tensor(shape):
+  return tf.constant([], shape=shape)
+
+def graph_repro():
+  tf.compat.v1.disable_eager_execution()
+  input_shape = output_shape = (0, 0, 0)
+  bias_shape = (0,)
+  input_tensor = empty_tensor(input_shape)
+  bias_tensor = empty_tensor(bias_shape)
+  output_tensor = tf.nn.bias_add(input_tensor, bias_tensor)
+  with tf.compat.v1.Session() as sess:
+    jacobians = tf.compat.v1.test.compute_gradient(
+        [input_tensor, bias_tensor], [input_shape, bias_shape], output_tensor,
+        output_shape)
+
+def random_tensor(shape):
+  return tf.constant(np.random.random_sample(shape))
+
+# Taken from tensorflow/python/ops/gradient_checker_v2_test.py / testEmptyMatMul
+def existing_test_repro():
+  def f(x, y):
+    return tf.linalg.matmul(x, y)
+
+  x = random_tensor((0, 3))
+  y = random_tensor((3, 4))
+
+  jacobians = tf.test.compute_gradient(f, [x, y])
+
 if __name__ == "__main__":
   # eager_repro()
-  eager_work_around()
+  # eager_work_around()
   # graph_repro()
+  existing_test_repro()
