@@ -29,7 +29,20 @@ def eager_repro():
   tf.test.compute_gradient(tf.nn.bias_add, [empty(3), empty(1)])
   tf.test.compute_gradient(tf.linalg.matmul, [empty(2), empty(3)])
 
+def eager_work_around():
+  input_val = empty(3)
+  bias_val = empty(1)
+
+  def bias_add_1(input_val):
+    return tf.nn.bias_add(input_val, bias_val)
+
+  def bias_add_2(bias_val):
+    return tf.nn.bias_add(input_val, bias_val)
+
+  input_jacobians = tf.test.compute_gradient(bias_add_1, [input_val])
+  bias_jacobians = tf.test.compute_gradient(bias_add_2, [bias_val])
+
 if __name__ == "__main__":
-  eager_repro()
-  # eager_work_around()
+  # eager_repro()
+  eager_work_around()
   # graph_repro()
