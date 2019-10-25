@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Copyright 2019 The TensorFlow-Determinism Authors. All Rights Reserved
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,17 +15,4 @@
 # limitations under the License.
 # ========================================================================
 
-# Reported at https://github.com/tensorflow/tensorflow/issues/33660
-# TODO: See if this bug repros with tf.compat.v1.test.compute_gradient
-#       (in graph mode)
-
-import numpy as np
-import tensorflow as tf
-
-def empty(rank):
-  shape = (0,) * rank
-  return np.array([]).reshape(shape)
-
-# Comment-out the first to run the second
-tf.test.compute_gradient(tf.nn.bias_add, [empty(3), empty(1)])
-tf.test.compute_gradient(tf.linalg.matmul, [empty(2), empty(3)])
+./container.sh tensorflow/tensorflow:2.0.0-gpu python tf_issue_33660.py

@@ -1,8 +1,7 @@
-# Copyright 2019 The TensorFlow Authors. All Rights Reserved
+# Copyright 2019 The TensorFlow-Determinism Authors. All Rights Reserved
 #
-# _new_biad_add_1_14() derived from source in
-# https://github/tensorflow/tensorflow and therefore
-# Copyright 2019 The TensorFlow Authors. All Rights Reserved
+# Some code in this file was derived from the TensorFlow project and/or
+# has been, or will be, contributed to the TensorFlow project.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -142,13 +141,18 @@ class BiasAddTest(test.TestCase):
         def bias_add(input_tensor, bias_tensor):
           return nn_ops.bias_add(input_tensor, bias_tensor,
                                  data_format=data_format)
-        # TODO: See if TF issue 33660 can be worked-around by calling
-        #       compute_gradient twice, once for each input, as is done
-        #       in the graph mode branch below.
-        jacob_t, jacob_n = gradient_checker_v2.compute_gradient(
-            bias_add, [input_tensor, bias_tensor])
-        input_jacob_t, bias_jacob_t = jacob_t
-        input_jacob_n, bias_jacob_n = jacob_n
+        # The following is a work-around for TF issue 33660. Instead of
+        # calculating the analytical and numerical gradients for both
+        # inputs in a single call to compute_gradient, compute_gradient
+        # is called for each input separately.
+        def bias_add_1(input_tensor):
+          return bias_add(input_tensor, bias_tensor)
+        def bias_add_2(bias_tensor):
+          return bias_add(input_tensor, bias_tensor)
+        input_jacob_a, input_jacob_n = gradient_checker_v2.compute_gradient(
+            bias_add_1, [input_tensor])
+        bias_jacob_a, bias_jacob_n = gradient_checker_v2.compute_gradient(
+            bias_add_2, [bias_tensor])
         # Test gradient of BiasAddGrad
         def bias_add_grad_function(upstream_gradients):
           with backprop.GradientTape() as tape:
@@ -157,22 +161,22 @@ class BiasAddTest(test.TestCase):
             gradient_injector_output = bias_add_output * upstream_gradients
             return tape.gradient(gradient_injector_output, bias_tensor)
         upstream_tensor = self._random_tensor(np_input.shape, dtype)
-        grad_jacob_t, grad_jacob_n = gradient_checker_v2.compute_gradient(
+        grad_jacob_a, grad_jacob_n = gradient_checker_v2.compute_gradient(
             bias_add_grad_function, [upstream_tensor])
       else:
         output_tensor = nn_ops.bias_add(
             input_tensor, bias_tensor, data_format=data_format)
-        input_jacob_t, input_jacob_n = gradient_checker.compute_gradient(
+        input_jacob_a, input_jacob_n = gradient_checker.compute_gradient(
             input_tensor, np_input.shape, output_tensor, np_input.shape)
-        bias_jacob_t, bias_jacob_n = gradient_checker.compute_gradient(
+        bias_jacob_a, bias_jacob_n = gradient_checker.compute_gradient(
             bias_tensor, bias.shape, output_tensor, np_input.shape)
         # Test gradient of BiasAddGrad
         bias_add_grad = gradients_impl.gradients(
             nn_ops.l2_loss(output_tensor), bias_tensor)[0]
-        grad_jacob_t, grad_jacob_n = gradient_checker.compute_gradient(
+        grad_jacob_a, grad_jacob_n = gradient_checker.compute_gradient(
             output_tensor, np_input.shape, bias_add_grad, bias.shape)
 
-      return ((input_jacob_t, bias_jacob_t, grad_jacob_t),
+      return ((input_jacob_a, bias_jacob_a, grad_jacob_a),
               (input_jacob_n, bias_jacob_n, grad_jacob_n))
 
 
@@ -180,9 +184,9 @@ class BiasAddTest(test.TestCase):
     with self.cached_session(use_gpu=use_gpu):
       if data_format == "NCHW":
         np_input = self._NHWCToNCHW(np_input)
-      jacob_t, jacob_n = self._computeGradient(np_input, bias, dtype,
+      jacob_a, jacob_n = self._computeGradient(np_input, bias, dtype,
                                                data_format)
-      input_jacob_t, bias_jacob_t, grad_jacob_t = jacob_t
+      input_jacob_a, bias_jacob_a, grad_jacob_a = jacob_a
       input_jacob_n, bias_jacob_n, grad_jacob_n = jacob_n
 
       if dtype == np.float16:
@@ -206,9 +210,9 @@ class BiasAddTest(test.TestCase):
         threshold = 1e-10
       else:
         threshold = 5e-3
-      self.assertAllClose(input_jacob_t, input_jacob_n, threshold, threshold)
-      self.assertAllClose(bias_jacob_t, bias_jacob_n, threshold, threshold)
-      self.assertAllClose(grad_jacob_t, grad_jacob_n, threshold, threshold)
+      self.assertAllClose(input_jacob_a, input_jacob_n, threshold, threshold)
+      self.assertAllClose(bias_jacob_a, bias_jacob_n, threshold, threshold)
+      self.assertAllClose(grad_jacob_a, grad_jacob_n, threshold, threshold)
 
   @test_util.run_in_graph_and_eager_modes
   def testGradientTensor2D(self):
@@ -267,10 +271,7 @@ class BiasAddTest(test.TestCase):
     for shape in (0, 0), (2, 0), (0, 2), (4, 3, 0), (4, 0, 3), (0, 4, 3):
       self._testAll(np.random.randn(*shape), np.random.randn(shape[-1]))
 
-  # TODO: There seems to be a bug in gradient_checker_v2.compute_gradient that
-  # prevents this test from working in eager mode. See repro_eager_issue.py.
-  # When that has been fixed, this test should also be run in eager mode.
-  @test_util.run_deprecated_v1
+  @test_util.run_in_graph_and_eager_modes
   def testEmptyGradient(self):
     for (data_format, use_gpu) in ("NHWC", False), ("NHWC", True):
       for shape in (0, 0), (2, 0), (0, 2):

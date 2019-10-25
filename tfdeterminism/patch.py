@@ -1,8 +1,7 @@
 # Copyright 2019 The TensorFlow-Determinism Authors. All Rights Reserved
 #
-# _new_biad_add_1_14() derived from source in
-# https://github/tensorflow/tensorflow and therefore
-# Copyright 2019 The TensorFlow Authors. All Rights Reserved
+# Some code in this file was derived from the TensorFlow project and/or
+# has been, or will be, contributed to the TensorFlow project.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
