@@ -133,52 +133,52 @@ class BiasAddTest(test.TestCase):
     return constant_op.constant(2 * np.random.rand(*shape) - 1, dtype=dtype)
 
   def _computeGradient(self, np_input, bias, dtype, data_format):
-      input_tensor = constant_op.constant(
-          np_input, shape=np_input.shape, dtype=dtype)
-      bias_tensor = constant_op.constant(bias, shape=bias.shape, dtype=dtype)
+    input_shape = output_shape = np_input.shape
+    bias_shape = bias.shape
+    input_tensor = constant_op.constant(
+        np_input, shape=input_shape, dtype=dtype)
+    bias_tensor = constant_op.constant(bias, shape=bias_shape, dtype=dtype)
 
-      if context.executing_eagerly():
-        def bias_add(input_tensor, bias_tensor):
-          return nn_ops.bias_add(input_tensor, bias_tensor,
-                                 data_format=data_format)
-        # The following is a work-around for TF issue 33660. Instead of
-        # calculating the analytical and numerical gradients for both
-        # inputs in a single call to compute_gradient, compute_gradient
-        # is called for each input separately.
-        def bias_add_1(input_tensor):
-          return bias_add(input_tensor, bias_tensor)
-        def bias_add_2(bias_tensor):
-          return bias_add(input_tensor, bias_tensor)
-        input_jacob_a, input_jacob_n = gradient_checker_v2.compute_gradient(
-            bias_add_1, [input_tensor])
-        bias_jacob_a, bias_jacob_n = gradient_checker_v2.compute_gradient(
-            bias_add_2, [bias_tensor])
-        # Test gradient of BiasAddGrad
-        def bias_add_grad_function(upstream_gradients):
-          with backprop.GradientTape() as tape:
-            tape.watch(bias_tensor)
-            bias_add_output = bias_add(input_tensor, bias_tensor)
-            gradient_injector_output = bias_add_output * upstream_gradients
-            return tape.gradient(gradient_injector_output, bias_tensor)
-        upstream_tensor = self._random_tensor(np_input.shape, dtype)
-        grad_jacob_a, grad_jacob_n = gradient_checker_v2.compute_gradient(
-            bias_add_grad_function, [upstream_tensor])
-      else:
-        output_tensor = nn_ops.bias_add(
-            input_tensor, bias_tensor, data_format=data_format)
-        # TODO: Call compute_gradient only once (see tf_issue_33660.py)
-        input_jacob_a, input_jacob_n = gradient_checker.compute_gradient(
-            input_tensor, np_input.shape, output_tensor, np_input.shape)
-        bias_jacob_a, bias_jacob_n = gradient_checker.compute_gradient(
-            bias_tensor, bias.shape, output_tensor, np_input.shape)
-        # Test gradient of BiasAddGrad
-        bias_add_grad = gradients_impl.gradients(
-            nn_ops.l2_loss(output_tensor), bias_tensor)[0]
-        grad_jacob_a, grad_jacob_n = gradient_checker.compute_gradient(
-            output_tensor, np_input.shape, bias_add_grad, bias.shape)
+    if context.executing_eagerly():
+      def bias_add(input_tensor, bias_tensor):
+        return nn_ops.bias_add(input_tensor, bias_tensor,
+                               data_format=data_format)
+      # The following is a work-around for TF issue 33660. Instead of
+      # calculating the analytical and numerical gradients for both
+      # inputs in a single call to compute_gradient, compute_gradient
+      # is called for each input separately.
+      def bias_add_1(input_tensor):
+        return bias_add(input_tensor, bias_tensor)
+      def bias_add_2(bias_tensor):
+        return bias_add(input_tensor, bias_tensor)
+      input_jacob_a, input_jacob_n = gradient_checker_v2.compute_gradient(
+          bias_add_1, [input_tensor])
+      bias_jacob_a, bias_jacob_n = gradient_checker_v2.compute_gradient(
+          bias_add_2, [bias_tensor])
+      # Test gradient of BiasAddGrad
+      def bias_add_grad_function(upstream_gradients):
+        with backprop.GradientTape() as tape:
+          tape.watch(bias_tensor)
+          bias_add_output = bias_add(input_tensor, bias_tensor)
+          gradient_injector_output = bias_add_output * upstream_gradients
+          return tape.gradient(gradient_injector_output, bias_tensor)
+      upstream_tensor = self._random_tensor(output_shape, dtype)
+      grad_jacob_a, grad_jacob_n = gradient_checker_v2.compute_gradient(
+          bias_add_grad_function, [upstream_tensor])
+    else:
+      output_tensor = nn_ops.bias_add(
+          input_tensor, bias_tensor, data_format=data_format)
+      jacobians = gradient_checker.compute_gradient(
+          [input_tensor, bias_tensor], [input_shape, bias_shape],
+          output_tensor, output_shape)
+      (input_jacob_a, input_jacob_n), (bias_jacob_a, bias_jacob_n) = jacobians
+      bias_add_grad = gradients_impl.gradients(
+          nn_ops.l2_loss(output_tensor), bias_tensor)[0]
+      grad_jacob_a, grad_jacob_n = gradient_checker.compute_gradient(
+          output_tensor, output_shape, bias_add_grad, bias_shape)
 
-      return ((input_jacob_a, bias_jacob_a, grad_jacob_a),
-              (input_jacob_n, bias_jacob_n, grad_jacob_n))
+    return ((input_jacob_a, bias_jacob_a, grad_jacob_a),
+            (input_jacob_n, bias_jacob_n, grad_jacob_n))
 
 
   def _testGradient(self, np_input, bias, dtype, data_format, use_gpu):
@@ -200,12 +200,10 @@ class BiasAddTest(test.TestCase):
                                            data_format)
         input_jacob_n, bias_jacob_n, grad_jacob_n = jacob_n
 
-      if (context.executing_eagerly() and
-          np_input.size >= 512 and
+      if (np_input.size >= 512 and
           dtype != dtypes.float64):
         # This threshold seems to have been marginal and small changes in the
-        # calls to the RNG caused by inplementing eager support pushed the
-        # error over the limit
+        # test were pushing it over the limit.
         threshold = 5e-2
       elif dtype == dtypes.float64:
         threshold = 1e-10
