@@ -1,12 +1,6 @@
 # Release 0.3.0
 
-## New Functionality
-
-* Add patch availability on TensorFlow version 2.0
-
-## Enhanced Testing / Higher Quality
-
-* Test in eager mode
+Add patch availability for stock TensorFlow version 2.0, and test in eager mode.
 
 Developed by Duncan Riach with thanks to Nathan Luehr for review.
 
