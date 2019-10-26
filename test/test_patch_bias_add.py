@@ -38,7 +38,7 @@ from tensorflow.python.ops import nn_ops
 import tensorflow.python.ops.nn_grad  # pylint: disable=unused-import
 from tensorflow.python.platform import test
 
-
+@test_util.run_all_in_graph_and_eager_modes
 class BiasAddTest(test.TestCase):
 
   def _npBias(self, inputs, bias):
@@ -96,20 +96,17 @@ class BiasAddTest(test.TestCase):
       self._testBias(np_inputs, np_bias, use_gpu=True)
       self._testBiasNCHW(np_inputs, np_bias, use_gpu=True)
 
-  @test_util.run_in_graph_and_eager_modes
   def testIntTypes(self):
     for t in [np.int8, np.int16, np.int32, np.int64]:
       self._testAll(
           np.array([[10, 20, 30], [40, 50, 60]]).astype(t),
           np.array([1, 2, 3]).astype(t))
 
-  @test_util.run_in_graph_and_eager_modes
   def testFloatTypes(self):
     for t in [np.float16, np.float32, np.float64]:
       self._testAll(
           np.random.rand(4, 3, 3).astype(t), np.random.rand(3).astype(t))
 
-  @test_util.run_in_graph_and_eager_modes
   def test4DFloatTypes(self):
     for t in [np.float16, np.float32, np.float64]:
       self._testAll(
@@ -122,7 +119,6 @@ class BiasAddTest(test.TestCase):
           np.random.rand(4, 4, 4, 2048).astype(t),
           np.random.rand(2048).astype(t))
 
-  @test_util.run_in_graph_and_eager_modes
   def test5DFloatTypes(self):
     for t in [np.float16, np.float32, np.float64]:
       self._testAll(
@@ -172,6 +168,7 @@ class BiasAddTest(test.TestCase):
           [input_tensor, bias_tensor], [input_shape, bias_shape],
           output_tensor, output_shape)
       (input_jacob_a, input_jacob_n), (bias_jacob_a, bias_jacob_n) = jacobians
+      # Test gradient of BiasAddGrad
       bias_add_grad = gradients_impl.gradients(
           nn_ops.l2_loss(output_tensor), bias_tensor)[0]
       grad_jacob_a, grad_jacob_n = gradient_checker.compute_gradient(
@@ -179,7 +176,6 @@ class BiasAddTest(test.TestCase):
 
     return ((input_jacob_a, bias_jacob_a, grad_jacob_a),
             (input_jacob_n, bias_jacob_n, grad_jacob_n))
-
 
   def _testGradient(self, np_input, bias, dtype, data_format, use_gpu):
     with self.cached_session(use_gpu=use_gpu):
@@ -200,30 +196,26 @@ class BiasAddTest(test.TestCase):
                                            data_format)
         input_jacob_n, bias_jacob_n, grad_jacob_n = jacob_n
 
-      if (np_input.size >= 512 and
-          dtype != dtypes.float64):
-        # This threshold seems to have been marginal and small changes in the
-        # test were pushing it over the limit.
-        threshold = 5e-2
-      elif dtype == dtypes.float64:
+      if dtype == dtypes.float64:
         threshold = 1e-10
+      elif np_input.size >= 512:
+        # The 5e-3 threshold seems to have been marginal in these cases, and
+        # small changes in the test were pushing it over the limit.
+        threshold = 5e-2
       else:
         threshold = 5e-3
       self.assertAllClose(input_jacob_a, input_jacob_n, threshold, threshold)
       self.assertAllClose(bias_jacob_a, bias_jacob_n, threshold, threshold)
       self.assertAllClose(grad_jacob_a, grad_jacob_n, threshold, threshold)
 
-  @test_util.run_in_graph_and_eager_modes
   def testGradientTensor2D(self):
     for (data_format, use_gpu) in ("NHWC", False), ("NHWC", True):
       for dtype in (dtypes.float16, dtypes.float32, dtypes.float64):
-        np_input = np.array(
-            [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
-            dtype=dtype.as_numpy_dtype).reshape(3, 2)
+        np_input = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+                            dtype=dtype.as_numpy_dtype).reshape(3, 2)
         bias = np.array([1.3, 2.4], dtype=dtype.as_numpy_dtype)
         self._testGradient(np_input, bias, dtype, data_format, use_gpu)
 
-  @test_util.run_in_graph_and_eager_modes
   def testGradientTensor3D(self):
     for (data_format, use_gpu) in [("NHWC", False), ("NHWC", True),
                                    ("NCHW", False), ("NCHW", True)]:
@@ -233,7 +225,6 @@ class BiasAddTest(test.TestCase):
         bias = np.array([1.3, 2.4], dtype=dtype.as_numpy_dtype)
         self._testGradient(np_input, bias, dtype, data_format, use_gpu)
 
-  @test_util.run_in_graph_and_eager_modes
   def testGradientTensor4D(self):
     for (data_format, use_gpu) in [("NHWC", False)]:
       for dtype in (dtypes.float16, dtypes.float32, dtypes.float64):
@@ -253,7 +244,6 @@ class BiasAddTest(test.TestCase):
                            np.random.rand(64).astype(dtype.as_numpy_dtype),
                            dtype, data_format, use_gpu)
 
-  @test_util.run_in_graph_and_eager_modes
   def testGradientTensor5D(self):
     for (data_format, use_gpu) in [("NHWC", False), ("NHWC", True),
                                    ("NCHW", False), ("NCHW", True)]:
@@ -264,13 +254,11 @@ class BiasAddTest(test.TestCase):
         bias = np.array([1.3, 2.4], dtype=dtype.as_numpy_dtype)
         self._testGradient(np_input, bias, dtype, data_format, use_gpu)
 
-  @test_util.run_in_graph_and_eager_modes
   def testEmpty(self):
     np.random.seed(7)
     for shape in (0, 0), (2, 0), (0, 2), (4, 3, 0), (4, 0, 3), (0, 4, 3):
       self._testAll(np.random.randn(*shape), np.random.randn(shape[-1]))
 
-  @test_util.run_in_graph_and_eager_modes
   def testEmptyGradient(self):
     for (data_format, use_gpu) in ("NHWC", False), ("NHWC", True):
       for shape in (0, 0), (2, 0), (0, 2):
@@ -282,8 +270,8 @@ class BiasAddTest(test.TestCase):
                                    ("NCHW", False), ("NCHW", True)]:
       for shape in (4, 3, 0), (4, 0, 3), (0, 4, 3):
         self._testGradient(
-            np.random.randn(*shape),
-            np.random.randn(shape[-1]), dtypes.float64, data_format, use_gpu)
+            np.random.randn(*shape), np.random.randn(shape[-1]), dtypes.float64,
+            data_format, use_gpu)
 
 
 class BiasAddTestDeterministic(test.TestCase):
