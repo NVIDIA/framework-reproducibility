@@ -229,17 +229,19 @@ class BiasAddTest(test.TestCase):
     for (data_format, use_gpu) in [("NHWC", False)]:
       for dtype in (dtypes.float16, dtypes.float32, dtypes.float64):
         np_input = np.arange(
-            1.0, 49.0, dtype=dtype.as_numpy_dtype).reshape(
-                [2, 3, 4, 2]).astype(np.float32)
+            1.0, 49.0,
+            dtype=dtype.as_numpy_dtype).reshape([2, 3, 4, 2]).astype(np.float32)
         bias = np.array([1.3, 2.4], dtype=dtype.as_numpy_dtype)
         self._testGradient(np_input, bias, dtype, data_format, use_gpu)
         np_input = np.arange(
-            1.0, 513.0, dtype=dtype.as_numpy_dtype).reshape(
-                [64, 2, 2, 2]).astype(np.float32)
+            1.0, 513.0,
+            dtype=dtype.as_numpy_dtype).reshape([64, 2, 2,
+                                                 2]).astype(np.float32)
         self._testGradient(np_input, bias, dtype, data_format, use_gpu)
         np_input = np.arange(
-            1.0, 513.0, dtype=dtype.as_numpy_dtype).reshape(
-                [2, 2, 2, 64]).astype(np.float32)
+            1.0, 513.0,
+            dtype=dtype.as_numpy_dtype).reshape([2, 2, 2,
+                                                 64]).astype(np.float32)
         self._testGradient(np_input,
                            np.random.rand(64).astype(dtype.as_numpy_dtype),
                            dtype, data_format, use_gpu)
@@ -249,8 +251,9 @@ class BiasAddTest(test.TestCase):
                                    ("NCHW", False), ("NCHW", True)]:
       for dtype in (dtypes.float16, dtypes.float32, dtypes.float64):
         np_input = np.arange(
-            1.0, 49.0, dtype=dtype.as_numpy_dtype).reshape(
-                [1, 2, 3, 4, 2]).astype(np.float32)
+            1.0, 49.0,
+            dtype=dtype.as_numpy_dtype).reshape([1, 2, 3, 4,
+                                                 2]).astype(np.float32)
         bias = np.array([1.3, 2.4], dtype=dtype.as_numpy_dtype)
         self._testGradient(np_input, bias, dtype, data_format, use_gpu)
 
@@ -284,7 +287,7 @@ class BiasAddTestDeterministic(test.TestCase):
     elif data_layout == 'channels_last':
       shape = (batch_size,) + data_dims + (channel_count,)
     else:
-      raise ValueError("Unknown data format")
+      raise ValueError('Unknown data format')
     return shape
 
   def _dataFormatFromDataLayout(self, data_layout=None):
@@ -293,7 +296,7 @@ class BiasAddTestDeterministic(test.TestCase):
     elif data_layout == 'channels_last':
       return 'NHWC'
     else:
-      raise ValueError("Unknown data_layout")
+      raise ValueError('Unknown data_layout')
 
   def _randomNDArray(self, shape):
     return 2 * np.random.random_sample(shape) - 1
@@ -303,9 +306,8 @@ class BiasAddTestDeterministic(test.TestCase):
 
   def _testDeterministicGradientsCase(self, op_binding, data_layout, data_rank,
                                       data_type):
-    seed = (hash(data_layout) % 256 +
-            hash(data_rank) % 256 +
-            hash(data_type) % 256)
+    seed = (
+        hash(data_layout) % 256 + hash(data_rank) % 256 + hash(data_type) % 256)
     np.random.seed(seed)
     batch_size = 10
     channel_count = 8
