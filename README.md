@@ -249,6 +249,19 @@ Number                                                        | Title           
 * Stack Overflow: [Are tensorflow random values guaranteed to be the same
   inside a single run? (comment)][502] (updated 2019-10-10).
 
+## Credits
+
+Here are the names of some of the people who have helped out with this project.
+If any names are missing, then please let us know.
+
+Ben Barsdell, Kevin Brown, Carl Case, Bryan Catanzaro, Sharan Chetlur,
+Joey Conway, Luke Durant, Marc Edgar, Mostafa Hagog, Tero Karras, Bob Keating,
+Andrew Kerr, Xiang Bo Kong, Nicolas Koumchatzky, Jorge Albericio Latorre,
+Simon Layton, Jose Alvarez Lopez, Nathan Luehr, Conrado Silva Miranda,
+John Montrym, Michael O'Connor, Lauri Peltonen, Rakesh Ranjan,
+Jussi Rasanen, Mikko Ronkainen, Dilip Sequeria, Matthijs De Smedt,
+Kevin Vincent, Stephen Warren, Hao Wu, Yifang Xu, Tim Zaman, William Zhang.
+
 [501]: https://stackoverflow.com/questions/54047654/tensorflow-different-results-with-the-same-random-seed
 [502]: https://stackoverflow.com/questions/52213325/are-tensorflow-random-values-guaranteed-to-be-the-same-inside-a-single-run#comment91376212_52213325
 
