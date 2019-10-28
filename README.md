@@ -259,7 +259,7 @@ Joey Conway, Luke Durant, Marc Edgar, Mostafa Hagog, Tero Karras, Bob Keating,
 Andrew Kerr, Xiang Bo Kong, Nicolas Koumchatzky, Jorge Albericio Latorre,
 Simon Layton, Jose Alvarez Lopez, Nathan Luehr, Conrado Silva Miranda,
 John Montrym, Michael O'Connor, Lauri Peltonen, Rakesh Ranjan,
-Jussi Rasanen, Mikko Ronkainen, Dilip Sequeria, Matthijs De Smedt,
+Jussi Rasanen, Duncan Riach, Mikko Ronkainen, Dilip Sequeria, Matthijs De Smedt,
 Kevin Vincent, Stephen Warren, Hao Wu, Yifang Xu, Tim Zaman, William Zhang.
 
 [501]: https://stackoverflow.com/questions/54047654/tensorflow-different-results-with-the-same-random-seed
