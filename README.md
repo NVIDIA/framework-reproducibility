@@ -233,6 +233,7 @@ Number                                                        | Title           
 [31465](https://github.com/tensorflow/tensorflow/pull/31465)  | Add GPU-deterministic `tf.nn.bias_add`                       | merged pre-2.1      | N/A        |
 [32979](https://github.com/tensorflow/tensorflow/pull/32979)  | Fix typo in release note                                     | closed (not merged) | N/A        |
 [33483](https://github.com/tensorflow/tensorflow/pull/33483)  | Fix small typo in v2.0.0 release note                        | merged pre-2.1      | N/A        |
+[33803](https://github.com/tensorflow/tensorflow/pull/33803)  | Enable tf.nn.bias_add python op tests to work in eager mode  |                     | N/A        |
 
 ### Miscellaneous
 
