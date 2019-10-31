@@ -62,7 +62,7 @@ version is based on:
  NGC Container Version | TensorFlow Version |
 :----------------------|:-------------------|
  19.06                 | 1.13               |
- 19.07 - 19.09         | 1.14               |
+ 19.07 - 19.10         | 1.14               |
 
 For information about pulling and running the NVIDIA NGC containers, see [these
 instructions][2].
