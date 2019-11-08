@@ -16,14 +16,17 @@
 import sys
 import unittest
 
-sys.path.append('..')
+sys.path.insert(0, '..')
+from tfdeterminism import __version__ as tfd_version
 import tfdeterminism as tfd
 from get_version import get_version
 
 class TestMisc(unittest.TestCase):
 
-    def test_version(self):
-        self.assertEqual(tfd.__version__, get_version())
+  def test_version(self):
+    expected_version = get_version()
+    self.assertEqual(tfd_version, expected_version)
+    self.assertEqual(tfd.__version__, expected_version)
 
 if __name__ == '__main__':
-    unittest.main()
+  unittest.main()

@@ -21,6 +21,6 @@ import sys
 
 import tensorflow as tf
 
-sys.path.append('..')
+sys.path.insert(0, '..')
 from tfdeterminism import patch
 patch()

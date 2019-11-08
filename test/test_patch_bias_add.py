@@ -388,7 +388,7 @@ class BiasAddTestDeterministic(test.TestCase):
 
 if __name__ == "__main__":
   import sys
-  sys.path.append('..')
+  sys.path.insert(0, '..')
   from tfdeterminism import patch
   patch()
   test.main()
