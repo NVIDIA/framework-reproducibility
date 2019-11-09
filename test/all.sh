@@ -30,15 +30,15 @@ expect () {
       echo "ERROR: Unexpected last line of output"
       echo "Actual  : ${last_line}"
       echo "Expected: ${exp_last_line}"
-      ((FAIL_COUNT++))
+      FAIL_COUNT=$((FAIL_COUNT+1))
     else
-      ((PASS_COUNT++))
+      PASS_COUNT=$((PASS_COUNT+1))
     fi
   else
     echo "ERROR: Unexpected exit code"
     echo "Actual  : ${exit_code}"
     echo "Expected: ${exp_exit_code}"
-    ((FAIL_COUNT++))
+    FAIL_COUNT=$((FAIL_COUNT+1))
   fi
 }
 
@@ -49,8 +49,12 @@ PACKAGE_NAME=fwd9m
 OK=0
 ERROR=1
 
+# Testing the installation
+
 expect $OK    "Successfully installed ${DISTRIBUTION_NAME}" \
               ./install_package.sh
+
+# Testing the patch
 
 expect $OK    "Expected exception (TypeError) caught: ${PACKAGE_NAME}.tensorflow.patch: TensorFlow inside NGC containers does not require patching" \
               ./container.sh nvcr.io/nvidia/tensorflow:19.09-py2 python test_patch_apply.py --expected-exception TypeError
@@ -77,6 +81,21 @@ expect $OK    "" \
 
 expect $OK    "${PACKAGE_NAME}.tensorflow.enable_determinism (version ${VERSION}) has been applied to TensorFlow version 2.0.0" \
               ./container.sh tensorflow/tensorflow:2.0.0-gpu python test_enable_determinism_apply.py
+
+# Testing the NGC TF containers (using integration test)
+# TODO: Add NGC TF 19.06 (TF 1.13) support to integration test
+
+expect $OK    "" \
+              ./container.sh nvcr.io/nvidia/tensorflow:19.07-py2 integration_test.sh
+
+expect $OK    "" \
+              ./container.sh nvcr.io/nvidia/tensorflow:19.08-py2 integration_test.sh
+
+expect $OK    "" \
+              ./container.sh nvcr.io/nvidia/tensorflow:19.09-py2 integration_test.sh
+
+expect $OK    "" \
+              ./container.sh nvcr.io/nvidia/tensorflow:19.10-py2 integration_test.sh
 
 echo "${PASS_COUNT} tests passed"
 echo "${FAIL_COUNT} tests failed"

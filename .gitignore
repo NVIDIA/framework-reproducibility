@@ -13,3 +13,4 @@ venv/
 
 # Testing
 *.log
+*.summary

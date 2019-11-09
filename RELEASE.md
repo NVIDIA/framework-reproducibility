@@ -14,6 +14,11 @@ included in the next release tag (and PyPI version).
 
 ## Enhanced Testing / Higher Quality
 
+  * Integration testing of the patch on stock TensorFlow versions 1.14 and 1.15.
+  * Integration testing of the built-in deterministic functionality
+    (via `TF_DETERMINISTIC_OPS`) in NGC TF container versions 19.06 through
+    19.10.
+
 # Release 0.3.0
 
 Add patch availability for stock TensorFlow version 2.0, and test in eager mode.
