@@ -20,7 +20,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import os, random, sys, getopt
+import argparse
+import getopt
+import os
+import random
+import sys
 import numpy as np
 import tensorflow as tf
 from tensorflow.python.keras.layers import Input, Conv3D, MaxPooling3D, Lambda
@@ -91,6 +95,8 @@ def train(data_format="channels_first"):
   return summarize_weights(model, "after training"), loss_history[-1]
 
 def main(argv):
+  parser = argparse.ArgumentParser()
+  # parser.add_argument('--skip_fixes', dest='skip_fixes', action=)
   try:
     opts, _ = getopt.getopt(argv, 'sl')
   except getopt.GetopError:
