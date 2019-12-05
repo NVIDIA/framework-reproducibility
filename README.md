@@ -94,6 +94,8 @@ TensorFlow with GPU support.
 
 ### Additional Ingredients in the Determinism Recipe
 
+#### Seeds ####
+
 You'll also need to set any and all appropriate random seeds:
 
 ```
@@ -103,6 +105,19 @@ np.random.seed(SEED)
 tf.set_random_seed(SEED)
 ```
 
+#### Dataset Sharding ####
+
+If you're using `tf.data.Dataset`, you should not shard the dataset. This
+is achieved by either not calling the `shard()` method, or by setting its
+`num_shards` parameter to 1.
+
+#### Gradient Gating ####
+
+For deterministic functionality, some types of models may require
+`gate_gradients=tf.train.Optimizer.GATE_OP` in the session config.
+
+#### Multi-GPU with Horovod ####
+
 If you're using Horovod for multi-GPU training, you may need to disable Tensor
 Fusion (assuming that the non-determinism associated with Tensor Fusion has not
 yet been resolved):
@@ -110,6 +125,19 @@ yet been resolved):
 ```
 os.environ['HOROVOD_FUSION_THRESHOLD']='0'
 ```
+
+#### CPU ####
+
+If you want to obtain determinism when your ops are running on the CPU, you may
+need to limit the number of CPU threads used:
+
+```
+session_config.intra_op_parallelism_threads = 1
+session_config.inter_op_parallelism_threads = 1
+```
+
+It should not be necessary to do this when your ops are not running on the CPU
+(e.g. when they're running on a GPU).
 
 ## Detailed Status of Determinism in TensorFlow and Beyond
 
@@ -189,8 +217,8 @@ the op injects non-determinism into the computation.
 * [Issue 29101](https://github.com/tensorflow/tensorflow/issues/29101): Random
   seed not set in graph context of `Dataset#map`. This may have been resolved
   in version 1.14 of TensorFlow.
-* `tf.data.Dataset` with more than one worker. The work-around is to use only
-  one worker.
+* `tf.data.Dataset` with more than one shard (aka worker). The work-around is to
+  use only one shard.
 
 ### Sources of Non-Determinism Beyond TensorFlow
 
