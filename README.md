@@ -251,8 +251,8 @@ Number                                                         | Title          
 
 Number                                                       | Title                                                         | Status              | Date Merged |
 ------------------------------------------------------------:|:--------------------------------------------------------------|:--------------------|:------------|
-[10636](https://github.com/tensorflow/tensorflow/pull/10636) | Non-determinism Docs (see note 1)                             | closed (not merged) |            |
-[24273](https://github.com/tensorflow/tensorflow/pull/24273) | Enable dataset.map to respect seeds from the outer context    | closed (not merged) |            |
+[10636](https://github.com/tensorflow/tensorflow/pull/10636) | Non-determinism Docs (see note 1)                             | closed (not merged) |             |
+[24273](https://github.com/tensorflow/tensorflow/pull/24273) | Enable dataset.map to respect seeds from the outer context    | closed (not merged) |             |
 [24747](https://github.com/tensorflow/tensorflow/pull/24747) | Add cuDNN deterministic env variable (only for convolution).  | merged pre-1.14     | 2019-01-15  |
 [25269](https://github.com/tensorflow/tensorflow/pull/25269) | Add deterministic cuDNN max-pooling                           | merged pre-1.14     | 2019-01-30  |
 [25796](https://github.com/tensorflow/tensorflow/pull/25796) | Added tests for `TF_CUDNN_DETERMINISTIC`                      | merged pre-1.14     | 2019-02-22  |
@@ -260,10 +260,11 @@ Number                                                       | Title            
 [29667](https://github.com/tensorflow/tensorflow/pull/29667) | Add release note about `TF_CUDNN_DETERMINISTIC`               | merged into r1.14   | 2019-08-06  |
 [31389](https://github.com/tensorflow/tensorflow/pull/31389) | Enhance release notes related to `TF_CUDNN_DETERMINISTIC`     | merged into r1.14   | 2019-08-07  |
 [31465](https://github.com/tensorflow/tensorflow/pull/31465) | Add GPU-deterministic `tf.nn.bias_add`                        | merged pre-2.1      | 2019-10-17  |
-[32979](https://github.com/tensorflow/tensorflow/pull/32979) | Fix typo in release note                                      | closed (not merged) |            |
+[32979](https://github.com/tensorflow/tensorflow/pull/32979) | Fix typo in release note                                      | closed (not merged) |             |
 [33483](https://github.com/tensorflow/tensorflow/pull/33483) | Fix small typo in v2.0.0 release note                         | merged pre-2.1      | 2019-10-25  |
-[33803](https://github.com/tensorflow/tensorflow/pull/33803) | Enable tf.nn.bias_add python op tests to work in eager mode   | awaiting review     |            |
-[33900](https://github.com/tensorflow/tensorflow/pull/33900) | Address problems with use_deterministic_cudnn test decorator  | awaiting review     |            |
+[33803](https://github.com/tensorflow/tensorflow/pull/33803) | Enable tf.nn.bias_add python op tests to work in eager mode   | awaiting review     |             |
+[33900](https://github.com/tensorflow/tensorflow/pull/33900) | Address problems with use_deterministic_cudnn test decorator  | awaiting review     |             |
+[34887](https://github.com/tensorflow/tensorflow/pull/34887) | Add info about `TF_DETERMINISTIC_OPS` to r2.1 release note    | awaiting review     |             |
 
 [1001]: https://github.com/tensorflow/tensorflow/commit/c27909ea80e8823dbf4f7176ab69991a630356a1
 
