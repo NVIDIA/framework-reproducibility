@@ -63,6 +63,7 @@ version is based on:
 :----------------------|:-------------------|
  19.06                 | 1.13               |
  19.07 - 19.10         | 1.14               |
+ 19.11 - 19.12         | 1.15 / 2.0         |
 
 For information about pulling and running the NVIDIA NGC containers, see [these
 instructions][2].
@@ -155,14 +156,14 @@ by default when running on a GPU.
 
 #### Confirmed Current GPU-Specific Sources of Non-Determinism (With Solutions)
 
- Source                                         | NGC 19.06+ / TF 2.1 | TF 1.14, 1.15, 2.0  |
-:-----------------------------------------------|:--------------------|:--------------------|
- TF auto-tuning of cuDNN convolution algorithms | TCD or TDO          | TCD or TDP          |
- cuDNN convolution backprop to weight gradients | TCD or TDO          | TCD or TDP          |
- cuDNN convolution backprop to data gradients   | TCD or TDO          | TCD or TDP          |
- cuDNN max-pooling backprop                     | TCD or TDO          | TCD or TDP          |
- `tf.nn.bias_add` backprop (see XLA note)       | TDO                 | TDP                 |
- `tf.image.resize_bilinear` fwd and bwd         | NS1                 | NS1                 |
+ Source                                                               | NGC 19.06+ / TF 2.1 | TF 1.14, 1.15, 2.0  |
+:---------------------------------------------------------------------|:--------------------|:--------------------|
+ TF auto-tuning of cuDNN convolution algorithms (see multi-algo note) | TCD or TDO          | TCD or TDP          |
+ cuDNN convolution backprop to weight gradients                       | TCD or TDO          | TCD or TDP          |
+ cuDNN convolution backprop to data gradients                         | TCD or TDO          | TCD or TDP          |
+ cuDNN max-pooling backprop                                           | TCD or TDO          | TCD or TDP          |
+ `tf.nn.bias_add` backprop (see XLA note)                             | TDO                 | TDP                 |
+ `tf.image.resize_bilinear` fwd and bwd                               | NS1                 | NS1                 |
 
 Key to the solutions refenced above:
 
@@ -174,6 +175,15 @@ Key to the solutions refenced above:
  NS1      | There is currently no solution available for this, but one is under development.                                                                                                                |
 
 Notes:
+  * multi-algo: From NGC 19.12 onwards, the cuDNN forward and backward
+    convolution algorithms are selected deterministically from several
+    deterministic algorithms. Prior to this (i.e. NGC 19.11 and earler and all
+    currently released versions of stock TensorFlow), there was only one
+    deterministic algorithm selected for each of the forward and two backward
+    paths. In those versions of TensorFlow, some layer configurations
+    are not supported (resulting in an exception). The multi-algorithm support
+    is not currently available in stock TensorFlow, but is being added by
+    PR [34951](https://github.com/tensorflow/tensorflow/pull/34951).
   * XLA: These solutions will not work when XLA JIT compilation is enabled.
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
