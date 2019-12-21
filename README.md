@@ -177,8 +177,8 @@ Key to the solutions refenced above:
 Notes:
   * multi-algo: From NGC 19.12 onwards, the cuDNN forward and backward
     convolution algorithms are selected deterministically from several
-    deterministic algorithms. Prior to this (i.e. NGC 19.11 and earler and all
-    currently released versions of stock TensorFlow), there was only one
+    deterministic algorithms. Prior to this (i.e. NGC 19.11 and earlier, and all
+    currently released versions of stock TensorFlow), there is only one
     deterministic algorithm selected for each of the forward and two backward
     paths. In those versions of TensorFlow, some layer configurations
     are not supported (resulting in an exception). The multi-algorithm support
