@@ -183,8 +183,11 @@ Notes:
     paths. In those versions of TensorFlow, some layer configurations
     are not supported (resulting in an exception). The multi-algorithm support
     is not currently available in stock TensorFlow, but is being added by
-    PR [34951](https://github.com/tensorflow/tensorflow/pull/34951).
-  * XLA: These solutions will not work when XLA JIT compilation is enabled.
+    [PR 34951](https://github.com/tensorflow/tensorflow/pull/34951).
+  * XLA: These solutions will not work when XLA JIT compilation is enabled due
+    to reductions on XLA GPU not being deterministic (see
+    [this comment](https://github.com/tensorflow/tensorflow/pull/34887#discussion_r355610837)
+    on PR 34887).
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
 
@@ -239,8 +242,7 @@ the op injects non-determinism into the computation.
 * Horovod Tensor Fusion. Work-around: disable Tensor Fusion by setting the
   environment variable `HOROVOD_FUSION_THRESHOLD` to '0'. This issue may have
   been resolved by Horovod
-  [pull-request 1130](https://github.com/horovod/horovod/pull/1130) (not yet
-  confirmed).
+  [PR 1130](https://github.com/horovod/horovod/pull/1130) (not yet confirmed).
 
 ## Relevant Links
 
