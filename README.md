@@ -156,18 +156,15 @@ by default when running on a GPU.
 
 #### Confirmed Current GPU-Specific Sources of Non-Determinism (With Solutions)
 
- Source                                                               | NGC 19.06+ / TF 2.1 | TF 1.14, 1.15, 2.0  |
-:---------------------------------------------------------------------|:--------------------|:--------------------|
- TF auto-tuning of cuDNN convolution algorithms (see multi-algo note) | TCD or TDO          | TCD or TDP          |
- cuDNN convolution backprop to weight gradients                       | TCD or TDO          | TCD or TDP          |
- cuDNN convolution backprop to data gradients                         | TCD or TDO          | TCD or TDP          |
- cuDNN max-pooling backprop                                           | TCD or TDO          | TCD or TDP          |
- `tf.nn.bias_add` backprop (see XLA note)                             | TDO                 | TDP                 |
- `tf.image.resize_bilinear` fwd and bwd                               | NS1                 | NS1                 |
-
- Source                                                               | TF 2.2              |
-:---------------------------------------------------------------------|:--------------------|
- XLA reductions on GPU                                                | XGDR                |
+ Source                                                               | NGC 19.06+ /<br>TF 2.1 | TF 1.14, 1.15,<br>2.0 | TF 2.2     |
+:---------------------------------------------------------------------|:-----------------------|:----------------------|:-----------|
+ TF auto-tuning of cuDNN convolution algorithms (see multi-algo note) | TCD or TDO             | TCD or TDP            | TCD or TDO |
+ cuDNN convolution backprop to weight gradients                       | TCD or TDO             | TCD or TDP            | TCD or TDO |
+ cuDNN convolution backprop to data gradients                         | TCD or TDO             | TCD or TDP            | TCD or TDO |
+ cuDNN max-pooling backprop                                           | TCD or TDO             | TCD or TDP            | TCD or TDO |
+ `tf.nn.bias_add` backprop (see XLA note)                             | TDO                    | TDP                   | TDO        |
+ `tf.image.resize_bilinear` fwd and bwd                               | NS1                    | NS1                   | NS1        |
+ XLA reductions on GPU                                                | NS2                    | NS2                   | XGDR       |
 
 Key to the solutions refenced above:
 
@@ -177,6 +174,7 @@ Key to the solutions refenced above:
  TDO      | Set environment variable `TF_DETERMINISTIC_OPS` to '1' or 'true'. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to '0' or 'false').   |
  TDP      | Apply `tfdeterminism.patch`. Note that solution TDO will be in stock TensorFlow v2.1 (see [PR 31465](https://github.com/tensorflow/tensorflow/pull/31465)).                                     |
  NS1      | There is currently no solution available for this, but one is under development.                                                                                                                |
+ NS2      | There is no solution in the sepecified version, but one will be available in a version that will be released in the future.                                                                     |
  XGDR     | Set XLA_FLAGS=--xla_gpu_deterministic_reductions. It's [TBD](https://github.com/tensorflow/tensorflow/pull/34887#discussion_r364007975) whether this solution will be enabled by default.       |
 
 Notes:
