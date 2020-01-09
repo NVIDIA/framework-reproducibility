@@ -165,7 +165,7 @@ by default when running on a GPU.
  `tf.nn.bias_add` backprop (see XLA note)                             | TDO                 | TDP                 |
  `tf.image.resize_bilinear` fwd and bwd                               | NS1                 | NS1                 |
 
- Source                                                                 TF 2.2
+ Source                                                               | TF 2.2              |
 :---------------------------------------------------------------------|:--------------------|
  XLA reductions on GPU                                                | XGDR                |
 
