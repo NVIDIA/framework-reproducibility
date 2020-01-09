@@ -41,7 +41,7 @@ supplied in this repo.
 The longer-term intention and plan is to upstream all solutions into stock
 TensorFlow.
 
-Determinism is not guaranteed when XLA JIT compilation is enabled.
+Currently, GPU determinism is more thoroughly supported when XLA is not used.
 
 ### NVIDIA NGC TensorFlow Containers
 
@@ -165,6 +165,10 @@ by default when running on a GPU.
  `tf.nn.bias_add` backprop (see XLA note)                             | TDO                 | TDP                 |
  `tf.image.resize_bilinear` fwd and bwd                               | NS1                 | NS1                 |
 
+ Source                                                                 TF 2.2
+:---------------------------------------------------------------------|:--------------------|
+ XLA reductions on GPU                                                | XGDR                |
+
 Key to the solutions refenced above:
 
  Solution | Description                                                                                                                                                                                     |
@@ -173,6 +177,7 @@ Key to the solutions refenced above:
  TDO      | Set environment variable `TF_DETERMINISTIC_OPS` to '1' or 'true'. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to '0' or 'false').   |
  TDP      | Apply `tfdeterminism.patch`. Note that solution TDO will be in stock TensorFlow v2.1 (see [PR 31465](https://github.com/tensorflow/tensorflow/pull/31465)).                                     |
  NS1      | There is currently no solution available for this, but one is under development.                                                                                                                |
+ XGDR     | Set XLA_FLAGS=--xla_gpu_deterministic_reductions. It's [TBD](https://github.com/tensorflow/tensorflow/pull/34887#discussion_r364007975) whether this solution will be enabled by default.       |
 
 Notes:
   * multi-algo: From NGC 19.12 onwards, the cuDNN forward and backward
@@ -185,9 +190,9 @@ Notes:
     is not currently available in stock TensorFlow, but is being added by
     [PR 34951](https://github.com/tensorflow/tensorflow/pull/34951).
   * XLA: These solutions will not work when XLA JIT compilation is enabled due
-    to reductions on XLA GPU not being deterministic (see
+    to XLA reductions on GPU not being deterministic (see
     [this comment](https://github.com/tensorflow/tensorflow/pull/34887#discussion_r355610837)
-    on PR 34887).
+    on PR 34887). The XGDR solution can also be used, if available.
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
 
@@ -279,12 +284,14 @@ Number                                                       | Title            
 [34887](https://github.com/tensorflow/tensorflow/pull/34887) | Add info about `TF_DETERMINISTIC_OPS` to v2.1 release notes   | merged | 2019-12-09  | 2.1     |
 [34951](https://github.com/tensorflow/tensorflow/pull/34951) | Add multi-algorithm deterministic cuDNN convolutions          | open   |             |         |
 [35006](https://github.com/tensorflow/tensorflow/pull/35006) | Fix version 2.1 release note regarding TF_DETERMINISTIC_OPS   | merged | 2019-12-20  | 2.1     |
+[e3195][1002]<sup>2</sup>                                    | [XLA/GPU] Convert reduction into tree reduction using padding | merged | 2020-01-07  | 2.2     |
 
 [1001]: https://github.com/tensorflow/tensorflow/commit/c27909ea80e8823dbf4f7176ab69991a630356a1
+[1002]: https://github.com/tensorflow/tensorflow/commit/e31955d9fb34ae7273354dc2347ba99eea8c5280
 
 Notes:
   1. Updated on 2019-10-08
-  2. This was effectively a stand-alone commit
+  2. These were effectively stand-alone commits
 
 ### Miscellaneous
 
@@ -300,22 +307,22 @@ Notes:
 * Stack Overflow: [Tensorflow: Different results with the same random seed][501]
 * Stack Overflow: [Are tensorflow random values guaranteed to be the same inside a single run? (comment)][502] (updated 2019-10-10).
 
+[501]: https://stackoverflow.com/questions/54047654/tensorflow-different-results-with-the-same-random-seed
+[502]: https://stackoverflow.com/questions/52213325/are-tensorflow-random-values-guaranteed-to-be-the-same-inside-a-single-run#comment91376212_52213325
+
 ## Credits
 
 Here are the names of some of the people who have helped out with this project.
 If any names are missing, then please let us know.
 
 Ben Barsdell, Kevin Brown, Carl Case, Bryan Catanzaro, Sharan Chetlur,
-Joey Conway, Luke Durant, Marc Edgar, Mostafa Hagog, Tero Karras, Bob Keating,
-Andrew Kerr, Xiang Bo Kong, Nicolas Koumchatzky, Jorge Albericio Latorre,
-Simon Layton, Jose Alvarez Lopez, Nathan Luehr, Conrado Silva Miranda,
-John Montrym, Michael O'Connor, Lauri Peltonen, Rakesh Ranjan,
-Jussi Rasanen, Duncan Riach (PIC), Mikko Ronkainen, Dilip Sequeria,
-Matthijs De Smedt, Kevin Vincent, Stephen Warren, Hao Wu, Yifang Xu, Tim Zaman,
-William Zhang.
-
-[501]: https://stackoverflow.com/questions/54047654/tensorflow-different-results-with-the-same-random-seed
-[502]: https://stackoverflow.com/questions/52213325/are-tensorflow-random-values-guaranteed-to-be-the-same-inside-a-single-run#comment91376212_52213325
+Joey Conway, Luke Durant, Marc Edgar, Mostafa Hagog, George Karpenkov,
+Tero Karras, Bob Keating, Andrew Kerr, Xiang Bo Kong, Nicolas Koumchatzky,
+Jorge Albericio Latorre, Simon Layton, Jose Alvarez Lopez, Nathan Luehr,
+Conrado Silva Miranda, John Montrym, Michael O'Connor, Lauri Peltonen,
+Rakesh Ranjan, Jussi Rasanen, Duncan Riach (PIC), Mikko Ronkainen,
+Dilip Sequeria, Matthijs De Smedt, Kevin Vincent, Stephen Warren, Hao Wu,
+Yifang Xu, Tim Zaman, William Zhang.
 
 [1]: http://bit.ly/determinism-in-deep-learning
 [2]: https://ngc.nvidia.com/catalog/containers/nvidia:tensorflow
