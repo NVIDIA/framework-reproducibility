@@ -103,7 +103,7 @@ You'll also need to set any and all appropriate random seeds:
 os.environ['PYTHONHASHSEED']=str(SEED)
 random.seed(SEED)
 np.random.seed(SEED)
-tf.set_random_seed(SEED)
+tf.random.set_seed(SEED)
 ```
 
 #### Dataset Sharding ####
