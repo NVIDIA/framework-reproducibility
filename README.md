@@ -200,7 +200,7 @@ by default when running on a GPU.
  cuDNN convolution backprop to data gradients                         | TCD or TDO             | TCD or TDP            | TCD or TDO |
  cuDNN max-pooling backprop                                           | TCD or TDO             | TCD or TDP            | TCD or TDO |
  `tf.nn.bias_add` backprop (see XLA note)                             | TDO                    | TDP                   | TDO        |
- `tf.image.resize_bilinear` fwd and bwd                               | NS1                    | NS1                   | NS1        |
+ `tf.image.resize_bilinear` backprop                                  | NS1                    | NS1                   | NS1        |
  XLA reductions on GPU                                                | NS2                    | NS2                   | XGDR       |
 
 Key to the solutions refenced above:
