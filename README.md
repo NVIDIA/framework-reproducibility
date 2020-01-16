@@ -32,22 +32,59 @@ TensorFlow before you can import and use `tfdeterminism`.
 
 ## Deterministic TensorFlow Solutions
 
-There are currently two main ways to access GPU-deterministic functionality in
-TensorFlow for most deep learning applications. The first way is to use an
-NVIDIA NGC TensorFlow container. The second way is to use version 1.14, 1.15,
-or 2.0 of stock TensorFlow with GPU support, plus the application of a patch
-supplied in this repo.
+There are currently three ways to access GPU-deterministic op functionality in
+TensorFlow for most deep learning applications:
 
-The longer-term intention and plan is to upstream all solutions into stock
-TensorFlow.
+1. Use stock TensorFlow version 2.1, which implements nearly all of the
+   currently-available solutions. It does not require patching.
+2. Use an NVIDIA NGC TensorFlow container (version >= 19.06). Version 19.12
+   implements [multi-algorithm deterministic cuDNN convolutions][1003].
+3. Use version 1.14, 1.15, or 2.0 of stock TensorFlow with GPU support, plus the
+   application of a patch supplied in this repo.
+
+The long-term intention and plan is to continue upstreaming all solutions into
+stock TensorFlow.
 
 Currently, GPU determinism is more thoroughly supported when XLA is not used.
+
+### Stock TensorFlow Version 2.1
+
+Stock TensorFlow version 2.1 implements nearly all of the currently-available
+GPU-deterministic op solutions. It is missing
+[multi-algorithm deterministic cuDNN convolutions][1003], which you may not
+require. First, try using TF 2.1; if it throws an exception with the
+message "No algorithm worked!" then you will need to use
+[NGC TF container](#nvidia-ngc-tensorflow-containers) version 19.12.
+
+The following Python code is running on a machine in which `pip` package
+`tensorflow=2.1.0` has been installed correctly.
+
+```
+import tensorflow as tf
+import os
+os.environ['TF_DETERMINISTIC_OPS'] = '1'
+# Now build your graph and train it
+```
+
+Stock TensorFlow version 2.1 with GPU support can be installed as follows:
+
+```
+pip install tensorflow=2.1.0
+```
+
+The TensorFlow project includes [detailed instructions][3] for installing
+TensorFlow with GPU support.
 
 ### NVIDIA NGC TensorFlow Containers
 
 NGC TensorFlow containers, starting with version 19.06, implement
-GPU-deterministic TensorFlow functionality. In Python code running inside the
-container, this can be enabled as follows:
+GPU-deterministic op functionality. Version 19.12 also implements
+[multi-algorithm deterministic cuDNN convolutions][1003], which solves the
+problem of some layer configurations causing an exception to be thrown with the
+message "No algorithm worked!".
+
+In Python code running inside the container, deterministic ops can be enabled
+as follows:
 
 ```
 import tensorflow as tf
@@ -68,13 +105,13 @@ version is based on:
 For information about pulling and running the NVIDIA NGC containers, see [these
 instructions][2].
 
-### Stock TensorFlow
+### Stock TensorFlow Version < 2.1
 
-Versions 1.14, 1.15, and 2.0 of stock TensorFlow implement a reduced form of GPU
-determinism, which must be supplemented with a patch provided in this repo.
-The following Python code is running on a machine in which `pip` package
-`tensorflow-gpu=2.0.0` has been installed correctly and on which
-`tensorflow-determinism` has also been installed (as shown in the
+Versions 1.14, 1.15, and 2.0 of stock TensorFlow implement a reduced form of
+GPU-deterministic op functionality, which must be supplemented with a patch
+provided in this repo. The following Python code is running on a machine in
+which `pip` package `tensorflow-gpu=2.0.0` has been installed correctly and on
+which `tensorflow-determinism` has also been installed (as shown in the
 [installation](#installation) section above).
 
 ```
@@ -184,9 +221,9 @@ Notes:
     currently released versions of stock TensorFlow), there is only one
     deterministic algorithm selected for each of the forward and two backward
     paths. In those versions of TensorFlow, some layer configurations
-    are not supported (resulting in an exception). The multi-algorithm support
-    is not currently available in stock TensorFlow, but is being added by
-    [PR 34951](https://github.com/tensorflow/tensorflow/pull/34951).
+    are not supported (resulting in an exception being thrown with the message
+    "No algorithm worked!"). The multi-algorithm support is not currently
+    available in stock TensorFlow, but is being added by [PR 34951][1003].
   * XLA: These solutions will not work when XLA JIT compilation is enabled due
     to XLA reductions on GPU not being deterministic (see
     [this comment](https://github.com/tensorflow/tensorflow/pull/34887#discussion_r355610837)
@@ -280,12 +317,13 @@ Number                                                       | Title            
 [33803](https://github.com/tensorflow/tensorflow/pull/33803) | Enable tf.nn.bias_add python op tests to work in eager mode   | open   |             |         |
 [33900](https://github.com/tensorflow/tensorflow/pull/33900) | Address problems with use_deterministic_cudnn test decorator  | merged | 2020-01-09  | 2.2     |
 [34887](https://github.com/tensorflow/tensorflow/pull/34887) | Add info about `TF_DETERMINISTIC_OPS` to v2.1 release notes   | merged | 2019-12-09  | 2.1     |
-[34951](https://github.com/tensorflow/tensorflow/pull/34951) | Add multi-algorithm deterministic cuDNN convolutions          | open   |             |         |
+[34951][1003]                                                | Add multi-algorithm deterministic cuDNN convolutions          | open   |             |         |
 [35006](https://github.com/tensorflow/tensorflow/pull/35006) | Fix version 2.1 release note regarding TF_DETERMINISTIC_OPS   | merged | 2019-12-20  | 2.1     |
 [e3195][1002]<sup>2</sup>                                    | [XLA/GPU] Convert reduction into tree reduction using padding | merged | 2020-01-07  | 2.2     |
 
 [1001]: https://github.com/tensorflow/tensorflow/commit/c27909ea80e8823dbf4f7176ab69991a630356a1
 [1002]: https://github.com/tensorflow/tensorflow/commit/e31955d9fb34ae7273354dc2347ba99eea8c5280
+[1003]: https://github.com/tensorflow/tensorflow/pull/34951
 
 Notes:
   1. Updated on 2019-10-08
@@ -314,13 +352,13 @@ Here are the names of some of the people who have helped out with this project.
 If any names are missing, then please let us know.
 
 Ben Barsdell, Kevin Brown, Carl Case, Bryan Catanzaro, Sharan Chetlur,
-Joey Conway, Luke Durant, Marc Edgar, Mostafa Hagog, George Karpenkov,
-Tero Karras, Bob Keating, Andrew Kerr, Xiang Bo Kong, Nicolas Koumchatzky,
-Jorge Albericio Latorre, Simon Layton, Jose Alvarez Lopez, Nathan Luehr,
-Conrado Silva Miranda, John Montrym, Michael O'Connor, Lauri Peltonen,
-Rakesh Ranjan, Jussi Rasanen, Duncan Riach (PIC), Mikko Ronkainen,
-Dilip Sequeria, Matthijs De Smedt, Kevin Vincent, Stephen Warren, Hao Wu,
-Yifang Xu, Tim Zaman, William Zhang.
+Joey Conway, Timo Denk, Luke Durant, Marc Edgar, Mostafa Hagog,
+George Karpenkov, Tero Karras, Bob Keating, Andrew Kerr, Xiang Bo Kong,
+Nicolas Koumchatzky, Jorge Albericio Latorre, Simon Layton, Jose Alvarez Lopez,
+Nathan Luehr, Conrado Silva Miranda, John Montrym, Michael O'Connor,
+Lauri Peltonen, Rakesh Ranjan, Jussi Rasanen, Duncan Riach (PIC),
+Mikko Ronkainen, Dilip Sequeria, Matthijs De Smedt, Kevin Vincent,
+Stephen Warren, Hao Wu, Yifang Xu, Tim Zaman, William Zhang.
 
 [1]: http://bit.ly/determinism-in-deep-learning
 [2]: https://ngc.nvidia.com/catalog/containers/nvidia:tensorflow
