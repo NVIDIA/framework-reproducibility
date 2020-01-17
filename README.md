@@ -357,8 +357,8 @@ George Karpenkov, Tero Karras, Bob Keating, Andrew Kerr, Xiang Bo Kong,
 Nicolas Koumchatzky, Jorge Albericio Latorre, Simon Layton, Jose Alvarez Lopez,
 Nathan Luehr, Conrado Silva Miranda, John Montrym, Michael O'Connor,
 Lauri Peltonen, Rakesh Ranjan, Jussi Rasanen, Duncan Riach (PIC),
-Mikko Ronkainen, Dilip Sequeria, Matthijs De Smedt, Kevin Vincent,
-Stephen Warren, Hao Wu, Yifang Xu, Tim Zaman, William Zhang.
+Mikko Ronkainen, Dilip Sequeria, Matthijs De Smedt, Valentina Taviani,
+Kevin Vincent, Stephen Warren, Hao Wu, Yifang Xu, Tim Zaman, William Zhang.
 
 [1]: http://bit.ly/determinism-in-deep-learning
 [2]: https://ngc.nvidia.com/catalog/containers/nvidia:tensorflow
