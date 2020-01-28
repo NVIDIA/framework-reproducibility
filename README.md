@@ -317,17 +317,21 @@ Number                                                       | Title            
 [33803](https://github.com/tensorflow/tensorflow/pull/33803) | Enable tf.nn.bias_add python op tests to work in eager mode   | open   |             |         |
 [33900](https://github.com/tensorflow/tensorflow/pull/33900) | Address problems with use_deterministic_cudnn test decorator  | merged | 2020-01-09  | 2.2     |
 [34887](https://github.com/tensorflow/tensorflow/pull/34887) | Add info about `TF_DETERMINISTIC_OPS` to v2.1 release notes   | merged | 2019-12-09  | 2.1     |
-[34951][1003]                                                | Add multi-algorithm deterministic cuDNN convolutions          | open   |             |         |
+[34951][1003]                                                | Add multi-algorithm deterministic cuDNN convolutions          | merged | 2020-01-27  | note 3  |
 [35006](https://github.com/tensorflow/tensorflow/pull/35006) | Fix version 2.1 release note regarding TF_DETERMINISTIC_OPS   | merged | 2019-12-20  | 2.1     |
 [e3195][1002]<sup>2</sup>                                    | [XLA/GPU] Convert reduction into tree reduction using padding | merged | 2020-01-07  | 2.2     |
+[29387][1004]<sup>2</sup>                                    | Roll back of [PR 34951][1003]                                 | merged | 2020-01-27  | note 3  |
 
 [1001]: https://github.com/tensorflow/tensorflow/commit/c27909ea80e8823dbf4f7176ab69991a630356a1
 [1002]: https://github.com/tensorflow/tensorflow/commit/e31955d9fb34ae7273354dc2347ba99eea8c5280
 [1003]: https://github.com/tensorflow/tensorflow/pull/34951
+[1004]: https://github.com/tensorflow/tensorflow/commit/2938772a08ed02ced4663ca38168ab3f82e8f81b
 
 Notes:
   1. Updated on 2019-10-08
   2. These were effectively stand-alone commits
+  3. [PR 34951][1003] was rolled back because it was thought to have caused a
+     test to become flaky
 
 ### Miscellaneous
 
