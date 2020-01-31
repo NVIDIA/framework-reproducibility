@@ -1,3 +1,14 @@
+# Release 0.4.0 (not yet released)
+
+This is tracking changes in the master branch that will be included in the next
+release tag.
+
+## New Functionality
+
+  * Add script to find commits in the TensorFlow repo related to determinism.
+
+## Enhanced Testing / Higher Quality
+
 # Release 0.3.0
 
 Add patch availability for stock TensorFlow version 2.0, and test in eager mode.
