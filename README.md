@@ -100,7 +100,7 @@ version is based on:
 :----------------------|:-------------------|
  19.06                 | 1.13               |
  19.07 - 19.10         | 1.14               |
- 19.11 - 19.12         | 1.15 / 2.0         |
+ 19.11 - 20.01         | 1.15 / 2.0         |
 
 For information about pulling and running the NVIDIA NGC containers, see [these
 instructions][2].
@@ -124,7 +124,7 @@ patch()
 Stock TensorFlow with GPU support can be installed as follows:
 
 ```
-pip install tensorflow-gpu=2.0.0
+pip install tensorflow-gpu=2.0.1
 ```
 
 The TensorFlow project includes [detailed instructions][3] for installing
@@ -215,15 +215,14 @@ Key to the solutions refenced above:
  XGDR     | Set XLA_FLAGS=--xla_gpu_deterministic_reductions. It's [TBD](https://github.com/tensorflow/tensorflow/pull/34887#discussion_r364007975) whether this solution will be enabled by default.       |
 
 Notes:
-  * multi-algo: From NGC 19.12 onwards, the cuDNN forward and backward
-    convolution algorithms are selected deterministically from several
-    deterministic algorithms. Prior to this (i.e. NGC 19.11 and earlier, and all
-    currently released versions of stock TensorFlow), there is only one
-    deterministic algorithm selected for each of the forward and two backward
-    paths. In those versions of TensorFlow, some layer configurations
+  * multi-algo: From NGC TF 19.12 onwards and stock TensorFlow 2.2 onwards, the
+    cuDNN forward and backward convolution algorithms are selected
+    deterministically from several deterministic algorithms. Prior to this (i.e.
+    NGC 19.11 and earlier, and stock TensorFlow 2.1 and earlier), there is only
+    one deterministic algorithm selected for each of the forward and two
+    backward paths. In those versions of TensorFlow, some layer configurations
     are not supported (resulting in an exception being thrown with the message
-    "No algorithm worked!"). The multi-algorithm support is not currently
-    available in stock TensorFlow, but is being added by [PR 34951][1003].
+    "No algorithm worked!").
   * XLA: These solutions will not work when XLA JIT compilation is enabled due
     to XLA reductions on GPU not being deterministic (see
     [this comment](https://github.com/tensorflow/tensorflow/pull/34887#discussion_r355610837)
@@ -301,40 +300,36 @@ Number                                                         | Title          
 
 ### TensorFlow Pull Requests
 
-Type: PR = Pull Request; IC = Individual Commit
+The following pull requests (and some inidividual commits) are ones that are
+directly related to this project. As we have
+[discovered](scripts/README.md#find-tensorflow-commits), 1.8% of all commits
+seem to reference, or have some relationship with, "determinism" or
+"deterministic". As of 2020-01-30, that was 1,391 commits.
 
- Type | ID                                                           | Title                                                         | Status | Date Merged | Version |
-:-----|:------------------------------------------------------------:|:--------------------------------------------------------------|:-------|:------------|:--------|
- PR   | [10636](https://github.com/tensorflow/tensorflow/pull/10636) | Non-determinism Docs (see note 1)                             | closed |             |         |
- PR   | [24273](https://github.com/tensorflow/tensorflow/pull/24273) | Enable dataset.map to respect seeds from the outer context    | closed |             |         |
- PR   | [24747](https://github.com/tensorflow/tensorflow/pull/24747) | Add cuDNN deterministic env variable (only for convolution).  | merged | 2019-01-15  | 1.14    |
- PR   | [25269](https://github.com/tensorflow/tensorflow/pull/25269) | Add deterministic cuDNN max-pooling                           | merged | 2019-01-30  | 1.14    |
- PR   | [25796](https://github.com/tensorflow/tensorflow/pull/25796) | Added tests for `TF_CUDNN_DETERMINISTIC`                      | merged | 2019-02-22  | 1.14    |
- IC   | [c2790][1001]                                                | Add a decorator to disable autotuning during test executions. | merged | 2019-03-13  | 1.14    |
- PR   | [29667](https://github.com/tensorflow/tensorflow/pull/29667) | Add release note about `TF_CUDNN_DETERMINISTIC`               | merged | 2019-08-06  | 1.14    |
- PR   | [31389](https://github.com/tensorflow/tensorflow/pull/31389) | Enhance release notes related to `TF_CUDNN_DETERMINISTIC`     | merged | 2019-08-07  | 1.14    |
- PR   | [31465](https://github.com/tensorflow/tensorflow/pull/31465) | Add GPU-deterministic `tf.nn.bias_add`                        | merged | 2019-10-17  | 2.1     |
- PR   | [32979](https://github.com/tensorflow/tensorflow/pull/32979) | Fix typo in release note                                      | closed |             |         |
- PR   | [33483](https://github.com/tensorflow/tensorflow/pull/33483) | Fix small typo in v2.0.0 release note                         | merged | 2019-10-25  | 2.1     |
- PR   | [33803](https://github.com/tensorflow/tensorflow/pull/33803) | Enable tf.nn.bias_add python op tests to work in eager mode   | open   |             |         |
- PR   | [33900](https://github.com/tensorflow/tensorflow/pull/33900) | Address problems with use_deterministic_cudnn test decorator  | merged | 2020-01-09  | 2.2     |
- PR   | [34887](https://github.com/tensorflow/tensorflow/pull/34887) | Add info about `TF_DETERMINISTIC_OPS` to v2.1 release notes   | merged | 2019-12-09  | 2.1     |
- PR   | [34951][1003]                                                | Add multi-algorithm deterministic cuDNN convolutions          | merged | 2020-01-27  | note 2  |
- PR   | [35006](https://github.com/tensorflow/tensorflow/pull/35006) | Fix version 2.1 release note regarding TF_DETERMINISTIC_OPS   | merged | 2019-12-20  | 2.1     |
- IC   | [e3195][1002]                                                | [XLA/GPU] Convert reduction into tree reduction using padding | merged | 2020-01-07  | 2.2     |
- IC   | [29387][1004]                                                | Roll back of [PR 34951][1003]                                 | merged | 2020-01-27  | note 2  |
- IC   | [3021e][1005]                                                | [XLA] Make memory_space_assignment deterministic.             | merged | 2020-01-30  | 2.2     |
+ID                                                           | Title                                                         | Status | Date Merged | Version |
+------------------------------------------------------------:|:--------------------------------------------------------------|:-------|:------------|:--------|
+[24747](https://github.com/tensorflow/tensorflow/pull/24747) | Add cuDNN deterministic env variable (only for convolution).  | merged | 2019-01-15  | 1.14    |
+[25269](https://github.com/tensorflow/tensorflow/pull/25269) | Add deterministic cuDNN max-pooling                           | merged | 2019-01-30  | 1.14    |
+[25796](https://github.com/tensorflow/tensorflow/pull/25796) | Added tests for `TF_CUDNN_DETERMINISTIC`                      | merged | 2019-02-22  | 1.14    |
+[c2790][1001]<sup>1</sup>                                    | Add a decorator to disable autotuning during test executions. | merged | 2019-03-13  | 1.14    |
+[29667](https://github.com/tensorflow/tensorflow/pull/29667) | Add release note about `TF_CUDNN_DETERMINISTIC`               | merged | 2019-08-06  | 1.14    |
+[31389](https://github.com/tensorflow/tensorflow/pull/31389) | Enhance release notes related to `TF_CUDNN_DETERMINISTIC`     | merged | 2019-08-07  | 1.14    |
+[31465](https://github.com/tensorflow/tensorflow/pull/31465) | Add GPU-deterministic `tf.nn.bias_add`                        | merged | 2019-10-17  | 2.1     |
+[32979](https://github.com/tensorflow/tensorflow/pull/32979) | Fix typo in release note                                      | closed |             |         |
+[33483](https://github.com/tensorflow/tensorflow/pull/33483) | Fix small typo in v2.0.0 release note                         | merged | 2019-10-25  | 2.1     |
+[33803](https://github.com/tensorflow/tensorflow/pull/33803) | Enable tf.nn.bias_add python op tests to work in eager mode   | open   |             |         |
+[33900](https://github.com/tensorflow/tensorflow/pull/33900) | Address problems with use_deterministic_cudnn test decorator  | merged | 2020-01-09  | 2.2     |
+[34887](https://github.com/tensorflow/tensorflow/pull/34887) | Add info about `TF_DETERMINISTIC_OPS` to v2.1 release notes   | merged | 2019-12-09  | 2.1     |
+[34951][1003]                                                | Add multi-algorithm deterministic cuDNN convolutions          | merged | 2020-01-27  | 2.2     |
+[35006](https://github.com/tensorflow/tensorflow/pull/35006) | Fix version 2.1 release note regarding TF_DETERMINISTIC_OPS   | merged | 2019-12-20  | 2.1     |
+[e3195][1002]<sup>1</sup>                                    | [XLA/GPU] Convert reduction into tree reduction using padding | merged | 2020-01-07  | 2.2     |
+ 
+Notes:
+  1. These are individual commits.
 
 [1001]: https://github.com/tensorflow/tensorflow/commit/c27909ea80e8823dbf4f7176ab69991a630356a1
 [1002]: https://github.com/tensorflow/tensorflow/commit/e31955d9fb34ae7273354dc2347ba99eea8c5280
 [1003]: https://github.com/tensorflow/tensorflow/pull/34951
-[1004]: https://github.com/tensorflow/tensorflow/commit/2938772a08ed02ced4663ca38168ab3f82e8f81b
-[1005]: https://github.com/tensorflow/tensorflow/commit/3021e0d5d7ac8e40f74de97f9fc7037b0a995ef7
-
-Notes:
-  1. Updated on 2019-10-08
-  2. [PR 34951][1003] was rolled back because it was thought to have caused a
-     Google internal test to become flaky
 
 ### Miscellaneous
 
