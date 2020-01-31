@@ -31,12 +31,12 @@ found_count=0
 total_count=0
 for hash in "${hashes[@]}"
 do
-	if [[ $(git show ${hash} | grep -i -E ${regex}) ]]; then
-		date=$(git show -s --format=%ci ${hash})
-		date=${date:0:10}
-		echo "${date}: https://github.com/tensorflow/tensorflow/commit/${hash}"
-		((found_count++))
-	fi
-	((total_count++))
+  if [[ $(git show ${hash} | grep -i -E ${regex}) ]]; then
+    date=$(git show -s --format=%ci ${hash})
+    date=${date:0:10}
+    echo "${date}: https://github.com/tensorflow/tensorflow/commit/${hash}"
+    ((found_count++))
+  fi
+  ((total_count++))
 done
 echo "Found ${found_count} relevant commits out of a total of ${total_count} commits"
