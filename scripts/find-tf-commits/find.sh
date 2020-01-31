@@ -19,6 +19,7 @@
 
 cd tensorflow
 git pull
+git config diff.renameLimit 999999
 
 IFS=$'\n'
 # The initial commit to the TensorFlow repository was on 2015-11-06
