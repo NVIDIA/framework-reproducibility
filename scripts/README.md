@@ -30,7 +30,7 @@ reported by GitHub.
   1. There are too many commits to manually sort.
   2. The realization that they represented a small, arbitrary selection led to
      the removal of two items from the [list][100] of pull requests and
-     individual commits in the main project README, including [PR 10636][101]
+     individual commits in the main project README: [PR 10636][101]
      (Non-determinism Docs) and [PR 24273][102] (Enable dataset.map to respect
      seeds from the outer context).
 
