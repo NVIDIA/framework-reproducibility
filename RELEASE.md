@@ -1,11 +1,12 @@
 # Release 0.4.0 (not yet released)
 
-This is tracking changes in the master branch that will be included in the next
-release tag.
+This is tracking changes that have been made in the master branch that will be
+included in the next release tag (and PyPI version).
 
-## New Functionality
+## Enhanced Functionality
 
   * Add script to find commits in the TensorFlow repo related to determinism.
+  * patch() throws more specific exceptions.
 
 ## Enhanced Testing / Higher Quality
 

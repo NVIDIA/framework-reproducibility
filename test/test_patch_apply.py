@@ -22,5 +22,16 @@ import sys
 import tensorflow as tf
 
 sys.path.insert(0, '..')
+
+expected_exception = None
+if len(sys.argv) > 2 and sys.argv[1] == "--expected-exception":
+  expected_exception_string = sys.argv[2]
+  if expected_exception_string == "TypeError":
+    expected_exception = TypeError
+
 from tfdeterminism import patch
-patch()
+try:
+  patch()
+except expected_exception as e:
+  print("Expected exception (%s) caught: " % expected_exception_string + str(e))
+  sys.exit(0)

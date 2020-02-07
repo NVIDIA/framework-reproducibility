@@ -50,11 +50,11 @@ ERROR=1
 expect $OK    "Successfully installed tensorflow-determinism" \
               ./install_package.sh
 
-expect $ERROR "Exception: tfdeterminism: TensorFlow inside NGC containers does not require patching" \
-              ./container.sh nvcr.io/nvidia/tensorflow:19.09-py2 python test_patch_apply.py
+expect $OK    "Expected exception (TypeError) caught: tfdeterminism: TensorFlow inside NGC containers does not require patching" \
+              ./container.sh nvcr.io/nvidia/tensorflow:19.09-py2 python test_patch_apply.py --expected-exception TypeError
 
-expect $ERROR "Exception: tfdeterminism: No patch available for version 1.13.1 of TensorFlow" \
-              ./container.sh tensorflow/tensorflow:1.13.1-gpu python test_patch_apply.py
+expect $OK    "Expected exception (TypeError) caught: tfdeterminism: No patch available for version 1.13.1 of TensorFlow" \
+              ./container.sh tensorflow/tensorflow:1.13.1-gpu python test_patch_apply.py --expected-exception TypeError
 
 expect $OK    "TensorFlow version 1.14.0 has been patched using tfdeterminism version ${version}"  \
               ./container.sh tensorflow/tensorflow:1.14.0-gpu python test_patch_apply.py

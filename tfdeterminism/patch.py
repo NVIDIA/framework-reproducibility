@@ -62,7 +62,7 @@ def _patch():
       TensorFlow.
   """
   if os.environ.get('NVIDIA_TENSORFLOW_VERSION'):
-    raise Exception("tfdeterminism: TensorFlow inside NGC containers does not "
+    raise TypeError("tfdeterminism: TensorFlow inside NGC containers does not "
                     "require patching")
   tf_version = tf.version.VERSION
   if re.match("(1\.(14|15)|2\.0)", tf_version):
@@ -72,7 +72,7 @@ def _patch():
           "using tfdeterminism version %s" %
           (tf_version, __version__), file=sys.stderr)
   else:
-    raise Exception("tfdeterminism: No patch available "
+    raise TypeError("tfdeterminism: No patch available "
                     "for version %s of TensorFlow" % tf_version)
 
 def _patch_bias_add():
