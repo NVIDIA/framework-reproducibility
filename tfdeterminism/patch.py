@@ -58,8 +58,10 @@ def _patch():
     Returns: nothing
 
     Raises:
-      ValueError if a patch is not available for the installed version of
-      TensorFlow.
+      TypeError (1) if a patch is not available for the installed version of
+      TensorFlow (either because it doesn't need one or because one has not
+      yet been implemented), or (2) if there is an attempt to apply the patch
+      inside an NGC TF container (where it should not be needed).
   """
   if os.environ.get('NVIDIA_TENSORFLOW_VERSION'):
     raise TypeError("tfdeterminism: TensorFlow inside NGC containers does not "
