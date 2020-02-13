@@ -317,7 +317,7 @@ ID                                                           | Title            
 [31465](https://github.com/tensorflow/tensorflow/pull/31465) | Add GPU-deterministic `tf.nn.bias_add`                        | merged | 2019-10-17  | 2.1     |
 [32979](https://github.com/tensorflow/tensorflow/pull/32979) | Fix typo in release note                                      | closed |             |         |
 [33483](https://github.com/tensorflow/tensorflow/pull/33483) | Fix small typo in v2.0.0 release note                         | merged | 2019-10-25  | 2.1     |
-[33803](https://github.com/tensorflow/tensorflow/pull/33803) | Enable tf.nn.bias_add python op tests to work in eager mode   | open   |             |         |
+[33803](https://github.com/tensorflow/tensorflow/pull/33803) | Enable tf.nn.bias_add python op tests to work in eager mode   | merged | 2020-02-12  | 2.2     |
 [33900](https://github.com/tensorflow/tensorflow/pull/33900) | Address problems with use_deterministic_cudnn test decorator  | merged | 2020-01-09  | 2.2     |
 [34887](https://github.com/tensorflow/tensorflow/pull/34887) | Add info about `TF_DETERMINISTIC_OPS` to v2.1 release notes   | merged | 2019-12-09  | 2.1     |
 [34951][1003]                                                | Add multi-algorithm deterministic cuDNN convolutions          | merged | 2020-01-27  | 2.2     |
