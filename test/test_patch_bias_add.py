@@ -148,21 +148,26 @@ class BiasAddTest(test.TestCase):
     bias_tensor = constant_op.constant(bias, shape=bias_shape, dtype=dtype)
 
     if context.executing_eagerly():
+
       def bias_add(input_tensor, bias_tensor):
-        return nn_ops.bias_add(input_tensor, bias_tensor,
-                               data_format=data_format)
+        return nn_ops.bias_add(
+            input_tensor, bias_tensor, data_format=data_format)
+
       # The following is a work-around for TF issue 33660. Instead of
       # calculating the analytical and numerical gradients for both
       # inputs in a single call to compute_gradient, compute_gradient
       # is called for each input separately.
       def bias_add_1(input_tensor):
         return bias_add(input_tensor, bias_tensor)
+
       def bias_add_2(bias_tensor):
         return bias_add(input_tensor, bias_tensor)
+
       input_jacob_a, input_jacob_n = gradient_checker_v2.compute_gradient(
           bias_add_1, [input_tensor])
       bias_jacob_a, bias_jacob_n = gradient_checker_v2.compute_gradient(
           bias_add_2, [bias_tensor])
+
       # Test gradient of BiasAddGrad
       def bias_add_grad_function(upstream_gradients):
         with backprop.GradientTape() as tape:
@@ -170,6 +175,7 @@ class BiasAddTest(test.TestCase):
           bias_add_output = bias_add(input_tensor, bias_tensor)
           gradient_injector_output = bias_add_output * upstream_gradients
           return tape.gradient(gradient_injector_output, bias_tensor)
+
       upstream_tensor = self._random_tensor(output_shape, dtype)
       grad_jacob_a, grad_jacob_n = gradient_checker_v2.compute_gradient(
           bias_add_grad_function, [upstream_tensor])
@@ -333,6 +339,7 @@ class BiasAddTestDeterministic(test.TestCase):
     data_format = self._dataFormatFromDataLayout(data_layout)
     repeat_count = 5
     if context.executing_eagerly():
+
       def bias_gradients(local_seed):
         np.random.seed(local_seed)
         upstream_gradients = self._randomDataOp(output_shape, data_type)
@@ -342,6 +349,7 @@ class BiasAddTestDeterministic(test.TestCase):
                                        data_format=data_format)
           gradient_injector_output = bias_add_output * upstream_gradients
         return tape.gradient(gradient_injector_output, bias_val)
+
       for i in range(repeat_count):
         local_seed = seed + i # select different upstream gradients
         result_a = bias_gradients(local_seed)
@@ -357,7 +365,9 @@ class BiasAddTestDeterministic(test.TestCase):
       # gradient generation graph. This is the reason for using the
       # gradient injector
       bias_gradients = gradients_impl.gradients(
-          gradient_injector_output, bias_val, grad_ys=None,
+          gradient_injector_output,
+          bias_val,
+          grad_ys=None,
           colocate_gradients_with_ops=True)[0]
       for i in range(repeat_count):
         feed_dict = {upstream_gradients: self._randomNDArray(output_shape)}
