@@ -193,15 +193,15 @@ by default when running on a GPU.
 
 #### Confirmed Current GPU-Specific Sources of Non-Determinism (With Solutions)
 
- Source                                                               | NGC 19.06+ /<br>TF 2.1 | TF 1.14, 1.15,<br>2.0 | TF 2.2     |
-:---------------------------------------------------------------------|:-----------------------|:----------------------|:-----------|
- TF auto-tuning of cuDNN convolution algorithms (see multi-algo note) | TCD or TDO             | TCD or TDP            | TCD or TDO |
- cuDNN convolution backprop to weight gradients                       | TCD or TDO             | TCD or TDP            | TCD or TDO |
- cuDNN convolution backprop to data gradients                         | TCD or TDO             | TCD or TDP            | TCD or TDO |
- cuDNN max-pooling backprop                                           | TCD or TDO             | TCD or TDP            | TCD or TDO |
- `tf.nn.bias_add` backprop (see XLA note)                             | TDO                    | TDP                   | TDO        |
- `tf.image.resize_bilinear` backprop                                  | NS1                    | NS1                   | NS1        |
- XLA reductions on GPU                                                | NS2                    | NS2                   | XGDR       |
+ Source                                                               | TF 1.14, 1.15,<br>2.0  | NGC 19.06+ /<br>TF 2.1 | TF 2.2     |
+:---------------------------------------------------------------------|:-----------------------|:-----------------------|:-----------|
+ TF auto-tuning of cuDNN convolution algorithms (see multi-algo note) | TCD or TDP             | TCD or TDO             | TCD or TDO |
+ cuDNN convolution backprop to weight gradients                       | TCD or TDP             | TCD or TDO             | TCD or TDO |
+ cuDNN convolution backprop to data gradients                         | TCD or TDP             | TCD or TDO             | TCD or TDO |
+ cuDNN max-pooling backprop                                           | TCD or TDP             | TCD or TDO             | TCD or TDO |
+ `tf.nn.bias_add` backprop (see XLA note)                             | TDP                    | TDO                    | TDO        |
+ `tf.image.resize_bilinear` backprop                                  | NS1                    | NS1                    | NS1        |
+ XLA reductions on GPU                                                | NS2                    | NS2                    | TDO        |
 
 Key to the solutions refenced above:
 
@@ -209,10 +209,9 @@ Key to the solutions refenced above:
 :---------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
  TCD      | Set environment variable `TF_CUDNN_DETERMINISTIC` to '1' or 'true'. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to '0' or 'false'). |
  TDO      | Set environment variable `TF_DETERMINISTIC_OPS` to '1' or 'true'. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to '0' or 'false').   |
- TDP      | Apply `tfdeterminism.patch`. Note that solution TDO will be in stock TensorFlow v2.1 (see [PR 31465](https://github.com/tensorflow/tensorflow/pull/31465)).                                     |
+ TDP      | Apply `tfdeterminism.patch`. Note that solution TDO is in stock TensorFlow v2.1 (see [PR 31465](https://github.com/tensorflow/tensorflow/pull/31465)), which makes patching unnecessary.        |
  NS1      | There is currently no solution available for this, but one is under development.                                                                                                                |
- NS2      | There is no solution in the sepecified version, but one will be available in a version that will be released in the future.                                                                     |
- XGDR     | Set XLA_FLAGS=--xla_gpu_deterministic_reductions. It's [TBD](https://github.com/tensorflow/tensorflow/pull/34887#discussion_r364007975) whether this solution will be enabled by default.       |
+ NS2      | There is no solution in the sepecified version, but there is a solution in a newer version.                                                                                                     |
 
 Notes:
   * multi-algo: From NGC TF 19.12 onwards and stock TensorFlow 2.2 onwards, the
@@ -223,10 +222,14 @@ Notes:
     backward paths. In those versions of TensorFlow, some layer configurations
     are not supported (resulting in an exception being thrown with the message
     "No algorithm worked!").
-  * XLA: These solutions will not work when XLA JIT compilation is enabled due
-    to XLA reductions on GPU not being deterministic (see
+  * XLA: Prior to TensorFlow version 2.2, these solutions will not work when
+    XLA JIT compilation is enabled due to XLA reductions on GPU not being
+    deterministic (see
     [this comment](https://github.com/tensorflow/tensorflow/pull/34887#discussion_r355610837)
-    on PR 34887). The XGDR solution can also be used, if available.
+    on PR 34887). This will be resolved in TensorFlow version 2.2 and NGC TF
+    containers based on that version of TensorFlow.
+  * `tf.image.resize_bilinear`: In the TF 2 API, this functionality is accessed
+    via `tf.image.resize` with `method=ResizeMethod.BILINEAR`.
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
 
@@ -329,6 +332,7 @@ ID                                                           | Title            
 [34951][1003]                                                | Add multi-algorithm deterministic cuDNN convolutions          | merged | 2020-01-27  | 2.2     |
 [35006](https://github.com/tensorflow/tensorflow/pull/35006) | Fix version 2.1 release note regarding TF_DETERMINISTIC_OPS   | merged | 2019-12-20  | 2.1     |
 [e3195][1002]<sup>1</sup>                                    | [XLA/GPU] Convert reduction into tree reduction using padding | merged | 2020-01-07  | 2.2     |
+[8b7a3][1004]<sup>1</sup>                                    | [XLA] Respect TF_DETERMINISTIC_OPS env variable for reductions| merged | 2020-02-19  | 2.2     |
  
 Notes:
   1. These are individual commits.
@@ -336,6 +340,7 @@ Notes:
 [1001]: https://github.com/tensorflow/tensorflow/commit/c27909ea80e8823dbf4f7176ab69991a630356a1
 [1002]: https://github.com/tensorflow/tensorflow/commit/e31955d9fb34ae7273354dc2347ba99eea8c5280
 [1003]: https://github.com/tensorflow/tensorflow/pull/34951
+[1004]: https://github.com/tensorflow/tensorflow/commit/8b7a3db0b6e09415b5640be4986fb4d7c6e5209a
 
 ### PyTorch Pull Requests
 
