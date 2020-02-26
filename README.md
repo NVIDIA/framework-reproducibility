@@ -282,6 +282,12 @@ the op injects non-determinism into the computation.
   environment variable `HOROVOD_FUSION_THRESHOLD` to '0'. This issue may have
   been resolved by Horovod
   [PR 1130](https://github.com/horovod/horovod/pull/1130) (not yet confirmed).
+* Before this project started, PyTorch was widely considered to have a more
+  complete and coherent GPU determinism story than TensorFlow. At the time of
+  writing (2020-02-25), it is no longer clear that one framework is superior to
+  the other in this regard. For more information about determinism in PyTorch,
+  see the [reproducibility documentation](http://bit.ly/pytorch-determinism) in
+  the PyTorch repo.
 
 ## Relevant Links
 
@@ -331,6 +337,12 @@ Notes:
 [1002]: https://github.com/tensorflow/tensorflow/commit/e31955d9fb34ae7273354dc2347ba99eea8c5280
 [1003]: https://github.com/tensorflow/tensorflow/pull/34951
 
+### PyTorch Pull Requests
+
+ID                                                     | Title                                                         | Status | Date Merged | Version |
+------------------------------------------------------:|:--------------------------------------------------------------|:-------|:------------|:--------|
+[33795](https://github.com/pytorch/pytorch/pull/33795) | Enhance reproducibility documentation                         | open   |             |         |
+
 ### Miscellaneous
 
 * Two Sigma: [A Workaround for Non-Determinism in
@@ -338,8 +350,6 @@ Notes:
 * Keras [issue 12800](https://github.com/keras-team/keras/issues/12800):
   Unable to get reproducible results using Keras with TF backend on GPU (updated
   on 2019-10-08)
-* PyTorch [Reproducibility](http://bit.ly/pytorch-determinism) (from the
-  official documentation)
 * Chainer [PR 2710](https://github.com/chainer/chainer/pull/2710): cuDNN
   Deterministic mode
 * Stack Overflow: [Tensorflow: Different results with the same random seed][501]
