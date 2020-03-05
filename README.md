@@ -37,8 +37,8 @@ TensorFlow for most deep learning applications:
 
 1. Use stock TensorFlow version 2.1, which implements nearly all of the
    currently-available solutions. It does not require patching.
-2. Use an NVIDIA NGC TensorFlow container (version >= 19.06). Version 19.12
-   implements [multi-algorithm deterministic cuDNN convolutions][1003].
+2. Use an NVIDIA NGC TensorFlow Docker image (version >= 19.06). Version
+   19.12 implements [multi-algorithm deterministic cuDNN convolutions][1003].
 3. Use version 1.14, 1.15, or 2.0 of stock TensorFlow with GPU support, plus the
    application of a patch supplied in this repo.
 
@@ -54,7 +54,8 @@ GPU-deterministic op solutions. It is missing
 [multi-algorithm deterministic cuDNN convolutions][1003], which you may not
 require. First, try using TF 2.1; if it throws an exception with the
 message "No algorithm worked!" then you will need to use
-[NGC TF container](#nvidia-ngc-tensorflow-containers) version 19.12.
+[NGC TF Docker image](#nvidia-gpu-cloud-ngc-tensorflow-docker-images) version
+19.12.
 
 The following Python code is running on a machine in which `pip` package
 `tensorflow=2.1.0` has been installed correctly.
@@ -75,9 +76,9 @@ pip install tensorflow=2.1.0
 The TensorFlow project includes [detailed instructions][3] for installing
 TensorFlow with GPU support.
 
-### NVIDIA NGC TensorFlow Containers
+### NVIDIA GPU Cloud (NGC) TensorFlow Docker Images
 
-NGC TensorFlow containers, starting with version 19.06, implement
+NGC TensorFlow Docker images, starting with version 19.06, implement
 GPU-deterministic op functionality. Version 19.12 also implements
 [multi-algorithm deterministic cuDNN convolutions][1003], which solves the
 problem of some layer configurations causing an exception to be thrown with the
@@ -93,17 +94,18 @@ os.environ['TF_DETERMINISTIC_OPS'] = '1'
 # Now build your graph and train it
 ```
 
-The following table shows which version of TensorFlow each NGC container
+The following table shows which version of TensorFlow each NGC Docker image
 version is based on:
 
- NGC Container Version | TensorFlow Version |
-:----------------------|:-------------------|
- 19.06                 | 1.13               |
- 19.07 - 19.10         | 1.14               |
- 19.11 - 20.01         | 1.15 / 2.0         |
+ NGC TF Image Version | TensorFlow Version |
+:---------------------|:-------------------|
+ 19.06                | 1.13               |
+ 19.07 - 19.10        | 1.14               |
+ 19.11 - 20.01        | 1.15 / 2.0         |
+ 20.02 - 20.03        | 1.15 / 2.1         |
 
-For information about pulling and running the NVIDIA NGC containers, see [these
-instructions][2].
+For information about pulling and running the NVIDIA NGC Docker images, see
+[these instructions][2].
 
 ### Stock TensorFlow Version < 2.1
 
@@ -200,8 +202,12 @@ by default when running on a GPU.
  cuDNN convolution backprop to data gradients                         | TCD or TDP             | TCD or TDO             | TCD or TDO |
  cuDNN max-pooling backprop                                           | TCD or TDP             | TCD or TDO             | TCD or TDO |
  `tf.nn.bias_add` backprop (see XLA note)                             | TDP                    | TDO                    | TDO        |
- `tf.image.resize_bilinear` backprop                                  | NS1                    | NS1                    | NS1        |
- XLA reductions on GPU                                                | NS2                    | NS2                    | TDO        |
+ XLA reductions on GPU                                                | NS                     | NS                     | TDO        |
+
+ Source                                                               | Stock TF  | NGC 20.03+ |
+:---------------------------------------------------------------------|:----------|:-----------|
+ `tf.image.resize_bilinear` backprop                                  | NS        | TDO        |
+
 
 Key to the solutions refenced above:
 
@@ -210,8 +216,7 @@ Key to the solutions refenced above:
  TCD      | Set environment variable `TF_CUDNN_DETERMINISTIC` to '1' or 'true'. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to '0' or 'false'). |
  TDO      | Set environment variable `TF_DETERMINISTIC_OPS` to '1' or 'true'. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to '0' or 'false').   |
  TDP      | Apply `tfdeterminism.patch`. Note that solution TDO is in stock TensorFlow v2.1 (see [PR 31465](https://github.com/tensorflow/tensorflow/pull/31465)), which makes patching unnecessary.        |
- NS1      | There is currently no solution available for this, but one is under development.                                                                                                                |
- NS2      | There is no solution in the sepecified version, but there is a solution in a newer version.                                                                                                     |
+ NS       | There is no solution in the specified version, but there is a solution in other versions (as shown)                                                                                             |
 
 Notes:
   * multi-algo: From NGC TF 19.12 onwards and stock TensorFlow 2.2 onwards, the
@@ -227,9 +232,12 @@ Notes:
     deterministic (see
     [this comment](https://github.com/tensorflow/tensorflow/pull/34887#discussion_r355610837)
     on PR 34887). This will be resolved in TensorFlow version 2.2 and NGC TF
-    containers based on that version of TensorFlow.
-  * `tf.image.resize_bilinear`: In the TF 2 API, this functionality is accessed
-    via `tf.image.resize` with `method=ResizeMethod.BILINEAR`.
+    Docker images based on that version of TensorFlow.
+  * `tf.image.resize_bilinear` (TF 1 API): In the TF 2 API, this functionality
+    is accessed via `tf.image.resize` with `method=ResizeMethod.BILINEAR` (which
+    is the default `method` setting). It is also exposed through
+    `tf.keras.layers.UpSampling2D` with `interpolation='bilinear'` (which is not
+    the default `interpolation` setting)
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
 
