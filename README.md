@@ -355,7 +355,7 @@ Notes:
 
 ID                                                     | Title                                                         | Status | Date Merged | Version |
 ------------------------------------------------------:|:--------------------------------------------------------------|:-------|:------------|:--------|
-[33795](https://github.com/pytorch/pytorch/pull/33795) | Enhance reproducibility documentation                         | open   |             |         |
+[33795](https://github.com/pytorch/pytorch/pull/33795) | Enhance reproducibility documentation                         | open   | 2020-03-06  | 1.5     |
 
 ### Miscellaneous
 
