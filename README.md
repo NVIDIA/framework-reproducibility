@@ -341,7 +341,7 @@ ID                                                           | Title            
 [35006](https://github.com/tensorflow/tensorflow/pull/35006) | Fix version 2.1 release note regarding TF_DETERMINISTIC_OPS   | merged | 2019-12-20  | 2.1     |
 [e3195][1002]<sup>1</sup>                                    | [XLA/GPU] Convert reduction into tree reduction using padding | merged | 2020-01-07  | 2.2     |
 [8b7a3][1004]<sup>1</sup>                                    | [XLA] Respect TF_DETERMINISTIC_OPS env variable for reductions| merged | 2020-02-19  | 2.2     |
-[37377](https://github.com/tensorflow/tensorflow/pull/37377) | [XLA] follow-up on GPU-deterministic reductions               | open   |             |         |
+[37377](https://github.com/tensorflow/tensorflow/pull/37377) | [XLA] follow-up on GPU-deterministic reductions               | merged | 2020-03-09  | 2.3     |
  
 Notes:
   1. These are individual commits.
