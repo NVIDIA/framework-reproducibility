@@ -15,4 +15,7 @@
 # limitations under the License.
 # ========================================================================
 
+printf "\n\n########## TensorFlow Version 2.0 (exhibits issue)\n\n"
 ./container.sh tensorflow/tensorflow:2.0.0-gpu tf_issue_33660_cases.sh
+printf "\n\n########## TensorFlow Version 2.1 (issue resolved)\n\n"
+./container.sh tensorflow/tensorflow:2.1.0-gpu tf_issue_33660_cases.sh

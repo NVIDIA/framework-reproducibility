@@ -20,6 +20,7 @@ import sys
 import tensorflow as tf
 
 def section(msg):
+  print("\n")
   print("=======================================================")
   print(msg)
   print("-------------------------------------------------------")
@@ -55,7 +56,7 @@ def empty_tensor(shape):
   return tf.constant([], shape=shape)
 
 def graph_repro():
-  section("GRAPH MODE REPRO")
+  section("GRAPH MODE REPRO (does not throw exception)")
   tf.compat.v1.disable_eager_execution()
   input_shape = output_shape = (0, 0, 0)
   bias_shape = (0,)
@@ -82,6 +83,6 @@ def existing_test_repro():
   jacobians = tf.test.compute_gradient(f, [x, y])
 
 if __name__ == "__main__":
-  if not tf.__version__.startswith("2.0"):
-    raise("This is designed to run with TensorFlow version 2.0")
+  if not tf.__version__.startswith("2."):
+    raise("This is designed to run with TensorFlow version 2")
   exec("%s()" % sys.argv[1])
