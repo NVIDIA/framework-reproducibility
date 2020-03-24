@@ -20,7 +20,7 @@ To use,
 
 ### Results
 
-I ran this on all commits between 2015-11-06 (the date of the very fist commit)
+I ran this on all commits between 2015-11-06 (the date of the very first commit)
 and 2020-01-30 and it found 1,391 commits out of a total of 77,508. That's 1.8%
 of total commits. I also confirmed that the total count matches the commit count
 reported by GitHub.
