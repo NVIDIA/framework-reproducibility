@@ -195,14 +195,15 @@ by default when running on a GPU.
 
 #### Confirmed Current GPU-Specific Sources of Non-Determinism (With Solutions)
 
- Source                                                               | TF 1.14, 1.15,<br>2.0  | NGC 19.06+ /<br>TF 2.1 | TF 2.2     |
-:---------------------------------------------------------------------|:-----------------------|:-----------------------|:-----------|
- TF auto-tuning of cuDNN convolution algorithms (see multi-algo note) | TCD or TDP             | TCD or TDO             | TCD or TDO |
- cuDNN convolution backprop to weight gradients                       | TCD or TDP             | TCD or TDO             | TCD or TDO |
- cuDNN convolution backprop to data gradients                         | TCD or TDP             | TCD or TDO             | TCD or TDO |
- cuDNN max-pooling backprop                                           | TCD or TDP             | TCD or TDO             | TCD or TDO |
- `tf.nn.bias_add` backprop (see XLA note)                             | TDP                    | TDO                    | TDO        |
- XLA reductions on GPU                                                | NS                     | NS                     | TDO        |
+ Source                                                               | TF 1.14, 1.15,<br>2.0  | NGC 19.06+ /<br>TF 2.1 | TF 2.2     | TF 2.3     |
+:---------------------------------------------------------------------|:-----------------------|:-----------------------|:-----------|:-----------|
+ TF auto-tuning of cuDNN convolution algorithms (see multi-algo note) | TCD or TDP             | TDO                    | TDO        | TDO        |
+ cuDNN convolution backprop to weight gradients                       | TCD or TDP             | TDO                    | TDO        | TDO        |
+ cuDNN convolution backprop to data gradients                         | TCD or TDP             | TDO                    | TDO        | TDO        |
+ cuDNN max-pooling backprop                                           | TCD or TDP             | TDO                    | TDO        | TDO        |
+ cuDNN CTC loss                                                       | NS                     | NS                     | NS         | TDO        |
+ `tf.nn.bias_add` backprop (see XLA note)                             | TDP                    | TDO                    | TDO        | TDO        |
+ XLA reductions on GPU                                                | NS                     | NS                     | TDO        | TDO        |
 
  Source                                                               | Stock TF  | NGC 20.03+ |
 :---------------------------------------------------------------------|:----------|:-----------|
@@ -342,6 +343,7 @@ ID                                                           | Title            
 [e3195][1002]<sup>1</sup>                                    | [XLA/GPU] Convert reduction into tree reduction using padding | merged | 2020-01-07  | 2.2     |
 [8b7a3][1004]<sup>1</sup>                                    | [XLA] Respect TF_DETERMINISTIC_OPS env variable for reductions| merged | 2020-02-19  | 2.2     |
 [37377](https://github.com/tensorflow/tensorflow/pull/37377) | [XLA] follow-up on GPU-deterministic reductions               | merged | 2020-03-09  | 2.3     |
+[9e096][1005]<sup>1</sup>                                    | Use the CUDNN_CTC_LOSS_ALGO_DETERMINISTIC ...                 | merged | 2020-03-10  | 2.3     |
  
 Notes:
   1. These are individual commits.
@@ -350,6 +352,7 @@ Notes:
 [1002]: https://github.com/tensorflow/tensorflow/commit/e31955d9fb34ae7273354dc2347ba99eea8c5280
 [1003]: https://github.com/tensorflow/tensorflow/pull/34951
 [1004]: https://github.com/tensorflow/tensorflow/commit/8b7a3db0b6e09415b5640be4986fb4d7c6e5209a
+[1005]: https://github.com/tensorflow/tensorflow/commit/9e096debc4a0909deb69970f38bee7b77e5e5f7d
 
 ### PyTorch Pull Requests
 
@@ -378,13 +381,14 @@ Here are the names of some of the people who have helped out with this project.
 If any names are missing, then please let us know.
 
 Ben Barsdell, Kevin Brown, Carl Case, Bryan Catanzaro, Sharan Chetlur,
-Joey Conway, Timo Denk, Luke Durant, Marc Edgar, Mostafa Hagog,
-George Karpenkov, Tero Karras, Bob Keating, Andrew Kerr, Xiang Bo Kong,
-Nicolas Koumchatzky, Jorge Albericio Latorre, Simon Layton, Jose Alvarez Lopez,
-Nathan Luehr, Conrado Silva Miranda, John Montrym, Michael O'Connor,
-Lauri Peltonen, Rakesh Ranjan, Jussi Rasanen, Duncan Riach (PIC),
-Mikko Ronkainen, Dilip Sequeria, Matthijs De Smedt, Valentina Taviani,
-Kevin Vincent, Stephen Warren, Hao Wu, Yifang Xu, Tim Zaman, William Zhang.
+Joey Conway, Sanjoy Das, Timo Denk, Luke Durant, Marc Edgar, Mostafa Hagog,
+Kaixi Hou, George Karpenkov, Tero Karras, Bob Keating, Andrew Kerr,
+Xiang Bo Kong, Nicolas Koumchatzky, Jorge Albericio Latorre, Simon Layton,
+Jose Alvarez Lopez, Nathan Luehr, Conrado Silva Miranda, John Montrym,
+Michael O'Connor, Lauri Peltonen, Rakesh Ranjan, Jussi Rasanen,
+Duncan Riach (PIC), Mikko Ronkainen, Dilip Sequeria, Matthijs De Smedt,
+Valentina Taviani, Kevin Vincent, Stephen Warren, Hao Wu, Yifang Xu, Tim Zaman,
+William Zhang.
 
 [1]: http://bit.ly/determinism-in-deep-learning
 [2]: https://ngc.nvidia.com/catalog/containers/nvidia:tensorflow
