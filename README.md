@@ -320,7 +320,7 @@ Number                                                         | Title          
 [29101](https://github.com/tensorflow/tensorflow/issues/29101) | Random seed not set in graph context of `Dataset#map`                                 | 2019-05-28  | Open   |
 [38151](https://github.com/tensorflow/tensorflow/issues/38151) | Test deterministic cuDNN CTC loss                                                     | 2020-04-01  | Open   |
 
-GitHub issues in related projects:
+GitHub issues in dependent projects:
 
  Project    | Number                                                     | Title                                                                 | Date Opened | Status |
 :-----------|-----------------------------------------------------------:|:----------------------------------------------------------------------|:------------|:-------|
