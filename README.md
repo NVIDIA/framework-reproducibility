@@ -307,14 +307,25 @@ This section catalogs relevant links.
 
 ### TensorFlow Issues
 
-Number                                                         | Title                                                                                 | Updated    |
---------------------------------------------------------------:|:--------------------------------------------------------------------------------------|:-----------|
- [2652](https://github.com/tensorflow/tensorflow/issues/2652)  | Backward pass of broadcasting on GPU is non-deterministic                             | 2019-10-08 |
- [2732](https://github.com/tensorflow/tensorflow/issues/2732)  | Mention that GPU reductions are nondeterministic in docs                              | 2019-10-08 |
-[13932](https://github.com/tensorflow/tensorflow/issues/13932) | Non-determinism from `tf.data.Dataset.map` with random ops                            |            |
-[16889](https://github.com/tensorflow/tensorflow/issues/16889) | Problems Getting TensorFlow to behave Deterministically                               | 2019-10-08 |
-[18096](https://github.com/tensorflow/tensorflow/issues/18096) | Feature Request: Support for configuring deterministic options of cuDNN conv routines | 2019-10-08 |
-[29101](https://github.com/tensorflow/tensorflow/issues/29101) | Random seed not set in graph context of `Dataset#map`                                 |            |
+GitHiub issues in the TensorFlow project:
+
+Number                                                         | Title                                                                                 | Date Opened | Status |
+--------------------------------------------------------------:|:--------------------------------------------------------------------------------------|:------------|:-------|
+ [2652](https://github.com/tensorflow/tensorflow/issues/2652)  | Backward pass of broadcasting on GPU is non-deterministic                             | 2016-06-03  | Closed |
+ [2732](https://github.com/tensorflow/tensorflow/issues/2732)  | Mention that GPU reductions are nondeterministic in docs                              | 2016-06-08  | Closed |
+[13932](https://github.com/tensorflow/tensorflow/issues/13932) | Non-determinism from `tf.data.Dataset.map` with random ops                            | 2017-10-23  | Closed |
+[16889](https://github.com/tensorflow/tensorflow/issues/16889) | Problems Getting TensorFlow to behave Deterministically                               | 2018-02-09  | Open   |
+[18096](https://github.com/tensorflow/tensorflow/issues/18096) | Feature Request: Support for configuring deterministic options of cuDNN conv routines | 2018-03-29  | Open   |
+[22398](https://github.com/tensorflow/tensorflow/issues/22398) | CUDA implementation of BiasAddGrad op is non-determinstic                             | 2018-09-19  | Closed |
+[29101](https://github.com/tensorflow/tensorflow/issues/29101) | Random seed not set in graph context of `Dataset#map`                                 | 2019-05-28  | Open   |
+[38151](https://github.com/tensorflow/tensorflow/issues/38151) | Test deterministic cuDNN CTC loss                                                     | 2020-04-01  | Open   |
+
+GitHub issues in related projects:
+
+ Project    | Number                                                     | Title                                                                 | Date Opened | Status |
+:-----------|-----------------------------------------------------------:|:----------------------------------------------------------------------|:------------|:-------|
+ Keras      | [12800](https://github.com/keras-team/keras/issues/12800)  | Unable to get reproducible results using Keras with TF backend on GPU | 2019-05-07  | Closed |
+ Tensorpack | [902](https://github.com/tensorpack/tensorpack/issues/902) | How to run Tensorpack training with deterministic behavior            | 2018-09-20  | Closed |
 
 ### TensorFlow Pull Requests
 
@@ -365,9 +376,6 @@ ID                                                     | Title                  
 
 * Two Sigma: [A Workaround for Non-Determinism in
   TensorFlow](http://bit.ly/two-sigma-determinism)
-* Keras [issue 12800](https://github.com/keras-team/keras/issues/12800):
-  Unable to get reproducible results using Keras with TF backend on GPU (updated
-  on 2019-10-08)
 * Chainer [PR 2710](https://github.com/chainer/chainer/pull/2710): cuDNN
   Deterministic mode
 * Stack Overflow: [Tensorflow: Different results with the same random seed][501]
@@ -388,8 +396,8 @@ Xiang Bo Kong, Nicolas Koumchatzky, Jorge Albericio Latorre, Simon Layton,
 Jose Alvarez Lopez, Nathan Luehr, Conrado Silva Miranda, John Montrym,
 Michael O'Connor, Lauri Peltonen, Rakesh Ranjan, Jussi Rasanen,
 Duncan Riach (PIC), Mikko Ronkainen, Dilip Sequeria, Matthijs De Smedt,
-Valentina Taviani, Kevin Vincent, Stephen Warren, Hao Wu, Yifang Xu, Tim Zaman,
-William Zhang.
+Valentina Taviani, Amirhossein Tebbifakhr, Kevin Vincent, Stephen Warren,
+Hao Wu, Yifang Xu, Tim Zaman, William Zhang.
 
 [1]: http://bit.ly/determinism-in-deep-learning
 [2]: https://ngc.nvidia.com/catalog/containers/nvidia:tensorflow
