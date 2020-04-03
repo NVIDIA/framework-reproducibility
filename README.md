@@ -291,9 +291,7 @@ the op injects non-determinism into the computation.
   load on the machine used to run TensorRT. There is a solution planned for
   this.
 * Horovod Tensor Fusion. Work-around: disable Tensor Fusion by setting the
-  environment variable `HOROVOD_FUSION_THRESHOLD` to '0'. This issue may have
-  been resolved by Horovod
-  [PR 1130](https://github.com/horovod/horovod/pull/1130) (not yet confirmed).
+  environment variable `HOROVOD_FUSION_THRESHOLD` to '0'.
 * Before this project started, PyTorch was widely considered to have a more
   complete and coherent GPU determinism story than TensorFlow. At the time of
   writing (2020-02-25), it is no longer clear that one framework is superior to
@@ -320,7 +318,9 @@ Number                                                         | Title          
 [29101](https://github.com/tensorflow/tensorflow/issues/29101) | Random seed not set in graph context of `Dataset#map`                                 | 2019-05-28  | Open   |
 [38151](https://github.com/tensorflow/tensorflow/issues/38151) | Test deterministic cuDNN CTC loss                                                     | 2020-04-01  | Open   |
 
-GitHub issues in dependent projects:
+### Related Project Issues
+
+GitHub issues in dependent or related projects:
 
  Project    | Number                                                     | Title                                                                 | Date Opened | Status |
 :-----------|-----------------------------------------------------------:|:----------------------------------------------------------------------|:------------|:-------|
@@ -329,8 +329,8 @@ GitHub issues in dependent projects:
 
 ### TensorFlow Pull Requests
 
-The following pull requests (and some inidividual commits) are ones that are
-directly related to this project. As we have
+The following pull requests (and some inidividual commits) are those in the
+TensorFlow GitHub repo that are directly related to this project. As we have
 [discovered](scripts/README.md#find-tensorflow-commits), 1.8% of all commits
 seem to reference, or have some relationship with, "determinism" or
 "deterministic". As of 2020-01-30, that was 1,391 commits.
@@ -372,6 +372,12 @@ ID                                                     | Title                  
 ------------------------------------------------------:|:--------------------------------------------------------------|:-------|:------------|:--------|
 [33795](https://github.com/pytorch/pytorch/pull/33795) | Enhance reproducibility documentation                         | merged | 2020-03-06  | 1.5     |
 
+### Horovod Pull Requests
+
+ID                                                     | Title                                                         | Status | Date Merged | Version |
+------------------------------------------------------:|:--------------------------------------------------------------|:-------|:------------|:--------|
+ [1130](https://github.com/horovod/horovod/pull/1130)  | Add grouped allreduce feature                                 | Open   |             |         |
+
 ### Miscellaneous
 
 * Two Sigma: [A Workaround for Non-Determinism in
@@ -395,9 +401,9 @@ Kaixi Hou, George Karpenkov, Tero Karras, Bob Keating, Andrew Kerr,
 Xiang Bo Kong, Nicolas Koumchatzky, Jorge Albericio Latorre, Simon Layton,
 Jose Alvarez Lopez, Nathan Luehr, Conrado Silva Miranda, John Montrym,
 Michael O'Connor, Lauri Peltonen, Rakesh Ranjan, Jussi Rasanen,
-Duncan Riach (PIC), Mikko Ronkainen, Dilip Sequeria, Matthijs De Smedt,
-Valentina Taviani, Amirhossein Tebbifakhr, Kevin Vincent, Stephen Warren,
-Hao Wu, Yifang Xu, Tim Zaman, William Zhang.
+Duncan Riach (PIC), Josh Romero, Mikko Ronkainen, Dilip Sequeria,
+Matthijs De Smedt, Valentina Taviani, Amirhossein Tebbifakhr, Kevin Vincent,
+Stephen Warren, Hao Wu, Yifang Xu, Tim Zaman, William Zhang.
 
 [1]: http://bit.ly/determinism-in-deep-learning
 [2]: https://ngc.nvidia.com/catalog/containers/nvidia:tensorflow
