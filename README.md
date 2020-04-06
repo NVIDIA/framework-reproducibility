@@ -204,6 +204,7 @@ by default when running on a GPU.
  cuDNN CTC loss                                                       | NS                     | NS                     | NS         | TDO        |
  `tf.nn.bias_add` backprop (see XLA note)                             | TDP                    | TDO                    | TDO        | TDO        |
  XLA reductions on GPU                                                | NS                     | NS                     | TDO        | TDO        |
+ Fused softmax/cross-entropy ops backprop                             | NS                     | NS                     | NS         | NS         |
 
  Source                                                               | Stock TF  | NGC 20.03+ |
 :---------------------------------------------------------------------|:----------|:-----------|
@@ -217,7 +218,7 @@ Key to the solutions refenced above:
  TCD      | Set environment variable `TF_CUDNN_DETERMINISTIC` to '1' or 'true'. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to '0' or 'false'). |
  TDO      | Set environment variable `TF_DETERMINISTIC_OPS` to '1' or 'true'. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to '0' or 'false').   |
  TDP      | Apply `tfdeterminism.patch`. Note that solution TDO is in stock TensorFlow v2.1 (see [PR 31465](https://github.com/tensorflow/tensorflow/pull/31465)), which makes patching unnecessary.        |
- NS       | There is no solution in the specified version, but there is a solution in other versions (as shown)                                                                                             |
+ NS       | There is no solution in the specified version, but there may be a solution in other versions (as shown)                                                                                         |
 
 Notes:
   * multi-algo: From NGC TF 19.12 onwards and stock TensorFlow 2.2 onwards, the
@@ -234,6 +235,10 @@ Notes:
     [this comment](https://github.com/tensorflow/tensorflow/pull/34887#discussion_r355610837)
     on PR 34887). This will be resolved in TensorFlow version 2.2 and NGC TF
     Docker images based on that version of TensorFlow.
+  * Fused softmax/cross-entropy ops refers to
+    `tf.nn.softmax_cross_entropy_with_logits` and
+    `tf.nn.sparse_softmax_cross_entropy_with_logits`. See TensorFlow
+    [issue 38185](https://github.com/tensorflow/tensorflow/issues/38185)
   * `tf.image.resize_bilinear` (TF 1 API): In the TF 2 API, this functionality
     is accessed via `tf.image.resize` with `method=ResizeMethod.BILINEAR` (which
     is the default `method` setting). It is also exposed through
@@ -317,6 +322,7 @@ Number                                                         | Title          
 [22398](https://github.com/tensorflow/tensorflow/issues/22398) | CUDA implementation of BiasAddGrad op is non-determinstic                             | 2018-09-19  | Closed |
 [29101](https://github.com/tensorflow/tensorflow/issues/29101) | Random seed not set in graph context of `Dataset#map`                                 | 2019-05-28  | Open   |
 [38151](https://github.com/tensorflow/tensorflow/issues/38151) | Test deterministic cuDNN CTC loss                                                     | 2020-04-01  | Open   |
+[38185](https://github.com/tensorflow/tensorflow/issues/38185) | Add GPU-deterministic back-prop for fused softmax/cross-entropy ops                   | 2020-04-02  | Open   |
 
 ### Related Project Issues
 
