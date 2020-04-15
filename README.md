@@ -362,7 +362,7 @@ ID                                                           | Title            
 [37377](https://github.com/tensorflow/tensorflow/pull/37377) | [XLA] follow-up on GPU-deterministic reductions               | merged | 2020-03-09  | 2.3     |
 [9e096][1005]<sup>1</sup>                                    | Use the CUDNN_CTC_LOSS_ALGO_DETERMINISTIC algorithm ...       | merged | 2020-03-10  | 2.3     |
 [38089](https://github.com/tensorflow/tensorflow/pull/38089) | Add reminder to test deterministic cuDNN CTC loss             | closed |             |         |
-[38509](https://github.com/tensorflow/tensorflow/pull/38509) | List deterministic op func bug fixes in v2.2 release notes    | open   |             |         |
+[38509](https://github.com/tensorflow/tensorflow/pull/38509) | List deterministic op func bug fixes in v2.2 release notes    | merged | 2020-04-15  | 2.2     |
  
 Notes:
   1. These are individual commits.
