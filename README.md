@@ -244,7 +244,7 @@ Notes:
     is the default `method` setting). It is also exposed through
     `tf.keras.layers.UpSampling2D` with `interpolation='bilinear'` (which is not
     the default `interpolation` setting). The solution in TF 2.3 depends upon
-    [PR 39423](https://github.com/tensorflow/tensorflow/pull/39243) getting
+    [PR 39243](https://github.com/tensorflow/tensorflow/pull/39243) getting
     approved and merged before that version snaps.
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
