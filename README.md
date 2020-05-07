@@ -206,9 +206,9 @@ by default when running on a GPU.
  XLA reductions on GPU                                                | NS                     | NS                     | TDO        | TDO        |
  Fused softmax/cross-entropy ops backprop                             | NS                     | NS                     | NS         | NS         |
 
- Source                                                               | Stock TF  | NGC 20.03+ |
-:---------------------------------------------------------------------|:----------|:-----------|
- `tf.image.resize_bilinear` backprop                                  | NS        | TDO        |
+ Source                                                               | TF <2.2   | NGC 20.03+ | TF 2.3 ? |
+:---------------------------------------------------------------------|:----------|:-----------|:---------|
+ `tf.image.resize_bilinear` backprop                                  | NS        | TDO        | TDO      |
 
 
 Key to the solutions refenced above:
@@ -243,7 +243,9 @@ Notes:
     is accessed via `tf.image.resize` with `method=ResizeMethod.BILINEAR` (which
     is the default `method` setting). It is also exposed through
     `tf.keras.layers.UpSampling2D` with `interpolation='bilinear'` (which is not
-    the default `interpolation` setting)
+    the default `interpolation` setting). The solution in TF 2.3 depends upon
+    [PR 39423](https://github.com/tensorflow/tensorflow/pull/39243) getting
+    approved and merged before that version snaps.
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
 
@@ -363,6 +365,7 @@ ID                                                           | Title            
 [9e096][1005]<sup>1</sup>                                    | Use the CUDNN_CTC_LOSS_ALGO_DETERMINISTIC algorithm ...       | merged | 2020-03-10  | 2.3     |
 [38089](https://github.com/tensorflow/tensorflow/pull/38089) | Add reminder to test deterministic cuDNN CTC loss             | closed |             |         |
 [38509](https://github.com/tensorflow/tensorflow/pull/38509) | List deterministic op func bug fixes in v2.2 release notes    | merged | 2020-04-15  | 2.2     |
+[39243](https://github.com/tensorflow/tensorflow/pull/39243) | GPU-deterministic tf.image.resize (bilinear)                  | open   |             |         |
  
 Notes:
   1. These are individual commits.
