@@ -248,7 +248,7 @@ Notes:
     approved and merged before that version snaps.
   * As of TensorFlow 2.0 onwards, the use of `tf.function' (for example, as a
     decorator), results in AutoGraph compiling your code into a graph. One
-    conversion that takes place is the replacing of `for` loops while TensorFlow's
+    conversion that takes place is the replacing of `for` loops with TensorFlow's
     `while_loop`. By default, the `while_loop` runs with 10 parallel iterations
     which introduces another source of non-determinism. To prevent this, please use
     `tf.autograph.experimental.set_loop_options` inside the `for` loop with 
