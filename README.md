@@ -246,6 +246,9 @@ Notes:
     the default `interpolation` setting). The solution in TF 2.3 depends upon
     [PR 39243](https://github.com/tensorflow/tensorflow/pull/39243) getting
     approved and merged before that version snaps.
+  * [Issue 39751](https://github.com/tensorflow/tensorflow/issues/39751)
+    `tf.math.unsorted_segment_sum` is non-deterministic. Some functions affected
+    include `tf.gather` and `tfa.image.dense_image_warp` on backprop.
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
 
