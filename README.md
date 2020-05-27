@@ -325,6 +325,7 @@ Number                                                         | Title          
 [29101](https://github.com/tensorflow/tensorflow/issues/29101) | Random seed not set in graph context of `Dataset#map`                                 | 2019-05-28  | Open   |
 [38151](https://github.com/tensorflow/tensorflow/issues/38151) | Test deterministic cuDNN CTC loss                                                     | 2020-04-01  | Open   |
 [38185](https://github.com/tensorflow/tensorflow/issues/38185) | Add GPU-deterministic back-prop for fused softmax/cross-entropy ops                   | 2020-04-02  | Open   |
+[38197](https://github.com/tensorflow/tensorflow/issues/38197) | Model not deterministic, even though os.environ['TF_DETERMINISTIC_OPS'] = '1' is set  | 2020-04-03  | Open   |
 
 ### Related Project Issues
 
