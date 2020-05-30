@@ -143,6 +143,7 @@ os.environ['PYTHONHASHSEED']=str(SEED)
 random.seed(SEED)
 np.random.seed(SEED)
 tf.random.set_seed(SEED)
+layer = layers.Dropout(rate, seed=SEED)
 ```
 
 #### Dataset Sharding ####
