@@ -143,8 +143,35 @@ os.environ['PYTHONHASHSEED']=str(SEED)
 random.seed(SEED)
 np.random.seed(SEED)
 tf.random.set_seed(SEED)
-layer = layers.Dropout(rate, seed=SEED)
 ```
+
+In the TensorFlow version 1 API, `tf.random.set_seed` was `tf.set_random_seed`.
+
+In most models, the effect of setting `tf.random.set_seed` is to ensure that the
+trainable variables (the weights and biases) in your model are pseudorandomly
+initialized the same way each time. Every time `tf.random.set_seed` is called,
+with a particular seed value, the pseudorandom number generator that TensorFlow
+uses to initialize the trainable variables is reset ("seeded") deterministically
+according to that seed.
+
+If you're using dropout, which introduces a pseudorandom dropout sequence during
+training, then to achieve deterministic results you will need to reset
+the pseudorandom number generator that is used to produce those dropout
+sequences. The pseudorandom dropout sequence introduced by `tf.keras.Dropout`
+layers _will_ be reset by `tf.random.set_seed`.
+
+If you would like to control the seed used for dropout independently of the seed
+used for trainable variable initialization, then you can call
+`tf.random.set_seed` just before training (e.g. just before calling `model.fit`
+but after constructing the model and running `model.compile`). However, if you
+would like to explicitly control the seed used for the dropout sequence, then
+you can specify it using the `seed` argument of the `tf.keras.layers.Dropout`
+constructor.
+
+Note that the `shuffle` argument of the Keras model `fit` method defaults to
+`True` (enabled). This pseudorandom shuffling is controlled by a pseudorandom
+number generator that is also reset reproducibly by `tf.random.set_seed`,
+probably the same pseudorandom number generator that TensorFlow uses throughout.
 
 #### Dataset Sharding ####
 
@@ -157,7 +184,7 @@ is achieved by either not calling the `shard()` method, or by setting its
 For deterministic functionality, some types of models may require
 `gate_gradients=tf.train.Optimizer.GATE_OP` in the session config.
 
-#### Multi-GPU with Horovod ####
+#### Multi-GPU using Horovod ####
 
 If you're using Horovod for multi-GPU training, you may need to disable Tensor
 Fusion (assuming that the non-determinism associated with Tensor Fusion has not
@@ -407,15 +434,48 @@ ID                                                     | Title                  
 Here are the names of some of the people who have helped out with this project.
 If any names are missing, then please let us know.
 
-Ben Barsdell, Kevin Brown, Carl Case, Bryan Catanzaro, Sharan Chetlur,
-Joey Conway, Sanjoy Das, Timo Denk, Luke Durant, Marc Edgar, Mostafa Hagog,
-Kaixi Hou, George Karpenkov, Tero Karras, Bob Keating, Andrew Kerr,
-Xiang Bo Kong, Nicolas Koumchatzky, Jorge Albericio Latorre, Simon Layton,
-Jose Alvarez Lopez, Nathan Luehr, Conrado Silva Miranda, John Montrym,
-Michael O'Connor, Lauri Peltonen, Rakesh Ranjan, Jussi Rasanen,
-Duncan Riach (PIC), Josh Romero, Mikko Ronkainen, Dilip Sequeria,
-Matthijs De Smedt, Valentina Taviani, Amirhossein Tebbifakhr, Kevin Vincent,
-Stephen Warren, Hao Wu, Yifang Xu, Tim Zaman, William Zhang.
+Ben Barsdell,
+Kevin Brown,
+Carl Case,
+Bryan Catanzaro,
+Sharan Chetlur,
+Joey Conway,
+Sanjoy Das,
+Timo Denk,
+Luke Durant,
+Marc Edgar,
+Mostafa Hagog,
+Kaixi Hou,
+George Karpenkov,
+Tero Karras,
+Bob Keating,
+Andrew Kerr,
+Xiang Bo Kong,
+Nicolas Koumchatzky,
+Jorge Albericio Latorre,
+Simon Layton,
+Ned Letcher,
+Jose Alvarez Lopez,
+Nathan Luehr,
+Conrado Silva Miranda,
+John Montrym,
+Michael O'Connor,
+Lauri Peltonen,
+Rakesh Ranjan,
+Jussi Rasanen,
+Duncan Riach (PIC),
+Josh Romero,
+Mikko Ronkainen,
+Dilip Sequeria,
+Matthijs De Smedt,
+Valentina Taviani,
+Amirhossein Tebbifakhr,
+Kevin Vincent,
+Stephen Warren,
+Hao Wu,
+Yifang Xu,
+Tim Zaman,
+William Zhang.
 
 [1]: http://bit.ly/determinism-in-deep-learning
 [2]: https://ngc.nvidia.com/catalog/containers/nvidia:tensorflow
