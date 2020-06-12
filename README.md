@@ -300,10 +300,10 @@ Notes:
     `tf.nn.softmax_cross_entropy_with_logits` and
     `tf.nn.sparse_softmax_cross_entropy_with_logits`. See TensorFlow
     [issue 38185](https://github.com/tensorflow/tensorflow/issues/38185).
-    Work-around: use non-fused softmax and cross-entropy. For example, select
-    the activation on the final `Dense` `tf.keras` layer to be 'softmax' and
-    then select `tf.keras.losses.categorical_crossentropy` for the loss
-    function.
+    Work-around: use non-fused softmax and cross-entropy. For example, assuming
+    you're using `tf.keras`, select the activation on the final `Dense` layer to
+    be 'softmax' and then select `tf.keras.losses.categorical_crossentropy` for
+    the loss function.
   * `tf.image.resize_bilinear` (TF 1 API): In the TF 2 API, this functionality
     is accessed via `tf.image.resize` with `method=ResizeMethod.BILINEAR` (which
     is the default `method` setting). It is also exposed through
