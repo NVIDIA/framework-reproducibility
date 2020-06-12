@@ -173,11 +173,44 @@ Note that the `shuffle` argument of the Keras model `fit` method defaults to
 number generator that is also reset reproducibly by `tf.random.set_seed`,
 probably the same pseudorandom number generator that TensorFlow uses throughout.
 
+You may also need to provide a seed for any other ops you use that rely on
+pseudorandom number generators, such as
+`tf.image.sample_distorted_bounding_box`, otherwise they may use a random seed
+and their operation will not be repducible.
+
 #### Dataset Sharding ####
 
 If you're using `tf.data.Dataset`, you should not shard the dataset. This
 is achieved by either not calling the `shard()` method, or by setting its
 `num_shards` parameter to 1.
+
+#### Data-Loader Parallelism ####
+
+When the data-loader pipeline is stateful and is replicated into multiple
+asynchronous threads, the threads can interact with each other, resulting in
+non-deterministic operation of the overall data-loader functionality. The
+most common example of this is when pseudorandom number genration is used in
+the data-loader pipeline, such as for data augmentation. When the same
+underlying pseudorandom number generator state is used in all the threads, it
+will result in non-deterministic functionality. This happens when the default
+pseudorandom number generator (e.g. from numpy) is used in the data-loader.
+There are two solution to this:
+
+  1. Make sure that the instances of the objects operating in the parallel
+     threads have their own pseudorandom number generator state. For example,
+     see [numpy.random.Generator][5].
+  2. Run the data-loader code in only one thread.
+
+How you run the data-loader code in only one thread depends on how you're
+running the data-loader. If you're using `tf.keras.Model::fit()` or
+`tf.keras.Model::fit_generator()` then `workers` should be set to not more than
+`1`.
+
+Since the validation process runs in the main thread, if the validation
+process uses the same stateful data pipeline as the training data-loader then
+these two processes will also run in separate threads and you'll wind up with
+the same problem. In this case, you need to set `workers` to `0` (zero), which
+will cause the data-loader to be run in the main thread.
 
 #### Gradient Gating ####
 
@@ -188,7 +221,7 @@ For deterministic functionality, some types of models may require
 
 If you're using Horovod for multi-GPU training, you may need to disable Tensor
 Fusion (assuming that the non-determinism associated with Tensor Fusion has not
-yet been resolved):
+yet been resolved, see Horovod [PR 1130][503]):
 
 ```
 os.environ['HOROVOD_FUSION_THRESHOLD']='0'
@@ -266,7 +299,11 @@ Notes:
   * Fused softmax/cross-entropy ops refers to
     `tf.nn.softmax_cross_entropy_with_logits` and
     `tf.nn.sparse_softmax_cross_entropy_with_logits`. See TensorFlow
-    [issue 38185](https://github.com/tensorflow/tensorflow/issues/38185)
+    [issue 38185](https://github.com/tensorflow/tensorflow/issues/38185).
+    Work-around: use non-fused softmax and cross-entropy. For example, select
+    the activation on the final `Dense` `tf.keras` layer to be 'softmax' and
+    then select `tf.keras.losses.categorical_crossentropy` for the loss
+    function.
   * `tf.image.resize_bilinear` (TF 1 API): In the TF 2 API, this functionality
     is accessed via `tf.image.resize` with `method=ResizeMethod.BILINEAR` (which
     is the default `method` setting). It is also exposed through
@@ -326,7 +363,8 @@ the op injects non-determinism into the computation.
   load on the machine used to run TensorRT. There is a solution planned for
   this.
 * Horovod Tensor Fusion. Work-around: disable Tensor Fusion by setting the
-  environment variable `HOROVOD_FUSION_THRESHOLD` to '0'.
+  environment variable `HOROVOD_FUSION_THRESHOLD` to '0'. See Horovod
+  [PR 1130][503].
 * Before this project started, PyTorch was widely considered to have a more
   complete and coherent GPU determinism story than TensorFlow. At the time of
   writing (2020-02-25), it is no longer clear that one framework is superior to
@@ -415,7 +453,7 @@ ID                                                     | Title                  
 
 ID                                                     | Title                                                         | Status | Date Merged | Version |
 ------------------------------------------------------:|:--------------------------------------------------------------|:-------|:------------|:--------|
- [1130](https://github.com/horovod/horovod/pull/1130)  | Add grouped allreduce feature                                 | Open   |             |         |
+ [1130][503]                                           | Add grouped allreduce feature                                 | Open   |             |         |
 
 ### Miscellaneous
 
@@ -428,6 +466,7 @@ ID                                                     | Title                  
 
 [501]: https://stackoverflow.com/questions/54047654/tensorflow-different-results-with-the-same-random-seed
 [502]: https://stackoverflow.com/questions/52213325/are-tensorflow-random-values-guaranteed-to-be-the-same-inside-a-single-run#comment91376212_52213325
+[503]: https://github.com/horovod/horovod/pull/1130
 
 ## Credits
 
@@ -481,3 +520,4 @@ William Zhang.
 [2]: https://ngc.nvidia.com/catalog/containers/nvidia:tensorflow
 [3]: https://www.tensorflow.org/install/gpu
 [4]: https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#atomic-functions
+[5]: https://numpy.org/doc/stable/reference/random/generator.html
