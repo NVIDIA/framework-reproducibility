@@ -265,11 +265,11 @@ by default when running on a GPU.
  cuDNN CTC loss                                                       | NS                     | NS                     | NS         | TDO        |
  `tf.nn.bias_add` backprop (see XLA note)                             | TDP                    | TDO                    | TDO        | TDO        |
  XLA reductions on GPU                                                | NS                     | NS                     | TDO        | TDO        |
- Fused softmax/cross-entropy ops backprop                             | NS                     | NS                     | NS         | NS         |
+ Fused softmax/cross-entropy ops backprop (see note)                  | NS                     | NS                     | NS         | NS         |
 
  Source                                                               | TF <2.2   | NGC 20.03+ | TF 2.3 ? |
 :---------------------------------------------------------------------|:----------|:-----------|:---------|
- `tf.image.resize_bilinear` backprop                                  | NS        | TDO        | TDO      |
+ `tf.image.resize_bilinear` backprop (see note)                       | NS        | TDO        | TDO      |
 
 
 Key to the solutions refenced above:
