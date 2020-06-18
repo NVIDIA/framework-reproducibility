@@ -392,15 +392,17 @@ Number                                                         | Title          
 [38151](https://github.com/tensorflow/tensorflow/issues/38151) | Test deterministic cuDNN CTC loss                                                     | 2020-04-01  | Open   |
 [38185](https://github.com/tensorflow/tensorflow/issues/38185) | Add GPU-deterministic back-prop for fused softmax/cross-entropy ops                   | 2020-04-02  | Open   |
 [38197](https://github.com/tensorflow/tensorflow/issues/38197) | Model not deterministic, even though os.environ['TF_DETERMINISTIC_OPS'] = '1' is set  | 2020-04-03  | Open   |
+[40514](https://github.com/tensorflow/tensorflow/issues/40514) | BERT: Non-deterministic on GPU, even with seeds fixed and TF_DETERMINISTIC_OPS="1"    | 2020-06-16  | Open   |
 
 ### Related Project Issues
 
 GitHub issues in dependent or related projects:
 
- Project    | Number                                                     | Title                                                                 | Date Opened | Status |
-:-----------|-----------------------------------------------------------:|:----------------------------------------------------------------------|:------------|:-------|
- Keras      | [12800](https://github.com/keras-team/keras/issues/12800)  | Unable to get reproducible results using Keras with TF backend on GPU | 2019-05-07  | Closed |
- Tensorpack | [902](https://github.com/tensorpack/tensorpack/issues/902) | How to run Tensorpack training with deterministic behavior            | 2018-09-20  | Closed |
+ Project                  | Number                                                          | Title                                                                 | Date Opened | Status |
+:-------------------------|----------------------------------------------------------------:|:----------------------------------------------------------------------|:------------|:-------|
+ Keras                    | [12800](https://github.com/keras-team/keras/issues/12800)       | Unable to get reproducible results using Keras with TF backend on GPU | 2019-05-07  | Closed |
+ Tensorpack               | [902](https://github.com/tensorpack/tensorpack/issues/902)      | How to run Tensorpack training with deterministic behavior            | 2018-09-20  | Closed |
+ huggingface/transformers | [5603](https://github.com/huggingface/transformers/issues/5063) | Non-deterministic training issue on GPU: TF-BERT                      | 2020-06-16  | Open   |
 
 ### TensorFlow Pull Requests
 
