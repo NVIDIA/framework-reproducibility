@@ -386,23 +386,23 @@ Number                                                         | Title          
  [2732](https://github.com/tensorflow/tensorflow/issues/2732)  | Mention that GPU reductions are nondeterministic in docs                              | 2016-06-08  | Closed |
 [13932](https://github.com/tensorflow/tensorflow/issues/13932) | Non-determinism from `tf.data.Dataset.map` with random ops                            | 2017-10-23  | Closed |
 [16889](https://github.com/tensorflow/tensorflow/issues/16889) | Problems Getting TensorFlow to behave Deterministically                               | 2018-02-09  | Open   |
-[18096](https://github.com/tensorflow/tensorflow/issues/18096) | Feature Request: Support for configuring deterministic options of cuDNN conv routines | 2018-03-29  | Open   |
+[18096](https://github.com/tensorflow/tensorflow/issues/18096) | Feature Request: Support for configuring deterministic options of cuDNN conv ...      | 2018-03-29  | Open   |
 [22398](https://github.com/tensorflow/tensorflow/issues/22398) | CUDA implementation of BiasAddGrad op is non-determinstic                             | 2018-09-19  | Closed |
 [29101](https://github.com/tensorflow/tensorflow/issues/29101) | Random seed not set in graph context of `Dataset#map`                                 | 2019-05-28  | Open   |
 [38151](https://github.com/tensorflow/tensorflow/issues/38151) | Test deterministic cuDNN CTC loss                                                     | 2020-04-01  | Open   |
 [38185](https://github.com/tensorflow/tensorflow/issues/38185) | Add GPU-deterministic back-prop for fused softmax/cross-entropy ops                   | 2020-04-02  | Open   |
-[38197](https://github.com/tensorflow/tensorflow/issues/38197) | Model not deterministic, even though os.environ['TF_DETERMINISTIC_OPS'] = '1' is set  | 2020-04-03  | Open   |
-[40514](https://github.com/tensorflow/tensorflow/issues/40514) | BERT: Non-deterministic on GPU, even with seeds fixed and TF_DETERMINISTIC_OPS="1"    | 2020-06-16  | Open   |
+[38197](https://github.com/tensorflow/tensorflow/issues/38197) | Model not deterministic ...                                                           | 2020-04-03  | Open   |
+[40514](https://github.com/tensorflow/tensorflow/issues/40514) | BERT: Non-deterministic on GPU ...                                                    | 2020-06-16  | Open   |
 
 ### Related Project Issues
 
 GitHub issues in dependent or related projects:
 
- Project                  | Number                                                          | Title                                                                 | Date Opened | Status |
-:-------------------------|----------------------------------------------------------------:|:----------------------------------------------------------------------|:------------|:-------|
- Keras                    | [12800](https://github.com/keras-team/keras/issues/12800)       | Unable to get reproducible results using Keras with TF backend on GPU | 2019-05-07  | Closed |
- Tensorpack               | [902](https://github.com/tensorpack/tensorpack/issues/902)      | How to run Tensorpack training with deterministic behavior            | 2018-09-20  | Closed |
- huggingface/transformers | [5603](https://github.com/huggingface/transformers/issues/5063) | Non-deterministic training issue on GPU: TF-BERT                      | 2020-06-16  | Open   |
+ Project      | Number                                                          | Title                                                                 | Date Opened | Status |
+:-------------|----------------------------------------------------------------:|:----------------------------------------------------------------------|:------------|:-------|
+ Keras        | [12800](https://github.com/keras-team/keras/issues/12800)       | Unable to get reproducible results using Keras / TF on GPU            | 2019-05-07  | Closed |
+ Tensorpack   | [902](https://github.com/tensorpack/tensorpack/issues/902)      | How to run Tensorpack training with deterministic behavior            | 2018-09-20  | Closed |
+ transformers | [5603](https://github.com/huggingface/transformers/issues/5063) | Non-deterministic training issue on GPU: TF-BERT                      | 2020-06-16  | Open   |
 
 ### TensorFlow Pull Requests
 
@@ -463,9 +463,9 @@ ID                                                     | Title                  
   TensorFlow](http://bit.ly/two-sigma-determinism)
 * Chainer [PR 2710](https://github.com/chainer/chainer/pull/2710): cuDNN
   Deterministic mode
-* Stack Exchange / Stack Overflow: [Tensorflow: Different results with the same random seed][501]
-* Stack Exchange / Stack Overflow: [Are tensorflow random values guaranteed to be the same inside a single run? (comment)][502]
-* Stack Exchange / Data Science: [Making Keras + Tensorflow code execution deterministic on a GPU][504]
+* SE / Stack Overflow: [Tensorflow: Different results with the same random seed][501]
+* SE / Stack Overflow: [Are tensorflow random values guaranteed to be the same inside a single run? (comment)][502]
+* SE / Data Science: [Making Keras + Tensorflow code execution deterministic on a GPU][504]
 
 [501]: https://stackoverflow.com/questions/54047654/tensorflow-different-results-with-the-same-random-seed
 [502]: https://stackoverflow.com/questions/52213325/are-tensorflow-random-values-guaranteed-to-be-the-same-inside-a-single-run#comment91376212_52213325
