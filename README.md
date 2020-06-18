@@ -461,12 +461,14 @@ ID                                                     | Title                  
   TensorFlow](http://bit.ly/two-sigma-determinism)
 * Chainer [PR 2710](https://github.com/chainer/chainer/pull/2710): cuDNN
   Deterministic mode
-* Stack Overflow: [Tensorflow: Different results with the same random seed][501]
-* Stack Overflow: [Are tensorflow random values guaranteed to be the same inside a single run? (comment)][502] (updated 2019-10-10).
+* Stack Exchange / Stack Overflow: [Tensorflow: Different results with the same random seed][501]
+* Stack Exchange / Stack Overflow: [Are tensorflow random values guaranteed to be the same inside a single run? (comment)][502]
+* Stack Exchange / Data Science: [Making Keras + Tensorflow code execution deterministic on a GPU][504]
 
 [501]: https://stackoverflow.com/questions/54047654/tensorflow-different-results-with-the-same-random-seed
 [502]: https://stackoverflow.com/questions/52213325/are-tensorflow-random-values-guaranteed-to-be-the-same-inside-a-single-run#comment91376212_52213325
 [503]: https://github.com/horovod/horovod/pull/1130
+[504]: https://datascience.stackexchange.com/questions/14812/making-keras-tensorflow-code-execution-deterministic-on-a-gpu/
 
 ## Credits
 
