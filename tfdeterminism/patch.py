@@ -74,6 +74,11 @@ def _patch():
     print("TensorFlow version %s has been patched "
           "using tfdeterminism version %s" %
           (tf_version, __version__), file=sys.stderr)
+  elif re.match("2\.1|2\.2"):
+    _patch_fused_softmax_cross_entropy()
+    print("TensorFlow version %s has been patched "
+          "using tfdeterminism version %s" %
+          (tf_version, __version__), file=sys.stderr)
   else:
     raise TypeError("tfdeterminism: No patch available "
                     "for version %s of TensorFlow" % tf_version)
