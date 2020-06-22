@@ -152,7 +152,7 @@ def _patch_fused_softmax_cross_entropy():
 
 
 # The original, pre-patched method can be viewed at
-# https://github.com/tensorflow/tensorflow/blob/v1.14.0/tensorflow/python/ops/nn_ops.py#L2628
+# https://github.com/tensorflow/tensorflow/blob/v1.14.0/tensorflow/python/ops/nn_ops.py#L3182
 def _new_softmax_cross_entropy_with_logits_1_14(labels, logits, axis=-1, name=None):
   """Computes softmax cross entropy between `logits` and `labels`.
   Measures the probability error in discrete classification tasks in which the
@@ -196,7 +196,7 @@ def _new_softmax_cross_entropy_with_logits_1_14(labels, logits, axis=-1, name=No
 
 
 # The original, pre-patched method can be viewed at
-# https://github.com/tensorflow/tensorflow/blob/v1.14.0/tensorflow/python/ops/nn_ops.py#L2628
+# https://github.com/tensorflow/tensorflow/blob/v1.14.0/tensorflow/python/ops/nn_ops.py#L3249
 def _new_sparse_softmax_cross_entropy_with_logits_1_14(
     _sentinel=None,  # pylint: disable=invalid-name
     labels=None,
