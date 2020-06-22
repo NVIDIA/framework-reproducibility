@@ -74,7 +74,7 @@ def _patch():
     print("TensorFlow version %s has been patched "
           "using tfdeterminism version %s" %
           (tf_version, __version__), file=sys.stderr)
-  elif re.match("2\.1|2\.2"):
+  elif re.match("2\.1|2\.2", tf_version):
     _patch_fused_softmax_cross_entropy()
     print("TensorFlow version %s has been patched "
           "using tfdeterminism version %s" %
