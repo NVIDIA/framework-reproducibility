@@ -70,6 +70,7 @@ def _patch():
   if re.match("(1\.(14|15)|2\.0)", tf_version):
     os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
     _patch_bias_add()
+    # Apply the fused softmax/cross-entropy patch here
     print("TensorFlow version %s has been patched "
           "using tfdeterminism version %s" %
           (tf_version, __version__), file=sys.stderr)
