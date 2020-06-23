@@ -21,7 +21,7 @@ import os
 
 import tensorflow as tf
 
-from .patch import _patch_bias_add
+from .patch import _patch_bias_add, _patch_fused_softmax_cross_entropy
 from .utils import _Version as Version
 
 def _enable_determinism(seed=None):
@@ -31,7 +31,7 @@ def _enable_determinism(seed=None):
     Call this method either before or after explicitly importing TensorFlow,
     but always before constructing any graphs.
 
-    This function cannot address all possible sources of non-determinism. Please 
+    This function cannot address all possible sources of non-determinism. Please
     see further instructions at https://github.com/NVIDIA/tensorflow-determinism
     to understand how to use it in a larger deterministic context.
 
@@ -52,7 +52,7 @@ def _enable_determinism(seed=None):
     _patch_bias_add()
   if in_ngc_cont and ngc_vers.at_least('19.06') or tf_vers.at_least('2.1'):
     os.environ['TF_DETERMINISTIC_OPS'] = '1'
+    # TODO: Add patch crossentropy here as well? Issue seems to still be present on tf 2.1, 2.2
   if in_ngc_cont and ngc_vers.at_least('19.06') or tf_vers.at_least('1.14'):
-    # Apply the fused softmax/cross-entropy patch here
-    pass
-  # TODO: Add other recipe items 
+    _patch_fused_softmax_cross_entropy()
+  # TODO: Add other recipe items
