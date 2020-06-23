@@ -145,19 +145,18 @@ def _new_bias_add_1_14(value, bias, data_format=None, name=None):
 
 
 def _patch_fused_softmax_cross_entropy():
-  # Sparse
+  # Non-sparse
   tf.nn.softmax_cross_entropy_with_logits = _new_softmax_cross_entropy_with_logits  # access via public API
   nn.softmax_cross_entropy_with_logits = _new_softmax_cross_entropy_with_logits  # called from tf.keras.layers.convolutional.Conv
   nn_ops.softmax_cross_entropy_with_logits = _new_softmax_cross_entropy_with_logits  # called from tests
 
-  # Non-sparse
+  # Sparse
   tf.nn.sparse_softmax_cross_entropy_with_logits = _new_sparse_softmax_cross_entropy_with_logits  # access via public API
   nn.sparse_softmax_cross_entropy_with_logits = _new_sparse_softmax_cross_entropy_with_logits  # called from tf.keras.layers.convolutional.Conv
   nn_ops.sparse_softmax_cross_entropy_with_logits = _new_sparse_softmax_cross_entropy_with_logits  # called from tests
 
-
 # The original, pre-patched method can be viewed at
-# https://github.com/tensorflow/tensorflow/blob/v1.14.0/tensorflow/python/ops/nn_ops.py#L2628
+# https://github.com/tensorflow/tensorflow/blob/v1.14.0/tensorflow/python/ops/nn_ops.py#L3182
 def _new_softmax_cross_entropy_with_logits(labels, logits, axis=-1, name=None):
   """Computes softmax cross entropy between `logits` and `labels`.
   Measures the probability error in discrete classification tasks in which the
