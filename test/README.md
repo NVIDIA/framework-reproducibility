@@ -12,8 +12,9 @@ Requirements:
 
 Then you should be able to run `./all.sh` and observe the final message.
 
-## Possible testing improvements
+## Things to do before next release
 
-  * Deprecation warning from patch
+  * Test deprecation warning from patch
   * Run test_utils.py from all.sh
-  * Integration tests for enable_determinism
+  * Add integration tests for enable_determinism
+  * Move TensorFlow-related functionality into tensorflow subdirectory

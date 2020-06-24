@@ -17,11 +17,11 @@ import sys
 import unittest
 
 sys.path.insert(0, '..')
-from tfdeterminism.utils import _Version as Version
+from fwd9m.utils import _Version as Version
 
 class TestUtils(unittest.TestCase):
 
-  def test_attributes(self):
+  def test_version_attributes(self):
     major = 1
     minor = 2
     version_string = "%d.%d.3" % (major, minor)
