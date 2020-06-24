@@ -18,3 +18,5 @@ Then you should be able to run `./all.sh` and observe the final message.
   * Run test_utils.py from all.sh
   * Add integration tests for enable_determinism
   * Move TensorFlow-related functionality into tensorflow subdirectory
+  * Change repo URL and description
+  * Update documentation
