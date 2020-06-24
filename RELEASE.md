@@ -5,8 +5,12 @@ included in the next release tag (and PyPI version).
 
 ## Enhanced Functionality
 
+  * WIP: Rename distribution to from tensorflow-determinism to
+    framework-determinism and rename package from tfdeterminism to fwd9m.
+  * WIP: Add `enable_determinism`, which provides best-effort to enable
+    determinism in whichever version of TensorFlow is being used.
   * Add script to find commits in the TensorFlow repo related to determinism.
-  * patch() throws more specific exceptions.
+  * `patch` throws more specific exceptions.
 
 ## Enhanced Testing / Higher Quality
 

@@ -28,13 +28,14 @@ class _Version:
       raise ValueError("The version string must contain at least a major and a minor version")
     major = version_pieces[0]
     minor = version_pieces[1]
-    self.version_string = major + '.' + minor
+    self.original_version_string = version_string
+    self.major_minor_version_string = major + '.' + minor
     self.major = int(major)
     self.minor = int(minor)
 
   def in_list(self, list_of_versions):
     """Is the version in the list of version provided?"""
-    return self.version_string in list_of_versions
+    return self.major_minor_version_string in list_of_versions
 
   def _only_major_and_minor(self, version):
     version_pieces = version.split('.')

@@ -1,4 +1,4 @@
-# Copyright 2019 NVIDIA Corporation. All Rights Reserved
+# Copyright 2020 NVIDIA Corporation. All Rights Reserved
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,23 +16,27 @@
 from setuptools import setup
 import os
 
+distribution_name = 'framework-determinism'
+package_name = 'fwd9m'
+
 # This file needs to be executed during installation. It's not possible to
-# import the full tfdeterminism package during installation because it will
-# fail to import if TensorFlow has not yet been installed. By temporarility
-# appending 'tfdeterminism' to sys.path, it's possible to just import the
-# version module.
+# import the full package during installation because it will fail to import if
+# all the supported frameworks have not been installed. By temporarility
+# appending to sys.path, it's possible to just import from the version module.
 import sys
-sys.path.append('tfdeterminism')
-from version import __version__
-sys.path.remove('tfdeterminism')
+sys.path.append(package_name)
+from version import _package_name, __version__ as version
+sys.path.remove(package_name)
+assert package_name == _package_name
 
 readme = os.path.join(os.path.dirname(os.path.realpath(__file__)), "README.md")
 with open(readme, "r") as fp:
   long_description = fp.read()
 
-description = "Tracking, debugging, and patching non-determinism in TensorFlow"
-url = "https://github.com/NVIDIA/tensorflow-determinism"
-install_requires = [] # intentionally not including tensorflow-gpu
+description = ("Tracking, debugging, and patching non-determinism "
+               "in the DL frameworks")
+url = "https://github.com/NVIDIA/%s" % distribution_name
+install_requires = [] # intentionally not including the framework packages
 
 classifiers = [
     'Development Status :: 3 - Alpha',
@@ -43,9 +47,9 @@ classifiers = [
 ]
 
 setup(
-  name                          = 'tensorflow-determinism',
-  version                       = __version__,
-  packages                      = ['tfdeterminism'],
+  name                          = distribution_name,
+  version                       = version,
+  packages                      = [package_name],
   url                           = url,
   license                       = 'Apache 2.0',
   author                        = 'NVIDIA',

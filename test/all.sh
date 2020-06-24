@@ -42,21 +42,23 @@ expect () {
   fi
 }
 
-version=$(python get_version.py)
+VERSION=$(python get_version.py)
+DISTRIBUTION_NAME=framework-determinism
+PACKAGE_NAME=fwd9m
 
 OK=0
 ERROR=1
 
-expect $OK    "Successfully installed tensorflow-determinism" \
+expect $OK    "Successfully installed ${DISTRIBUTION_NAME}" \
               ./install_package.sh
 
-expect $OK    "Expected exception (TypeError) caught: tfdeterminism: TensorFlow inside NGC containers does not require patching" \
+expect $OK    "Expected exception (TypeError) caught: ${PACKAGE_NAME}: TensorFlow inside NGC containers does not require patching" \
               ./container.sh nvcr.io/nvidia/tensorflow:19.09-py2 python test_patch_apply.py --expected-exception TypeError
 
-expect $OK    "Expected exception (TypeError) caught: tfdeterminism: No patch available for version 1.13.1 of TensorFlow" \
+expect $OK    "Expected exception (TypeError) caught: ${PACKAGE_NAME}: No patch available for version 1.13.1 of TensorFlow" \
               ./container.sh tensorflow/tensorflow:1.13.1-gpu python test_patch_apply.py --expected-exception TypeError
 
-expect $OK    "TensorFlow version 1.14.0 has been patched using tfdeterminism version ${version}"  \
+expect $OK    "TensorFlow version 1.14.0 has been patched using ${PACKAGE_NAME} version ${VERSION}"  \
               ./container.sh tensorflow/tensorflow:1.14.0-gpu python test_patch_apply.py
 
 expect $OK    "" \

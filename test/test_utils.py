@@ -21,6 +21,16 @@ from tfdeterminism.utils import _Version as Version
 
 class TestUtils(unittest.TestCase):
 
+  def test_attributes(self):
+    major = 1
+    minor = 2
+    version_string = "%d.%d.3" % (major, minor)
+    v = Version(version_string)
+    self.assertEqual(v.original_version_string, version_string)
+    self.assertEqual(v.major_minor_version_string, version_string[0:3])
+    self.assertEqual(v.major, major)
+    self.assertEqual(v.minor, minor)
+
   def test_version_class(self):
     v = Version('23.45.26')
     self.assertTrue (v.in_list(['1.2', '2.8', '23.45']))

@@ -14,7 +14,7 @@
 # ========================================================================
 
 import sys
-sys.path.insert(0,'../tfdeterminism')
+sys.path.insert(0,'../fwd9m')
 from version import __version__
 
 def get_version():
