@@ -65,7 +65,7 @@ def _patch():
       yet been implemented), or (2) if there is an attempt to apply the patch
       inside an NGC TF container (where it should not be needed).
   """
-  print("WARNING from %s: patch has been deprected. "
+  print("WARNING from %s: patch has been deprecated. "
         "Please use enable_determinism (which supports all versions "
         "of TensorFlow)." % package_name)
   if os.environ.get('NVIDIA_TENSORFLOW_VERSION'):

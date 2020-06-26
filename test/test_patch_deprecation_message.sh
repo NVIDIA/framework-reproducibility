@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2019 NVIDIA Corporation. All Rights Reserved
+# Copyright 2020 NVIDIA Corporation. All Rights Reserved
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
 # limitations under the License.
 # ========================================================================
 
-set -e # All the following tests should return a zero exit code
+WARNING="WARNING from fwd9m: patch has been deprecated. Please use enable_determinism (which supports all versions of TensorFlow)."
 
-./test_patch_deprecation_message.sh
-
-# The following should be run in any container
-python test_misc.py
-python test_utils.py
-
-# The following should be run in only some containers
-python test_patch_bias_add.py
+echo "Testing that patch produces a deprecation warning"
+if python test_patch_apply.py | grep -q "${WARNING}"; then
+   echo "Expected warning produced"
+   exit 0
+else
+   echo "Expected warning NOT produced"
+   exit 1
+fi
