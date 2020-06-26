@@ -1,5 +1,20 @@
 # TensorFlow Determinism
 
+## Announcement
+
+In the next release of this package (version 0.4), the distribution name will be
+changed from `tensorflow-determinism` to `framework-determinism` and the package
+name will be changed from `tfdeterminism` to `fwd9m`. These changes reflect an
+intention going forward for this repo to increasingly support determinism in
+multiple deep learning frameworks.
+
+Users of `tfdeterminism.patch` will need to use the to-be-deprecated
+`fwd9m.tensorflow.patch` and will be encouraged to migrate to using
+`fwd9m.tensorflow.enable_determinism` instead, which is intended to provide
+compatibility, indefinitely, with future versions of TensorFlow.
+
+## Introduction
+
 This repository serves three purposes:
 
   1. Provide up-to-date information (in this file) about non-determinism
