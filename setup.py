@@ -33,8 +33,7 @@ readme = os.path.join(os.path.dirname(os.path.realpath(__file__)), "README.md")
 with open(readme, "r") as fp:
   long_description = fp.read()
 
-description = ("Tracking, debugging, and patching non-determinism "
-               "in the DL frameworks")
+description = ("Providing determinism in the DL frameworks")
 url = "https://github.com/NVIDIA/%s" % distribution_name
 install_requires = [] # intentionally not including the framework packages
 
