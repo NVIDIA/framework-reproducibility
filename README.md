@@ -149,6 +149,12 @@ TensorFlow with GPU support.
 
 ### Additional Ingredients in the Determinism Recipe
 
+Deterministic op functionality, such as that enabled by
+`TF_DETERMINISTIC_OPS=1`, can only contribute to fully-deterministic operation
+of a model or training regime in the context of a deterministic system. The
+following are notes on various other items that must be addressed in order to
+ensure that your model trains or infers with prefect reproducibility.
+
 #### Seeds ####
 
 You'll also need to set any and all appropriate random seeds:
@@ -226,6 +232,22 @@ process uses the same stateful data pipeline as the training data-loader then
 these two processes will also run in separate threads and you'll wind up with
 the same problem. In this case, you need to set `workers` to `0` (zero), which
 will cause the data-loader to be run in the main thread.
+
+#### While Loop Parallelism ####
+
+The use of `tf.while_loop` when `parallel_iterations` is greater than 1 (note
+that 10 is the default) may introduce non-determinism into model functionality.
+Additionally, the [AutoGraph Transformations][6], that operate while compiling
+code into a graph when (TF2 API) `tf.function` (or the use of the @tf.function
+decorator) is used, may lead to [loops][7] being implemented using
+`tf.while_loop` and, therefore, parallelized.
+
+The current work-around, to prevent this non-determinism, is to use
+`tf.autograph.experimental.set_loop_options` inside the `for` loop, with
+`parallel_iterations=1`.
+
+It has not yet been determined if this non-determinism is specific to operation
+on a GPU or if it is a general issue in TensorFlow.
 
 #### Gradient Gating ####
 
@@ -326,15 +348,6 @@ Notes:
     the default `interpolation` setting). The solution in TF 2.3 depends upon
     [PR 39243](https://github.com/tensorflow/tensorflow/pull/39243) getting
     approved and merged before that version snaps.
-  * As of TensorFlow 2.0 onwards, the use of `tf.function' (for example, as a
-    decorator), results in AutoGraph compiling your code into a graph. One
-    conversion that takes place is the replacing of `for` loops with TensorFlow's
-    `while_loop`. By default, the `while_loop` runs with 10 parallel iterations
-    which introduces another source of non-determinism. To prevent this, please use
-    `tf.autograph.experimental.set_loop_options` inside the `for` loop with 
-    `parallel_iterations` set to `1`.
-
-    
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
 
@@ -379,6 +392,8 @@ the op injects non-determinism into the computation.
   in version 1.14 of TensorFlow.
 * `tf.data.Dataset` with more than one shard (aka worker). The work-around is to
   use only one shard.
+* `tf.while_loop` with `parallel_iterations` > 1 (default is 10). See
+  [While Loop Parallelism](#while-loop-parallelism)
 
 ### Sources of Non-Determinism Beyond TensorFlow
 
@@ -389,12 +404,13 @@ the op injects non-determinism into the computation.
 * Horovod Tensor Fusion. Work-around: disable Tensor Fusion by setting the
   environment variable `HOROVOD_FUSION_THRESHOLD` to '0'. See Horovod
   [PR 1130][503].
-* Before this project started, PyTorch was widely considered to have a more
-  complete and coherent GPU determinism story than TensorFlow. At the time of
-  writing (2020-02-25), it is no longer clear that one framework is superior to
-  the other in this regard. For more information about determinism in PyTorch,
-  see the [reproducibility documentation](http://bit.ly/pytorch-determinism) in
-  the PyTorch repo.
+* Before this project started (in 2018), PyTorch was widely considered to have a
+  more complete and coherent GPU determinism story than TensorFlow. At the time
+  of writing (2020-02-25), it is no longer clear that one framework is superior
+  to the other in this regard. For more information about determinism in
+  PyTorch, see the
+  [reproducibility documentation](http://bit.ly/pytorch-determinism) in the
+  PyTorch repo.
 
 ## Relevant Links
 
@@ -533,6 +549,7 @@ Jussi Rasanen,
 Duncan Riach (PIC),
 Josh Romero,
 Mikko Ronkainen,
+Gavin Seegoolam,
 Dilip Sequeria,
 Matthijs De Smedt,
 Valentina Taviani,
@@ -549,3 +566,5 @@ William Zhang.
 [3]: https://www.tensorflow.org/install/gpu
 [4]: https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#atomic-functions
 [5]: https://numpy.org/doc/stable/reference/random/generator.html
+[6]: https://www.tensorflow.org/guide/function#autograph_transformations
+[7]: https://www.tensorflow.org/guide/function#loops
