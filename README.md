@@ -2,11 +2,11 @@
 
 ## Announcement
 
-In the next release of this package (version 0.4), the distribution name will be
-changed from `tensorflow-determinism` to `framework-determinism` and the package
-name will be changed from `tfdeterminism` to `fwd9m`. These changes reflect an
-intention going forward for this repo to increasingly support determinism in
-multiple deep learning frameworks.
+In the next release of this package (version 0.4.0), the distribution name will
+be changed from `tensorflow-determinism` to `framework-determinism` and the
+package name will be changed from `tfdeterminism` to `fwd9m`. These changes
+reflect an intention going forward for this repo to increasingly support
+determinism in multiple deep learning frameworks.
 
 Users of `tfdeterminism.patch` will need to use the to-be-deprecated
 `fwd9m.tensorflow.patch` and will be encouraged to migrate to using

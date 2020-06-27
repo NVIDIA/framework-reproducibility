@@ -15,6 +15,7 @@ Then you should be able to run `./all.sh` and observe the final message.
 ## Things to do before next release
 
   * Add integration tests for enable_determinism
-  * Move TensorFlow-related functionality into tensorflow subdirectory
   * Factor integration test run/test mechanism for others to use
-  * Update documentation
+  * Update documentation organization to reflect multiple frameworks
+  * Update documentation to cover `enable_determinism`
+  * Potentially add translation from GitHub to PyPI documentation.

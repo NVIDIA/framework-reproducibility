@@ -52,13 +52,13 @@ ERROR=1
 expect $OK    "Successfully installed ${DISTRIBUTION_NAME}" \
               ./install_package.sh
 
-expect $OK    "Expected exception (TypeError) caught: ${PACKAGE_NAME}: TensorFlow inside NGC containers does not require patching" \
+expect $OK    "Expected exception (TypeError) caught: ${PACKAGE_NAME}.tensorflow.patch: TensorFlow inside NGC containers does not require patching" \
               ./container.sh nvcr.io/nvidia/tensorflow:19.09-py2 python test_patch_apply.py --expected-exception TypeError
 
-expect $OK    "Expected exception (TypeError) caught: ${PACKAGE_NAME}: No patch available for version 1.13.1 of TensorFlow" \
+expect $OK    "Expected exception (TypeError) caught: ${PACKAGE_NAME}.tensorflow.patch: No patch available for version 1.13.1 of TensorFlow" \
               ./container.sh tensorflow/tensorflow:1.13.1-gpu python test_patch_apply.py --expected-exception TypeError
 
-expect $OK    "TensorFlow version 1.14.0 has been patched using ${PACKAGE_NAME} version ${VERSION}"  \
+expect $OK    "TensorFlow version 1.14.0 has been patched using ${PACKAGE_NAME}.tensorflow.patch version ${VERSION}"  \
               ./container.sh tensorflow/tensorflow:1.14.0-gpu python test_patch_apply.py
 
 expect $OK    "" \
@@ -72,6 +72,11 @@ expect $OK    "" \
 
 expect $OK    "" \
               ./container.sh tensorflow/tensorflow:2.0.0-gpu test_patch.sh
+
+# enable_determinism tests
+
+expect $OK    "${PACKAGE_NAME}.tensorflow.enable_determinism (version ${VERSION}) has been applied to TensorFlow version 2.0.0" \
+              ./container.sh tensorflow/tensorflow:2.0.0-gpu python test_enable_determinism_apply.py
 
 echo "${PASS_COUNT} tests passed"
 echo "${FAIL_COUNT} tests failed"

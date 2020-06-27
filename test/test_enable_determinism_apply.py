@@ -1,6 +1,4 @@
-#!/bin/bash
-
-# Copyright 2020 NVIDIA Corporation. All Rights Reserved
+# Copyright 2019 NVIDIA Corporation. All Rights Reserved
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,13 +13,15 @@
 # limitations under the License.
 # ========================================================================
 
-WARNING="WARNING: fwd9m.tensorflow.patch has been deprecated. Please use enable_determinism (which supports all versions of TensorFlow)."
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
-echo "Testing that patch produces a deprecation warning"
-if python test_patch_apply.py | grep -q "${WARNING}"; then
-   echo "Expected warning produced"
-   exit 0
-else
-   echo "Expected warning NOT produced"
-   exit 1
-fi
+import sys
+
+import tensorflow as tf
+
+sys.path.insert(0, '..')
+
+from fwd9m.tensorflow import enable_determinism
+enable_determinism()

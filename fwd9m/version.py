@@ -13,5 +13,4 @@
 # limitations under the License.
 # ========================================================================
 
-_package_name = "fwd9m"
 __version__ = "0.4.0"

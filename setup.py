@@ -25,9 +25,8 @@ package_name = 'fwd9m'
 # appending to sys.path, it's possible to just import from the version module.
 import sys
 sys.path.append(package_name)
-from version import _package_name, __version__ as version
+from version import __version__ as version
 sys.path.remove(package_name)
-assert package_name == _package_name
 
 readme = os.path.join(os.path.dirname(os.path.realpath(__file__)), "README.md")
 with open(readme, "r") as fp:

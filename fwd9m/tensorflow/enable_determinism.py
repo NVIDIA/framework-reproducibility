@@ -17,12 +17,15 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import inspect
 import os
+import re
 
 import tensorflow as tf
 
 from .patch import _patch_bias_add
-from .utils import _Version as Version
+from ..utils import _Version as Version
+from ..version import __version__ as package_version
 
 def _enable_determinism(seed=None):
   """Provides a best-effort recipe to increase framework determinism when
@@ -55,4 +58,7 @@ def _enable_determinism(seed=None):
   if in_ngc_cont and ngc_vers.at_least('19.06') or tf_vers.at_least('1.14'):
     # Apply the fused softmax/cross-entropy patch here
     pass
-  # TODO: Add other recipe items 
+  # TODO: Add other recipe items
+  print("%s (version %s) has been applied to TensorFlow "
+        "version %s" % (__name__, package_version,
+                        tf_vers.original_version_string))
