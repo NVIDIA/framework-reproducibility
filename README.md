@@ -160,6 +160,7 @@ ensure that your model trains or infers with prefect reproducibility.
 You'll also need to set any and all appropriate random seeds:
 
 ```
+SEED = 123
 os.environ['PYTHONHASHSEED']=str(SEED)
 random.seed(SEED)
 np.random.seed(SEED)
