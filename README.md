@@ -118,6 +118,7 @@ version is based on:
  19.07 - 19.10        | 1.14               |
  19.11 - 20.01        | 1.15 / 2.0         |
  20.02 - 20.03        | 1.15 / 2.1         |
+ 20.06                | 1.15 / 2.2         |
 
 For information about pulling and running the NVIDIA NGC Docker images, see
 [these instructions][2].
@@ -305,7 +306,7 @@ by default when running on a GPU.
  XLA reductions on GPU                                                | NS                     | NS                     | TDO        | TDO        |
  Fused softmax/cross-entropy ops backprop (see note)                  | NS                     | NS                     | NS         | NS         |
 
- Source                                                               | TF <2.2   | NGC 20.03+ | TF 2.3 ? |
+ Source                                                               | TF <2.2   | NGC 20.03+ | TF 2.4 ? |
 :---------------------------------------------------------------------|:----------|:-----------|:---------|
  `tf.image.resize_bilinear` backprop (see note)                       | NS        | TDO        | TDO      |
 
