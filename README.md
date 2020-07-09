@@ -203,9 +203,12 @@ and their operation will not be repducible.
 
 #### Dataset Sharding ####
 
-If you're using `tf.data.Dataset`, you should not shard the dataset. This
+~~If you're using `tf.data.Dataset`, you should not shard the dataset. This
 is achieved by either not calling the `shard()` method, or by setting its
-`num_shards` parameter to 1.
+`num_shards` parameter to 1.~~
+
+From at least TensorFlow 2.2 onward, if not earlier, `tf.data.Dataset::shard`
+appears to operate deterministically.
 
 #### Data-Loader Parallelism ####
 
