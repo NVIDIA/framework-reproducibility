@@ -257,7 +257,8 @@ on a GPU or if it is a general issue in TensorFlow.
 #### Gradient Gating ####
 
 For deterministic functionality, some types of models may require
-`gate_gradients=tf.train.Optimizer.GATE_OP` in the session config.
+`gate_gradients=tf.train.Optimizer.GATE_OP` in the session config. I have never
+actually seen this be required though.
 
 #### Multi-GPU using Horovod ####
 
