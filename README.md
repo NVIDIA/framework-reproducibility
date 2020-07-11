@@ -438,7 +438,7 @@ Number                                                         | Title          
 [38151](https://github.com/tensorflow/tensorflow/issues/38151) | Test deterministic cuDNN CTC loss                                                     | 2020-04-01  | Open   |
 [38185](https://github.com/tensorflow/tensorflow/issues/38185) | Add GPU-deterministic back-prop for fused softmax/cross-entropy ops                   | 2020-04-02  | Open   |
 [38197](https://github.com/tensorflow/tensorflow/issues/38197) | Model not deterministic ...                                                           | 2020-04-03  | Open   |
-[40514](https://github.com/tensorflow/tensorflow/issues/40514) | BERT: Non-deterministic on GPU ...                                                    | 2020-06-16  | Open   |
+[40514](https://github.com/tensorflow/tensorflow/issues/40514) | BERT: Non-deterministic on GPU ...                                                    | 2020-06-16  | Closed |
 
 ### Related Project Issues
 
@@ -523,6 +523,7 @@ ID                                                     | Title                  
 Here are the names of some of the people who have helped out with this project.
 If any names are missing, then please let us know.
 
+Christoph Angerer,
 Ben Barsdell,
 Kevin Brown,
 Carl Case,
@@ -533,6 +534,7 @@ Sanjoy Das,
 Timo Denk,
 Luke Durant,
 Marc Edgar,
+Adam Ellsworth,
 Mostafa Hagog,
 Kaixi Hou,
 George Karpenkov,
