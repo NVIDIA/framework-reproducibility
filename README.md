@@ -33,6 +33,17 @@ topic.
 
 ## Installation
 
+Note that, currently, you only need to install and use this package if you're
+using a version of TensorFlow for which there is a determinism patch available.
+There is currently no patch available for TensorFlow versions 2.1 or greater
+because the effect of the patch that was developed for earlier versions has been
+upstreamed into these newer versions.
+
+The next release of this package (version 0.4.0) will include an
+`enable_determinism` function that can be applied to any version of TensorFlow
+to obtain the latest and best solutions, including any new patches (including
+for earlier versions of TensorFlow).
+
 Use `pip` to install:
 
 ```
@@ -50,30 +61,30 @@ TensorFlow before you can import and use `tfdeterminism`.
 There are currently three ways to access GPU-deterministic op functionality in
 TensorFlow for most deep learning applications:
 
-1. Use stock TensorFlow version 2.1, which implements nearly all of the
-   currently-available solutions. It does not require patching.
-2. Use an NVIDIA NGC TensorFlow Docker image (version >= 19.06). Version
-   19.12 implements [multi-algorithm deterministic cuDNN convolutions][1003].
+1. Use stock TensorFlow version 2.2, which implements most of the
+   currently-available deterministic op solutions. It does not require patching.
+2. Use an NVIDIA NGC TensorFlow Docker image (version >= 19.06).
+   Note that version 20.03+ implements deterministic backprop for bilinear
+   resizing, which has not yet been released in stock TensorFlow.
 3. Use version 1.14, 1.15, or 2.0 of stock TensorFlow with GPU support, plus the
-   application of a patch supplied in this repo.
+   application of `tfdeterminism.patch`. Version 2.1 of stock TensorFlow
+   does not require patching and includes almost all of the available
+   deterministic op solitions, except for
+   [multi-algorithm deterministic cuDNN convolutions][1003].
 
 The long-term intention and plan is to continue upstreaming all solutions into
 stock TensorFlow.
 
-Currently, GPU determinism is more thoroughly supported when XLA is not used.
+### Stock TensorFlow Version 2.2
 
-### Stock TensorFlow Version 2.1
-
-Stock TensorFlow version 2.1 implements nearly all of the currently-available
-GPU-deterministic op solutions. It is missing
-[multi-algorithm deterministic cuDNN convolutions][1003], which you may not
-require. First, try using TF 2.1; if it throws an exception with the
-message "No algorithm worked!" then you will need to use
+Stock TensorFlow version 2.2 implements most of the currently-available
+GPU-deterministic op solutions. It is missing deterministic backprop for
+bilinear resizing, which is provided by
 [NGC TF Docker image](#nvidia-gpu-cloud-ngc-tensorflow-docker-images) version
-19.12.
+20.03+.
 
 The following Python code is running on a machine in which `pip` package
-`tensorflow=2.1.0` has been installed correctly.
+`tensorflow=2.2.0` has been installed correctly.
 
 ```
 import tensorflow as tf
@@ -82,10 +93,10 @@ os.environ['TF_DETERMINISTIC_OPS'] = '1'
 # Now build your graph and train it
 ```
 
-Stock TensorFlow version 2.1 with GPU support can be installed as follows:
+Stock TensorFlow version 2.2 with GPU support can be installed as follows:
 
 ```
-pip install tensorflow=2.1.0
+pip install tensorflow=2.2.0
 ```
 
 The TensorFlow project includes [detailed instructions][3] for installing
@@ -94,10 +105,11 @@ TensorFlow with GPU support.
 ### NVIDIA GPU Cloud (NGC) TensorFlow Docker Images
 
 NGC TensorFlow Docker images, starting with version 19.06, implement
-GPU-deterministic op functionality. Version 19.12 also implements
+GPU-deterministic op functionality. Version 19.12 (and beyond) also implements
 [multi-algorithm deterministic cuDNN convolutions][1003], which solves the
 problem of some layer configurations causing an exception to be thrown with the
-message "No algorithm worked!".
+message "No algorithm worked!". Version 20.03 (and beyond) also implements
+deterministic backprop for bilinear resizing.
 
 In Python code running inside the container, deterministic ops can be enabled
 as follows:
@@ -310,7 +322,7 @@ by default when running on a GPU.
  XLA reductions on GPU                                                | NS                     | NS                     | TDO        | TDO        |
  Fused softmax/cross-entropy ops backprop (see note)                  | NS                     | NS                     | NS         | NS         |
 
- Source                                                               | TF <2.2   | NGC 20.03+ | TF 2.4 ? |
+ Source                                                               | TF < 2.4  | NGC 20.03+ | TF 2.4 ? |
 :---------------------------------------------------------------------|:----------|:-----------|:---------|
  `tf.image.resize_bilinear` backprop (see note)                       | NS        | TDO        | TDO      |
 
