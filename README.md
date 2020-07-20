@@ -69,7 +69,7 @@ TensorFlow for most deep learning applications:
 3. Use version 1.14, 1.15, or 2.0 of stock TensorFlow with GPU support, plus the
    application of `tfdeterminism.patch`. Version 2.1 of stock TensorFlow
    does not require patching and includes almost all of the available
-   deterministic op solitions, except for
+   deterministic op solutions, except for
    [multi-algorithm deterministic cuDNN convolutions][1003].
 
 The long-term intention and plan is to continue upstreaming all solutions into
