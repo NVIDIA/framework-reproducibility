@@ -325,7 +325,7 @@ by default when running on a GPU.
  Source                                                               | TF < 2.4  | NGC 20.03+ | TF 2.4 ? |
 :---------------------------------------------------------------------|:----------|:-----------|:---------|
  `tf.image.resize_bilinear` backprop (see note)                       | NS        | TDO        | TDO      |
-
+ `tf.image.resize_nearest_neighbor` backprop (see note)               | NS        | NS         | NS       |
 
 Key to the solutions refenced above:
 
@@ -359,13 +359,20 @@ Notes:
     you're using `tf.keras`, select the activation on the final `Dense` layer to
     be 'softmax' and then select `tf.keras.losses.categorical_crossentropy` for
     the loss function.
-  * `tf.image.resize_bilinear` (TF 1 API): In the TF 2 API, this functionality
+  * `tf.image.resize_bilinear` (TF1 API): In the TF2 API, this functionality
     is accessed via `tf.image.resize` with `method=ResizeMethod.BILINEAR` (which
     is the default `method` setting). It is also exposed through
     `tf.keras.layers.UpSampling2D` with `interpolation='bilinear'` (which is not
     the default `interpolation` setting). The solution in TF 2.3 depends upon
     [PR 39243](https://github.com/tensorflow/tensorflow/pull/39243) getting
     approved and merged before that version snaps.
+  * `tf.image.resize_nearest_neighbor` (TF1 API): In the TF2 API, this
+    functionality is accessed via `tf.image.resize` with `method='nearest'`. It
+    is also exposed through `tf.keras.layers.UpSampling2D` with
+    `interpolation='nearest'`. A potential work-around is to use
+    `tf.keras.layers.Conv2DTranspose` (see issues
+    [#12](https://github.com/NVIDIA/framework-determinism/issues/12) and
+    [#24](https://github.com/NVIDIA/framework-determinism/issues/24))
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
 
@@ -378,7 +385,6 @@ candidates for the injection of non-determinism.
 * `scatter_functor_gpu.cu.h`
 * `scatter_nd_op_gpu.cu.cc`
 * `sparse_tensor_dense_matmul_op_gpu.cu.cc`
-* `resize_nearest_neighbor_op_gpu.cu.cc`
 * `segment_reduction_ops.h`
 * `segment_reduction_ops_gpu.cu.cc`
 * `dilation_ops_gpu.cu.cc`
@@ -542,6 +548,7 @@ Carl Case,
 Bryan Catanzaro,
 Sharan Chetlur,
 Joey Conway,
+Emilio Coutinho,
 Sanjoy Das,
 Timo Denk,
 Luke Durant,
