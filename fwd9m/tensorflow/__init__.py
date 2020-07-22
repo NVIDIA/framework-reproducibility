@@ -1,4 +1,4 @@
-# Copyright 2019 NVIDIA Corporation. All Rights Reserved
+# Copyright 2019 NVIDIA. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,20 +13,9 @@
 # limitations under the License.
 # ========================================================================
 
-import sys
-import unittest
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
-sys.path.insert(0, '..')
-from fwd9m import __version__ as fwd9m_version
-import fwd9m
-from get_version import get_version
-
-class TestMisc(unittest.TestCase):
-
-  def test_version(self):
-    expected_version = get_version()
-    self.assertEqual(fwd9m_version, expected_version)
-    self.assertEqual(fwd9m.__version__, expected_version)
-
-if __name__ == '__main__':
-  unittest.main()
+from .enable_determinism import _enable_determinism as enable_determinism
+from .patch import _patch as patch

@@ -13,20 +13,15 @@
 # limitations under the License.
 # ========================================================================
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import sys
-import unittest
+
+import tensorflow as tf
 
 sys.path.insert(0, '..')
-from fwd9m import __version__ as fwd9m_version
-import fwd9m
-from get_version import get_version
 
-class TestMisc(unittest.TestCase):
-
-  def test_version(self):
-    expected_version = get_version()
-    self.assertEqual(fwd9m_version, expected_version)
-    self.assertEqual(fwd9m.__version__, expected_version)
-
-if __name__ == '__main__':
-  unittest.main()
+from fwd9m.tensorflow import enable_determinism
+enable_determinism()

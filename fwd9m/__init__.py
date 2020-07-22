@@ -1,4 +1,4 @@
-# Copyright 2019 NVIDIA Corporation. All Rights Reserved
+# Copyright 2020 NVIDIA. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,4 +13,8 @@
 # limitations under the License.
 # ========================================================================
 
-__version__ = "0.3.0"
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+from .version import __version__

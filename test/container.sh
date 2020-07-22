@@ -35,6 +35,8 @@ else
   IMAGE=${1}
   if [ "${2}" == "python" ]; then
     ENTRYPOINT="--entrypoint python"
+  elif [ "${2}" == "bash" ]; then
+    ENTRYPOINT="--entrypoint bash"
   else
     ENTRYPOINT="--entrypoint /mnt/test/${2}"
   fi

@@ -17,5 +17,11 @@
 
 set -e # All the following tests should return a zero exit code
 
+./test_patch_deprecation_message.sh
+
+# The following should be run in any container
 python test_misc.py
+python test_utils.py
+
+# The following should be run in only some containers
 python test_patch_bias_add.py

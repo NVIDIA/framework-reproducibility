@@ -29,7 +29,7 @@ if len(sys.argv) > 2 and sys.argv[1] == "--expected-exception":
   if expected_exception_string == "TypeError":
     expected_exception = TypeError
 
-from tfdeterminism import patch
+from fwd9m.tensorflow import patch
 try:
   patch()
 except expected_exception as e:

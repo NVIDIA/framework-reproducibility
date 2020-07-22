@@ -46,7 +46,8 @@ from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import nn
 from tensorflow.python.ops import nn_ops
 
-from .version import __version__
+from ..utils import _Version as Version
+from ..version import __version__ as package_version
 
 def _patch():
   """Patches TensorFlow to increase determinism when running on GPUs.
@@ -63,19 +64,22 @@ def _patch():
       yet been implemented), or (2) if there is an attempt to apply the patch
       inside an NGC TF container (where it should not be needed).
   """
+  print("WARNING: %s has been deprecated. Please use enable_determinism (which "
+        "supports all versions of TensorFlow)." % __name__)
   if os.environ.get('NVIDIA_TENSORFLOW_VERSION'):
-    raise TypeError("tfdeterminism: TensorFlow inside NGC containers does not "
-                    "require patching")
-  tf_version = tf.version.VERSION
-  if re.match("(1\.(14|15)|2\.0)", tf_version):
+    raise TypeError("%s: TensorFlow inside NGC containers does not "
+                    "require patching" % __name__)
+  tf_vers = Version(tf.version.VERSION)
+  if tf_vers.between('1.14', '2.0'):
     os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
     _patch_bias_add()
-    print("TensorFlow version %s has been patched "
-          "using tfdeterminism version %s" %
-          (tf_version, __version__), file=sys.stderr)
+    # Apply the fused softmax/cross-entropy patch here
+    print("TensorFlow version %s has been patched using %s version %s" %
+          (tf_vers.original_version_string, __name__,
+           package_version))
   else:
-    raise TypeError("tfdeterminism: No patch available "
-                    "for version %s of TensorFlow" % tf_version)
+    raise TypeError("%s: No patch available for version %s of TensorFlow" %
+                    (__name__, tf_vers.original_version_string))
 
 def _patch_bias_add():
   tf.nn.bias_add = _new_bias_add_1_14 # access via public API
