@@ -311,9 +311,6 @@ by default when running on a GPU.
 
 #### Confirmed Current GPU-Specific Sources of Non-Determinism (With Solutions)
 
-The following table has been split only in an attept to make the data fit better
-on the page.
-
  Source                                                               | TF 1.14, 1.15,<br>2.0  | NGC 19.06+ /<br>TF 2.1 | TF 2.2     | TF 2.3     |
 :---------------------------------------------------------------------|:-----------------------|:-----------------------|:-----------|:-----------|
  TF auto-tuning of cuDNN convolution algorithms (see multi-algo note) | TCD or TDP             | TDO                    | TDO        | TDO        |
