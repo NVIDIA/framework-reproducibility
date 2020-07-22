@@ -311,16 +311,16 @@ by default when running on a GPU.
 
 #### Confirmed Current GPU-Specific Sources of Non-Determinism (With Solutions)
 
- Source                                                               | TF 1.14, 1.15,<br>2.0  | NGC 19.06+ /<br>TF 2.1 | TF 2.2     | TF 2.3     |
-:---------------------------------------------------------------------|:-----------------------|:-----------------------|:-----------|:-----------|
- TF auto-tuning of cuDNN convolution algorithms (see multi-algo note) | TCD or TDP             | TDO                    | TDO        | TDO        |
- cuDNN convolution backprop to weight gradients                       | TCD or TDP             | TDO                    | TDO        | TDO        |
- cuDNN convolution backprop to data gradients                         | TCD or TDP             | TDO                    | TDO        | TDO        |
- cuDNN max-pooling backprop                                           | TCD or TDP             | TDO                    | TDO        | TDO        |
- cuDNN CTC loss                                                       | NS                     | NS                     | NS         | TDO        |
- `tf.nn.bias_add` backprop (see XLA note)                             | TDP                    | TDO                    | TDO        | TDO        |
- XLA reductions on GPU                                                | NS                     | NS                     | TDO        | TDO        |
- Fused softmax/cross-entropy ops backprop (see note)                  | NS                     | NS                     | NS         | NS         |
+ Source                                                                  | TF 1.14, 1.15,<br>2.0  | NGC 19.06+ /<br>TF 2.1 | TF 2.2     | TF 2.3     |
+:------------------------------------------------------------------------|:-----------------------|:-----------------------|:-----------|:-----------|
+ TF auto-tuning of cuDNN convolution algorithms (see<br>multi-algo note) | TCD or TDP             | TDO                    | TDO        | TDO        |
+ cuDNN convolution backprop to weight gradients                          | TCD or TDP             | TDO                    | TDO        | TDO        |
+ cuDNN convolution backprop to data gradients                            | TCD or TDP             | TDO                    | TDO        | TDO        |
+ cuDNN max-pooling backprop                                              | TCD or TDP             | TDO                    | TDO        | TDO        |
+ cuDNN CTC loss                                                          | NS                     | NS                     | NS         | TDO        |
+ `tf.nn.bias_add` backprop (see XLA note)                                | TDP                    | TDO                    | TDO        | TDO        |
+ XLA reductions on GPU                                                   | NS                     | NS                     | TDO        | TDO        |
+ Fused softmax/cross-entropy ops backprop (see note)                     | NS                     | NS                     | NS         | NS         |
 
  Source                                                               | TF < 2.4  | NGC 20.03+ | TF 2.4 ? |
 :---------------------------------------------------------------------|:----------|:-----------|:---------|
@@ -447,20 +447,20 @@ This section catalogs relevant links.
 
 GitHiub issues in the TensorFlow project:
 
-Number                                                         | Title                                                                                 | Date Opened | Status |
---------------------------------------------------------------:|:--------------------------------------------------------------------------------------|:------------|:-------|
- [2652](https://github.com/tensorflow/tensorflow/issues/2652)  | Backward pass of broadcasting on GPU is non-deterministic                             | 2016-06-03  | Closed |
- [2732](https://github.com/tensorflow/tensorflow/issues/2732)  | Mention that GPU reductions are nondeterministic in docs                              | 2016-06-08  | Closed |
-[13932](https://github.com/tensorflow/tensorflow/issues/13932) | Non-determinism from `tf.data.Dataset.map` with random ops                            | 2017-10-23  | Closed |
-[16889](https://github.com/tensorflow/tensorflow/issues/16889) | Problems Getting TensorFlow to behave Deterministically                               | 2018-02-09  | Open   |
-[18096](https://github.com/tensorflow/tensorflow/issues/18096) | Feature Request: Support for configuring deterministic options of cuDNN conv ...      | 2018-03-29  | Open   |
-[22398](https://github.com/tensorflow/tensorflow/issues/22398) | CUDA implementation of BiasAddGrad op is non-determinstic                             | 2018-09-19  | Closed |
-[29101](https://github.com/tensorflow/tensorflow/issues/29101) | Random seed not set in graph context of `Dataset#map`                                 | 2019-05-28  | Open   |
-[38151](https://github.com/tensorflow/tensorflow/issues/38151) | Test deterministic cuDNN CTC loss                                                     | 2020-04-01  | Open   |
-[38185](https://github.com/tensorflow/tensorflow/issues/38185) | Add GPU-deterministic back-prop for fused softmax/cross-entropy ops                   | 2020-04-02  | Open   |
-[38197](https://github.com/tensorflow/tensorflow/issues/38197) | Model not deterministic ...                                                           | 2020-04-03  | Open   |
-[39751](https://github.com/tensorflow/tensorflow/issues/39751) | Non-deterministic behaviour: tf.math.unsorted_segment_sum uses CUDA Atomic Operations | 2020-05-21  | Open   |
-[40514](https://github.com/tensorflow/tensorflow/issues/40514) | BERT: Non-deterministic on GPU ...                                                    | 2020-06-16  | Closed |
+Number                                                         | Title                                                                                    | Date Opened | Status |
+--------------------------------------------------------------:|:-----------------------------------------------------------------------------------------|:------------|:-------|
+ [2652](https://github.com/tensorflow/tensorflow/issues/2652)  | Backward pass of broadcasting on GPU is non-deterministic                                | 2016-06-03  | Closed |
+ [2732](https://github.com/tensorflow/tensorflow/issues/2732)  | Mention that GPU reductions are nondeterministic in docs                                 | 2016-06-08  | Closed |
+[13932](https://github.com/tensorflow/tensorflow/issues/13932) | Non-determinism from `tf.data.Dataset.map` with random ops                               | 2017-10-23  | Closed |
+[16889](https://github.com/tensorflow/tensorflow/issues/16889) | Problems Getting TensorFlow to behave Deterministically                                  | 2018-02-09  | Open   |
+[18096](https://github.com/tensorflow/tensorflow/issues/18096) | Feature Request: Support for configuring deterministic<br>options of cuDNN conv ...      | 2018-03-29  | Open   |
+[22398](https://github.com/tensorflow/tensorflow/issues/22398) | CUDA implementation of BiasAddGrad op is non-determinstic                                | 2018-09-19  | Closed |
+[29101](https://github.com/tensorflow/tensorflow/issues/29101) | Random seed not set in graph context of `Dataset#map`                                    | 2019-05-28  | Open   |
+[38151](https://github.com/tensorflow/tensorflow/issues/38151) | Test deterministic cuDNN CTC loss                                                        | 2020-04-01  | Open   |
+[38185](https://github.com/tensorflow/tensorflow/issues/38185) | Add GPU-deterministic back-prop for fused<br>softmax/cross-entropy ops                   | 2020-04-02  | Open   |
+[38197](https://github.com/tensorflow/tensorflow/issues/38197) | Model not deterministic, even though<br>os.environ['TF_DETERMINISTIC_OPS'] = '1' set     | 2020-04-03  | Open   |
+[39751](https://github.com/tensorflow/tensorflow/issues/39751) | Non-deterministic behaviour: tf.math.unsorted_segment_sum<br>uses CUDA Atomic Operations | 2020-05-21  | Open   |
+[40514](https://github.com/tensorflow/tensorflow/issues/40514) | TFBertForSequenceClassification: Non-deterministic when<br>training on GPU ...           | 2020-06-16  | Closed |
 
 ### Related Project Issues
 
@@ -480,29 +480,29 @@ TensorFlow GitHub repo that are directly related to this project. As we have
 seem to reference, or have some relationship with, "determinism" or
 "deterministic". As of 2020-01-30, that was 1,391 commits.
 
-ID                                                           | Title                                                         | Status | Date Merged | Version |
-------------------------------------------------------------:|:--------------------------------------------------------------|:-------|:------------|:--------|
-[24747](https://github.com/tensorflow/tensorflow/pull/24747) | Add cuDNN deterministic env variable (only for convolution).  | merged | 2019-01-15  | 1.14    |
-[25269](https://github.com/tensorflow/tensorflow/pull/25269) | Add deterministic cuDNN max-pooling                           | merged | 2019-01-30  | 1.14    |
-[25796](https://github.com/tensorflow/tensorflow/pull/25796) | Added tests for `TF_CUDNN_DETERMINISTIC`                      | merged | 2019-02-22  | 1.14    |
-[c2790][1001]<sup>1</sup>                                    | Add a decorator to disable autotuning during test executions. | merged | 2019-03-13  | 1.14    |
-[29667](https://github.com/tensorflow/tensorflow/pull/29667) | Add release note about `TF_CUDNN_DETERMINISTIC`               | merged | 2019-08-06  | 1.14    |
-[31389](https://github.com/tensorflow/tensorflow/pull/31389) | Enhance release notes related to `TF_CUDNN_DETERMINISTIC`     | merged | 2019-08-07  | 1.14    |
-[31465](https://github.com/tensorflow/tensorflow/pull/31465) | Add GPU-deterministic `tf.nn.bias_add`                        | merged | 2019-10-17  | 2.1     |
-[32979](https://github.com/tensorflow/tensorflow/pull/32979) | Fix typo in release note                                      | closed |             |         |
-[33483](https://github.com/tensorflow/tensorflow/pull/33483) | Fix small typo in v2.0.0 release note                         | merged | 2019-10-25  | 2.1     |
-[33803](https://github.com/tensorflow/tensorflow/pull/33803) | Enable tf.nn.bias_add python op tests to work in eager mode   | merged | 2020-02-12  | 2.2     |
-[33900](https://github.com/tensorflow/tensorflow/pull/33900) | Address problems with use_deterministic_cudnn test decorator  | merged | 2020-01-09  | 2.2     |
-[34887](https://github.com/tensorflow/tensorflow/pull/34887) | Add info about `TF_DETERMINISTIC_OPS` to v2.1 release notes   | merged | 2019-12-09  | 2.1     |
-[34951][1003]                                                | Add multi-algorithm deterministic cuDNN convolutions          | merged | 2020-01-27  | 2.2     |
-[35006](https://github.com/tensorflow/tensorflow/pull/35006) | Fix version 2.1 release note regarding TF_DETERMINISTIC_OPS   | merged | 2019-12-20  | 2.1     |
-[e3195][1002]<sup>1</sup>                                    | [XLA/GPU] Convert reduction into tree reduction using padding | merged | 2020-01-07  | 2.2     |
-[8b7a3][1004]<sup>1</sup>                                    | [XLA] Respect TF_DETERMINISTIC_OPS env variable for reductions| merged | 2020-02-19  | 2.2     |
-[37377](https://github.com/tensorflow/tensorflow/pull/37377) | [XLA] follow-up on GPU-deterministic reductions               | merged | 2020-03-09  | 2.3     |
-[9e096][1005]<sup>1</sup>                                    | Use the CUDNN_CTC_LOSS_ALGO_DETERMINISTIC algorithm ...       | merged | 2020-03-10  | 2.3     |
-[38089](https://github.com/tensorflow/tensorflow/pull/38089) | Add reminder to test deterministic cuDNN CTC loss             | closed |             |         |
-[38509](https://github.com/tensorflow/tensorflow/pull/38509) | List deterministic op func bug fixes in v2.2 release notes    | merged | 2020-04-15  | 2.2     |
-[39243](https://github.com/tensorflow/tensorflow/pull/39243) | GPU-deterministic tf.image.resize (bilinear)                  | open   |             |         |
+ID                                                           | Title                                                            | Status | Date Merged | Version |
+------------------------------------------------------------:|:-----------------------------------------------------------------|:-------|:------------|:--------|
+[24747](https://github.com/tensorflow/tensorflow/pull/24747) | Add cuDNN deterministic env variable (only<br>for convolution).  | merged | 2019-01-15  | 1.14    |
+[25269](https://github.com/tensorflow/tensorflow/pull/25269) | Add deterministic cuDNN max-pooling                              | merged | 2019-01-30  | 1.14    |
+[25796](https://github.com/tensorflow/tensorflow/pull/25796) | Added tests for `TF_CUDNN_DETERMINISTIC`                         | merged | 2019-02-22  | 1.14    |
+[c2790][1001]<sup>1</sup>                                    | Add a decorator to disable autotuning during<br>test executions. | merged | 2019-03-13  | 1.14    |
+[29667](https://github.com/tensorflow/tensorflow/pull/29667) | Add release note about `TF_CUDNN_DETERMINISTIC`                  | merged | 2019-08-06  | 1.14    |
+[31389](https://github.com/tensorflow/tensorflow/pull/31389) | Enhance release notes related to<br>`TF_CUDNN_DETERMINISTIC`     | merged | 2019-08-07  | 1.14    |
+[31465](https://github.com/tensorflow/tensorflow/pull/31465) | Add GPU-deterministic `tf.nn.bias_add`                           | merged | 2019-10-17  | 2.1     |
+[32979](https://github.com/tensorflow/tensorflow/pull/32979) | Fix typo in release note                                         | closed |             |         |
+[33483](https://github.com/tensorflow/tensorflow/pull/33483) | Fix small typo in v2.0.0 release note                            | merged | 2019-10-25  | 2.1     |
+[33803](https://github.com/tensorflow/tensorflow/pull/33803) | Enable tf.nn.bias_add python op tests<br>to work in eager mode   | merged | 2020-02-12  | 2.2     |
+[33900](https://github.com/tensorflow/tensorflow/pull/33900) | Address problems with use_deterministic_cudnn<br>test decorator  | merged | 2020-01-09  | 2.2     |
+[34887](https://github.com/tensorflow/tensorflow/pull/34887) | Add info about `TF_DETERMINISTIC_OPS` to v2.1<br>release notes   | merged | 2019-12-09  | 2.1     |
+[34951][1003]                                                | Add multi-algorithm deterministic cuDNN<br>convolutions          | merged | 2020-01-27  | 2.2     |
+[35006](https://github.com/tensorflow/tensorflow/pull/35006) | Fix version 2.1 release note regarding<br>TF_DETERMINISTIC_OPS   | merged | 2019-12-20  | 2.1     |
+[e3195][1002]<sup>1</sup>                                    | [XLA/GPU] Convert reduction into tree reduction<br>using padding | merged | 2020-01-07  | 2.2     |
+[8b7a3][1004]<sup>1</sup>                                    | [XLA] Respect TF_DETERMINISTIC_OPS env variable<br>for reductions| merged | 2020-02-19  | 2.2     |
+[37377](https://github.com/tensorflow/tensorflow/pull/37377) | [XLA] follow-up on GPU-deterministic reductions                  | merged | 2020-03-09  | 2.3     |
+[9e096][1005]<sup>1</sup>                                    | Use the CUDNN_CTC_LOSS_ALGO_DETERMINISTIC<br>algorithm ...       | merged | 2020-03-10  | 2.3     |
+[38089](https://github.com/tensorflow/tensorflow/pull/38089) | Add reminder to test deterministic cuDNN CTC loss                | closed |             |         |
+[38509](https://github.com/tensorflow/tensorflow/pull/38509) | List deterministic op func bug fixes in v2.2<br>release notes    | merged | 2020-04-15  | 2.2     |
+[39243](https://github.com/tensorflow/tensorflow/pull/39243) | GPU-deterministic tf.image.resize (bilinear)                     | open   |             |         |
  
 Notes:
   1. These are individual commits.
