@@ -311,6 +311,9 @@ by default when running on a GPU.
 
 #### Confirmed Current GPU-Specific Sources of Non-Determinism (With Solutions)
 
+The following table has been split only in an attept to make the data fit better
+on the page.
+
  Source                                                               | TF 1.14, 1.15,<br>2.0  | NGC 19.06+ /<br>TF 2.1 | TF 2.2     | TF 2.3     |
 :---------------------------------------------------------------------|:-----------------------|:-----------------------|:-----------|:-----------|
  TF auto-tuning of cuDNN convolution algorithms (see multi-algo note) | TCD or TDP             | TDO                    | TDO        | TDO        |
@@ -326,6 +329,7 @@ by default when running on a GPU.
 :---------------------------------------------------------------------|:----------|:-----------|:---------|
  `tf.image.resize_bilinear` backprop (see note)                       | NS        | TDO        | TDO      |
  `tf.image.resize_nearest_neighbor` backprop (see note)               | NS        | NS         | NS       |
+ `tf.math.unsorted_segment_sum` forward (see note)                    | NS        | NS         | NS       |
 
 Key to the solutions refenced above:
 
@@ -363,12 +367,9 @@ Notes:
     is accessed via `tf.image.resize` with `method=ResizeMethod.BILINEAR` (which
     is the default `method` setting). It is also exposed through
     `tf.keras.layers.UpSampling2D` with `interpolation='bilinear'` (which is not
-    the default `interpolation` setting). The solution in TF 2.3 depends upon
+    the default `interpolation` setting). The solution in TF 2.4 depends upon
     [PR 39243](https://github.com/tensorflow/tensorflow/pull/39243) getting
     approved and merged before that version snaps.
-  * [Issue 39751](https://github.com/tensorflow/tensorflow/issues/39751)
-    `tf.math.unsorted_segment_sum` is non-deterministic. Some functions affected
-    include `tf.gather` and `tfa.image.dense_image_warp` on backprop.
   * `tf.image.resize_nearest_neighbor` (TF1 API): In the TF2 API, this
     functionality is accessed via `tf.image.resize` with `method='nearest'`. It
     is also exposed through `tf.keras.layers.UpSampling2D` with
@@ -376,6 +377,10 @@ Notes:
     `tf.keras.layers.Conv2DTranspose` (see issues
     [#12](https://github.com/NVIDIA/framework-determinism/issues/12) and
     [#24](https://github.com/NVIDIA/framework-determinism/issues/24))
+  * `tf.math.unsorted_segment_sum`: other ops that are dependent on this op,
+    including `tf.gather` and `tfa.image.dense_image_warp` (both on the
+    backprop), therefore also operate nondeterministically. See
+    [Issue 39751](https://github.com/tensorflow/tensorflow/issues/39751)
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
 
@@ -388,8 +393,6 @@ candidates for the injection of non-determinism.
 * `scatter_functor_gpu.cu.h`
 * `scatter_nd_op_gpu.cu.cc`
 * `sparse_tensor_dense_matmul_op_gpu.cu.cc`
-* `segment_reduction_ops.h`
-* `segment_reduction_ops_gpu.cu.cc`
 * `dilation_ops_gpu.cu.cc`
 * `maxpooling_op_gpu.cu.cc`
 * `svd_op_gpu.cu.cc`
@@ -459,6 +462,7 @@ Number                                                         | Title          
 [38151](https://github.com/tensorflow/tensorflow/issues/38151) | Test deterministic cuDNN CTC loss                                                     | 2020-04-01  | Open   |
 [38185](https://github.com/tensorflow/tensorflow/issues/38185) | Add GPU-deterministic back-prop for fused softmax/cross-entropy ops                   | 2020-04-02  | Open   |
 [38197](https://github.com/tensorflow/tensorflow/issues/38197) | Model not deterministic ...                                                           | 2020-04-03  | Open   |
+[39751](https://github.com/tensorflow/tensorflow/issues/39751) | Non-deterministic behaviour: tf.math.unsorted_segment_sum uses CUDA Atomic Operations | 2020-05-21  | Open   |
 [40514](https://github.com/tensorflow/tensorflow/issues/40514) | BERT: Non-deterministic on GPU ...                                                    | 2020-06-16  | Closed |
 
 ### Related Project Issues
