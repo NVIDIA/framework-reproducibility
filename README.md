@@ -322,11 +322,11 @@ by default when running on a GPU.
  XLA reductions on GPU                                                   | NS                     | NS                     | TDO        | TDO        |
  Fused softmax/cross-entropy ops backprop (see note)                     | NS                     | NS                     | NS         | NS         |
 
- Source                                                               | TF < 2.4  | NGC 20.03+ | TF 2.4 ? |
-:---------------------------------------------------------------------|:----------|:-----------|:---------|
- `tf.image.resize_bilinear` backprop (see note)                       | NS        | TDO        | TDO      |
- `tf.image.resize_nearest_neighbor` backprop (see note)               | NS        | NS         | NS       |
- `tf.math.unsorted_segment_sum` forward (see note)                    | NS        | NS         | NS       |
+ Source                                                                         | TF < 2.4  | NGC 20.03+ | TF 2.4 ? |
+:-------------------------------------------------------------------------------|:----------|:-----------|:---------|
+ `tf.image.resize_bilinear` backprop (see note)                                 | NS        | TDO        | TDO      |
+ `tf.image.resize_nearest_neighbor` backprop (see note)                         | NS        | NS         | NS       |
+ `tf.math.segment_sum` and `tf.math.unsorted_segment_sum`<br>forward (see note) | NS        | NS         | NS       |
 
 Key to the solutions refenced above:
 
@@ -374,9 +374,10 @@ Notes:
     `tf.keras.layers.Conv2DTranspose` (see issues
     [#12](https://github.com/NVIDIA/framework-determinism/issues/12) and
     [#24](https://github.com/NVIDIA/framework-determinism/issues/24))
-  * `tf.math.unsorted_segment_sum`: other ops that are dependent on this op,
-    including `tf.gather` and `tfa.image.dense_image_warp` (both on the
-    backprop), therefore also operate nondeterministically. See
+  * `tf.math.segment_sum` and `tf.math.unsorted_segment_sum`: other ops that are
+    dependent on these ops, including `tf.gather` and
+    `tfa.image.dense_image_warp` (both on the backprop), therefore also operate
+    nondeterministically. See
     [Issue 39751](https://github.com/tensorflow/tensorflow/issues/39751)
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
