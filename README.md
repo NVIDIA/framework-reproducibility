@@ -268,9 +268,35 @@ on a GPU or if it is a general issue in TensorFlow.
 
 #### Gradient Gating ####
 
-For deterministic functionality, some types of models may require
-`gate_gradients=tf.train.Optimizer.GATE_OP` in the session config. I have never
-actually seen this be required though.
+In some TensorFlow API interfaces, it is possible to limit the amount of
+paralellism that is allowed during back-propagation calculations.
+
+If used, `tf.gradients` (not supported in eager execution) should have its
+`gate_gradients` parameter set to `True` (the default is `False`).
+
+The non-Keras, TF1 API optimizers, based on the `tf.compat.v1.train.Optimizer`,
+such as `tf.compat.v1.train.AdamOptimizer`, accept a `gate_gradients` parameter
+in their `minimize` and `compute_gradient` methods. If this is set to
+`tf.compat.v1.train.Optimizer.GATE_NONE` then there is an increased probability
+of introducing nondeterminism in the backprop. If not specified,`gate_gradients`
+defaults to `tf.compat.v1.train.Optimizer.GATE_OP`, which theoretically could
+lead to the introduction of nondeterminism, although I have not yet seen this
+happen in a real application. The setting of this parameter that minimizes
+parallelism in the backprop calculation (and leads to the lowest performance)
+is `tf.compat.v1.train.Optimizer.GATE_GRAPH`. If you've removed all other
+sources of nondeterminism and nondeterminism is still being introducted
+somewhere, then you could try this setting, if it's available to you. I don't
+recommend changing `gate_gradients` to `GATE_GRAPH` as a standard practice.
+
+The Keras optimizers, such as `tf.keras.optimizers.SGD`, which are now the
+standard optimizers in the TF2 API, do not offer a `gate_gradients` parameter
+in the `minimize` or `get_gradients` methods. There is also no ability to
+control gradient gating on `tf.GradientTape` for calculation of gradients in
+eager execution.
+
+The reduced availablilty of control of gradient gating in TF2, with eager
+execution and an increased reliance on the (often high-level) Keras interface,
+doesn't seem to be a real problem with respect to GPU-determinism.
 
 #### Multi-GPU using Horovod ####
 
