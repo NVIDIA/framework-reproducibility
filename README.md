@@ -130,7 +130,7 @@ version is based on:
  19.07 - 19.10        | 1.14               |
  19.11 - 20.01        | 1.15 / 2.0         |
  20.02 - 20.03        | 1.15 / 2.1         |
- 20.06                | 1.15 / 2.2         |
+ 20.06 - 20.07        | 1.15 / 2.2         |
 
 For information about pulling and running the NVIDIA NGC Docker images, see
 [these instructions][2].
