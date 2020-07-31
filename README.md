@@ -340,7 +340,7 @@ by default when running on a GPU.
 Note | Source                                                         | TF 1.14, 1.15,<br>2.0  | NGC 19.06+ /<br>TF 2.1 | TF 2.2     | TF 2.3     |
 ----:|:---------------------------------------------------------------|:-----------------------|:-----------------------|:-----------|:-----------|
    1 | TF auto-tuning of cuDNN convolution<br>algorithms              | TCD or TDP             | TDO                    | TDO        | TDO        |
-   2 | `tf.nn.conv*d` and<br>`tf.keras.layers.Conv*D`<br>backprop        | TCD or TDP             | TDO                    | TDO        | TDO        |
+   2 | `tf.nn.conv*d` and<br>`tf.keras.layers.Conv*D`<br>backprop     | TCD or TDP             | TDO                    | TDO        | TDO        |
    3 | `tf.nn.max_pool*d` and<br>`tf.keras.layers.MaxPool*D` backprop | TCD or TDP             | TDO                    | TDO        | TDO        |
    4 | `tf.nn.bias_add` backprop                                      | TDP                    | TDO                    | TDO        | TDO        |
    5 | XLA reductions on GPU                                          | NS                     | NS                     | TDO        | TDO        |
