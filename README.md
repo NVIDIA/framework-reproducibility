@@ -352,6 +352,7 @@ Note | Source                                                                   
    8 | `tf.image.resize` with `method=ResizeMethod.BILINEAR`<br>and `tf.keras.layers.UpSampling2D` with<br>`interpolation='bilinear'` backprop | NS        | TDO        | TDO      |
    9 | `tf.image.resize` with `method=ResizeMethod.NEAREST`<br>and `tf.keras.layers.UpSampling2D` with<br>`interpolation='nearest'` backprop   | NS        | NS         | NS       |
   10 | `tf.math.segment_sum` and `tf.math.unsorted_segment_sum`<br>forward, and `tf.gather` and `tfa.image.dense_image_warp`<br>backprop       | NS        | NS         | NS       |
+  11 | `tf.image.crop_and_resize` backprop to `image` (on CPU<br>or GPU) and backprop to `boxes`                                               | NS        | NS         | NS       |
 
 ##### Key to the Solutions Referenced Above
 
@@ -431,6 +432,12 @@ Note | Source                                                                   
      `tfa.image.dense_image_warp` (both in backprop), therefore also operate
      nondeterministically. See
      [Issue 39751](https://github.com/tensorflow/tensorflow/issues/39751).
+  11. Backprop to `image` on `tf.image.crop_and_resize` introduces
+      nondeterministic noise when running on either CPU or GPU. Backprop to
+      `boxes` introduces nondeterministic noise when running on GPU. See
+      TensorFlow
+      [Issue 42033](https://github.com/tensorflow/tensorflow/issues/42033) for
+      more information.
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
 
@@ -439,7 +446,6 @@ also in the master branch on 2019-03-03, afer release 1.31.1), the following
 files call CUDA `atomicAdd` either directly or indirectly. This makes them
 candidates for the injection of non-determinism.
 
-* `crop_and_resize_op_gpu.cu.cc`
 * `scatter_functor_gpu.cu.h`
 * `scatter_nd_op_gpu.cu.cc`
 * `sparse_tensor_dense_matmul_op_gpu.cu.cc`
@@ -514,6 +520,7 @@ Number                                                         | Title          
 [38197](https://github.com/tensorflow/tensorflow/issues/38197) | Model not deterministic, even though<br>os.environ['TF_DETERMINISTIC_OPS'] = '1' set     | 2020-04-03  | Open   |
 [39751](https://github.com/tensorflow/tensorflow/issues/39751) | Non-deterministic behaviour: tf.math.unsorted_segment_sum<br>uses CUDA Atomic Operations | 2020-05-21  | Open   |
 [40514](https://github.com/tensorflow/tensorflow/issues/40514) | TFBertForSequenceClassification: Non-deterministic when<br>training on GPU ...           | 2020-06-16  | Closed |
+[42033](https://github.com/tensorflow/tensorflow/issues/42033) | Add deterministic tf.image.crop_and_resize backprop                                      | 2020-08-04  | Open   |
 
 ### Related Project Issues
 
