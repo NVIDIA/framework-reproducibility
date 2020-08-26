@@ -174,11 +174,13 @@ You'll also need to set any and all appropriate random seeds:
 
 ```
 SEED = 123
-os.environ['PYTHONHASHSEED']=str(SEED)
 random.seed(SEED)
 np.random.seed(SEED)
 tf.random.set_seed(SEED)
 ```
+
+You also may need to set the environment variable `PYTHONHASHSEED` to a
+reproducible value before you start the python process.
 
 In the TensorFlow version 1 API, `tf.random.set_seed` was `tf.set_random_seed`.
 
@@ -307,6 +309,18 @@ yet been resolved, see Horovod [PR 1130][503]):
 ```
 os.environ['HOROVOD_FUSION_THRESHOLD']='0'
 ```
+
+#### Multi-GPU using MirroredStrategy ####
+
+Prior to TensorFlow version 2.3, when using `tf.data.Dataset::shuffle` with
+`tf.distribute.MirroredStrategy` (or perhaps any `tf.distribute` strategy),
+setting `reshuffle_each_iteration=True` introduces nondeterminism. This
+appears to have been fixed in TensorFlow version 2.3. See TF issue
+[38197](https://github.com/tensorflow/tensorflow/issues/38197) for more
+information.
+
+Also, note that the `seed` parameter of the `shuffle` method should always be
+set in order to obtain determinism.
 
 #### CPU ####
 
