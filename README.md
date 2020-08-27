@@ -367,6 +367,7 @@ Note | Source                                                                   
    9 | `tf.image.resize` with `method=ResizeMethod.NEAREST`<br>and `tf.keras.layers.UpSampling2D` with<br>`interpolation='nearest'` backprop   | NS        | NS         | NS       |
   10 | `tf.math.segment_sum` and `tf.math.unsorted_segment_sum`<br>forward, and `tf.gather` and `tfa.image.dense_image_warp`<br>backprop       | NS        | NS         | NS       |
   11 | `tf.image.crop_and_resize` backprop to `image` (on CPU<br>or GPU) and backprop to `boxes`                                               | NS        | NS         | NS       |
+  12 | `tf.sparse.sparse_dense_matmul` forward                                                                                                 | NS        | NS         | NS       |
 
 ##### Key to the Solutions Referenced Above
 
@@ -452,6 +453,9 @@ Note | Source                                                                   
       TensorFlow
       [Issue 42033](https://github.com/tensorflow/tensorflow/issues/42033) for
       more information.
+  12. The forward path of `tf.sparse.sparse_dense_matmul` introduces
+      nondeterminism for `tf.float32` and (allegedly) for `tf.float64`. See
+      TF [Issue 18037](https://github.com/tensorflow/tensorflow/issues/18037).
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
 
@@ -462,7 +466,6 @@ candidates for the injection of non-determinism.
 
 * `scatter_functor_gpu.cu.h`
 * `scatter_nd_op_gpu.cu.cc`
-* `sparse_tensor_dense_matmul_op_gpu.cu.cc`
 * `dilation_ops_gpu.cu.cc`
 * `maxpooling_op_gpu.cu.cc`
 * `svd_op_gpu.cu.cc`
