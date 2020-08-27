@@ -526,12 +526,13 @@ Number                                                         | Title          
  [2732](https://github.com/tensorflow/tensorflow/issues/2732)  | Mention that GPU reductions are nondeterministic in docs                                 | 2016-06-08  | Closed |
 [13932](https://github.com/tensorflow/tensorflow/issues/13932) | Non-determinism from `tf.data.Dataset.map` with random ops                               | 2017-10-23  | Closed |
 [16889](https://github.com/tensorflow/tensorflow/issues/16889) | Problems Getting TensorFlow to behave Deterministically                                  | 2018-02-09  | Open   |
+[18037](https://github.com/tensorflow/tensorflow/issues/18037) | tf.sparse_tensor_dense_matmul makes small errors with tf.float32 matrices on GPU         | 2018-03-27  | Open   |
 [18096](https://github.com/tensorflow/tensorflow/issues/18096) | Feature Request: Support for configuring deterministic<br>options of cuDNN conv ...      | 2018-03-29  | Open   |
 [22398](https://github.com/tensorflow/tensorflow/issues/22398) | CUDA implementation of BiasAddGrad op is non-determinstic                                | 2018-09-19  | Closed |
 [29101](https://github.com/tensorflow/tensorflow/issues/29101) | Random seed not set in graph context of `Dataset#map`                                    | 2019-05-28  | Open   |
 [38151](https://github.com/tensorflow/tensorflow/issues/38151) | Test deterministic cuDNN CTC loss                                                        | 2020-04-01  | Open   |
 [38185](https://github.com/tensorflow/tensorflow/issues/38185) | Add GPU-deterministic back-prop for fused<br>softmax/cross-entropy ops                   | 2020-04-02  | Open   |
-[38197](https://github.com/tensorflow/tensorflow/issues/38197) | Model not deterministic, even though<br>os.environ['TF_DETERMINISTIC_OPS'] = '1' set     | 2020-04-03  | Open   |
+[38197](https://github.com/tensorflow/tensorflow/issues/38197) | Model not deterministic, even though<br>os.environ['TF_DETERMINISTIC_OPS'] = '1' set     | 2020-04-03  | Closed |
 [39751](https://github.com/tensorflow/tensorflow/issues/39751) | Non-deterministic behaviour: tf.math.unsorted_segment_sum<br>uses CUDA Atomic Operations | 2020-05-21  | Open   |
 [40514](https://github.com/tensorflow/tensorflow/issues/40514) | TFBertForSequenceClassification: Non-deterministic when<br>training on GPU ...           | 2020-06-16  | Closed |
 [42033](https://github.com/tensorflow/tensorflow/issues/42033) | Add deterministic tf.image.crop_and_resize backprop                                      | 2020-08-04  | Open   |
