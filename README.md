@@ -61,30 +61,32 @@ TensorFlow before you can import and use `tfdeterminism`.
 There are currently three ways to access GPU-deterministic op functionality in
 TensorFlow for most deep learning applications:
 
-1. Use stock TensorFlow version 2.2, which implements most of the
-   currently-available deterministic op solutions. It does not require patching.
+1. Use the lastest version of stock TensorFlow (currently version 2.3), which
+   implements all of the currently-available deterministic op solutions. It does
+   not require patching.
 2. Use an NVIDIA NGC TensorFlow Docker image (version >= 19.06).
-   Note that version 20.03+ implements deterministic backprop for bilinear
-   resizing, which has not yet been released in stock TensorFlow.
 3. Use version 1.14, 1.15, or 2.0 of stock TensorFlow with GPU support, plus the
    application of `tfdeterminism.patch`. Version 2.1 of stock TensorFlow
-   does not require patching and includes almost all of the available
-   deterministic op solutions, except for
-   [multi-algorithm deterministic cuDNN convolutions][1003].
+   does not have a patch avaliable (and does not require earlier patching) and
+   includes many of the deterministic op solutions.
 
-The long-term intention and plan is to continue upstreaming all solutions into
-stock TensorFlow.
+For the latest status of GPU-determinism for different versions of TensorFlow,
+see the [tables](#confirmed-current-gpu-specific-sources-of-non-determinism-with-solutions)
+below. Although in the short-term, solutions may be deployed as patches for
+stock TensorFlow or via the NGC TensorFlow container images, the long-term
+intention and plan is to continue upstreaming all solutions into stock
+TensorFlow.
 
-### Stock TensorFlow Version 2.2
+### Stock TensorFlow Version 2.3
 
-Stock TensorFlow version 2.2 implements most of the currently-available
+Stock TensorFlow version 2.3 implements most of the currently-available
 GPU-deterministic op solutions. It is missing deterministic backprop for
 bilinear resizing, which is provided by
 [NGC TF Docker image](#nvidia-gpu-cloud-ngc-tensorflow-docker-images) version
 20.03+.
 
 The following Python code is running on a machine in which `pip` package
-`tensorflow=2.2.0` has been installed correctly.
+`tensorflow=2.3.0` has been installed correctly.
 
 ```
 import tensorflow as tf
@@ -93,10 +95,10 @@ os.environ['TF_DETERMINISTIC_OPS'] = '1'
 # Now build your graph and train it
 ```
 
-Stock TensorFlow version 2.2 with GPU support can be installed as follows:
+Stock TensorFlow version 2.3 with GPU support can be installed as follows:
 
 ```
-pip install tensorflow=2.2.0
+pip install tensorflow=2.3.0
 ```
 
 The TensorFlow project includes [detailed instructions][3] for installing
@@ -361,13 +363,13 @@ Note | Source                                                         | TF 1.14,
    6 | `tf.nn.ctc_loss` backprop                                      | NS                     | NS                     | NS         | TDO        |
    7 | `tf.nn.*cross_entropy_with_logits`<br>backprop                 | NS                     | NS                     | NS         | NS         |
 
-Note | Source                                                                                                                                  | TF < 2.4  | NGC 20.03+ | TF 2.4 ? |
-----:|:----------------------------------------------------------------------------------------------------------------------------------------|:----------|:-----------|:---------|
-   8 | `tf.image.resize` with `method=ResizeMethod.BILINEAR`<br>and `tf.keras.layers.UpSampling2D` with<br>`interpolation='bilinear'` backprop | NS        | TDO        | TDO      |
-   9 | `tf.image.resize` with `method=ResizeMethod.NEAREST`<br>and `tf.keras.layers.UpSampling2D` with<br>`interpolation='nearest'` backprop   | NS        | NS         | NS       |
-  10 | `tf.math.segment_sum` and `tf.math.unsorted_segment_sum`<br>forward, and `tf.gather` and `tfa.image.dense_image_warp`<br>backprop       | NS        | NS         | NS       |
-  11 | `tf.image.crop_and_resize` backprop to `image` (on CPU<br>or GPU) and backprop to `boxes`                                               | NS        | NS         | NS       |
-  12 | `tf.sparse.sparse_dense_matmul` forward                                                                                                 | NS        | NS         | NS       |
+Note | Source                                                                                                                                  | TF < 2.4  | NGC 20.03+ | TF 2.4 |
+----:|:----------------------------------------------------------------------------------------------------------------------------------------|:----------|:-----------|:-------|
+   8 | `tf.image.resize` with `method=ResizeMethod.BILINEAR`<br>and `tf.keras.layers.UpSampling2D` with<br>`interpolation='bilinear'` backprop | NS        | TDO        | TDO    |
+   9 | `tf.image.resize` with `method=ResizeMethod.NEAREST`<br>and `tf.keras.layers.UpSampling2D` with<br>`interpolation='nearest'` backprop   | NS        | NS         | NS     |
+  10 | `tf.math.segment_sum` and `tf.math.unsorted_segment_sum`<br>forward, and `tf.gather` and `tfa.image.dense_image_warp`<br>backprop       | NS        | NS         | NS     |
+  11 | `tf.image.crop_and_resize` backprop to `image` (on CPU<br>or GPU) and backprop to `boxes`                                               | NS        | NS         | NS     |
+  12 | `tf.sparse.sparse_dense_matmul` forward                                                                                                 | NS        | NS         | NS     |
 
 ##### Key to the Solutions Referenced Above
 
@@ -431,9 +433,7 @@ Note | Source                                                                   
      `BILINEAR` is the default `method` setting. In the TF1 API, this
      functionality is accessed via `tf.image.resize_bilinear`. It is also exposed
      through `tf.keras.layers.UpSampling2D` with `interpolation='bilinear'`
-     (which is not the default `interpolation` setting). The solution in TF 2.4
-     depends upon [PR 39243](https://github.com/tensorflow/tensorflow/pull/39243)
-     getting approved and merged before that version snaps.
+     (which is not the default `interpolation` setting).
   9. `tf.image.resize` with `method=ResizeMethod.NEAREST` (TF2 API): In the TF1
      API, this functionality is accessed via `tf.image.resize_nearest_neighbor`.
      It is also exposed through `tf.keras.layers.UpSampling2D` with
@@ -580,7 +580,7 @@ ID                                                           | Title            
 [9e096][1005]<sup>1</sup>                                    | Use the CUDNN_CTC_LOSS_ALGO_DETERMINISTIC<br>algorithm ...       | merged | 2020-03-10  | 2.3     |
 [38089](https://github.com/tensorflow/tensorflow/pull/38089) | Add reminder to test deterministic cuDNN CTC loss                | closed |             |         |
 [38509](https://github.com/tensorflow/tensorflow/pull/38509) | List deterministic op func bug fixes in v2.2<br>release notes    | merged | 2020-04-15  | 2.2     |
-[39243](https://github.com/tensorflow/tensorflow/pull/39243) | GPU-deterministic tf.image.resize (bilinear)                     | open   |             |         |
+[39243](https://github.com/tensorflow/tensorflow/pull/39243) | GPU-deterministic tf.image.resize (bilinear)                     | merged | 2020-09-22  | 2.4     |
  
 Notes:
   1. These are individual commits.
