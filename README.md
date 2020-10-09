@@ -605,6 +605,8 @@ ID                                                     | Title                  
 
 ### Miscellaneous
 
+* [Gradient injection][505] in the testing of op backprop determinism in
+  TensorFlow tests.
 * Two Sigma: [A Workaround for Non-Determinism in
   TensorFlow](http://bit.ly/two-sigma-determinism)
 * Chainer [PR 2710](https://github.com/chainer/chainer/pull/2710): cuDNN
@@ -617,6 +619,7 @@ ID                                                     | Title                  
 [502]: https://stackoverflow.com/questions/52213325/are-tensorflow-random-values-guaranteed-to-be-the-same-inside-a-single-run#comment91376212_52213325
 [503]: https://github.com/horovod/horovod/pull/1130
 [504]: https://datascience.stackexchange.com/questions/14812/making-keras-tensorflow-code-execution-deterministic-on-a-gpu/
+[505]: ./test/gradient_injection.md
 
 ## Credits
 
@@ -663,9 +666,11 @@ Dilip Sequeria,
 Hao Shen,
 Matthijs De Smedt,
 Valentina Taviani,
+Phil Teare,
 Amirhossein Tebbifakhr,
 Kevin Vincent,
 Stephen Warren,
+Shu Wang,
 Hao Wu,
 Yifang Xu,
 Tim Zaman,

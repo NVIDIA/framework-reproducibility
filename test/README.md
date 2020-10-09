@@ -19,3 +19,10 @@ Then you should be able to run `./all.sh` and observe the final message.
   * Update documentation organization to reflect multiple frameworks
   * Update documentation to cover `enable_determinism`
   * Potentially add translation from GitHub to PyPI documentation.
+
+## Documentation
+
+See the notes about [gradient injection][1] for testing backprop determinism
+of TensorFlow ops.
+
+[1]: ./gradient_injection.md
