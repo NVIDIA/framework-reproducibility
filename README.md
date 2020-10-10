@@ -1,5 +1,8 @@
 # TensorFlow Determinism
 
+This main README is currently focused on GPU-determinism with TensorFlow.
+For GPU-determinism with PyTorch, see the [pytorch page](./pytorch.md).
+
 ## Announcement
 
 In the next release of this package (version 0.4.0), the distribution name will
@@ -692,6 +695,7 @@ Matthijs De Smedt,
 Valentina Taviani,
 Phil Teare,
 Amirhossein Tebbifakhr,
+Matthijs Van keirsbilck,
 Kevin Vincent,
 Stephen Warren,
 Shu Wang,
