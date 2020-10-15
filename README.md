@@ -327,15 +327,25 @@ set in order to obtain determinism.
 #### CPU ####
 
 If you want to obtain determinism when your ops are running on the CPU, you may
-need to limit the number of CPU threads used:
+need to limit the number of CPU threads used. In the TF1 API, this can be
+acheived as follows:
 
 ```
-session_config.intra_op_parallelism_threads = 1
-session_config.inter_op_parallelism_threads = 1
+config = tf.compat.v1.ConfigProto(intra_op_parallelism_threads=1,
+                                  inter_op_parallelism_threads=1)
+with tf.compat.v1.Session(config=config):
+  ...
 ```
 
-It should not be necessary to do this when your ops are not running on the CPU
-(e.g. when they're running on a GPU).
+In the TF2 API, it can be achieved like this:
+
+```
+tf.config.threading.set_intra_op_parallelism_threads(1)
+tf.config.threading.set_inter_op_parallelism_threads(1)
+```
+
+It should not be necessary to limimt the number of CPU threads used when your
+ops are not running on the CPU (e.g. when they're running on a GPU).
 
 ## Detailed Status of Determinism in TensorFlow and Beyond
 
