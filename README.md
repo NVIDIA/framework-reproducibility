@@ -344,7 +344,7 @@ tf.config.threading.set_intra_op_parallelism_threads(1)
 tf.config.threading.set_inter_op_parallelism_threads(1)
 ```
 
-It should not be necessary to limimt the number of CPU threads used when your
+It should not be necessary to limit the number of CPU threads used when your
 ops are not running on the CPU (e.g. when they're running on a GPU).
 
 ## Detailed Status of Determinism in TensorFlow and Beyond
