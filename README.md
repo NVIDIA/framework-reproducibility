@@ -363,15 +363,15 @@ by default when running on a GPU.
 
 #### Confirmed Current GPU-Specific Sources of Non-Determinism (With Solutions)
 
-Note | Source                                                         | TF 1.14, 1.15,<br>2.0  | NGC 19.06+ /<br>TF 2.1 | TF 2.2     | TF 2.3     |
-----:|:---------------------------------------------------------------|:-----------------------|:-----------------------|:-----------|:-----------|
-   1 | TF auto-tuning of cuDNN convolution<br>algorithms              | TCD or TDP             | TDO                    | TDO        | TDO        |
-   2 | `tf.nn.conv*d` and<br>`tf.keras.layers.Conv*D`<br>backprop     | TCD or TDP             | TDO                    | TDO        | TDO        |
-   3 | `tf.nn.max_pool*d` and<br>`tf.keras.layers.MaxPool*D` backprop | TCD or TDP             | TDO                    | TDO        | TDO        |
-   4 | `tf.nn.bias_add` backprop                                      | TDP                    | TDO                    | TDO        | TDO        |
-   5 | XLA reductions on GPU                                          | NS                     | NS                     | TDO        | TDO        |
-   6 | `tf.nn.ctc_loss` backprop                                      | NS                     | NS                     | NS         | TDO        |
-   7 | `tf.nn.*cross_entropy_with_logits`<br>backprop                 | NS                     | NS                     | NS         | NS         |
+Note | Source                                                                        | TF 1.14, 1.15,<br>2.0  | NGC 19.06+ /<br>TF 2.1 | TF 2.2     | TF 2.3     |
+----:|:------------------------------------------------------------------------------|:-----------------------|:-----------------------|:-----------|:-----------|
+   1 | TF auto-tuning of cuDNN convolution<br>algorithms                             | TCD or TDP             | TDO                    | TDO        | TDO        |
+   2 | `tf.nn.conv*d` and<br>`tf.keras.layers.Conv*D`<br>backprop                    | TCD or TDP             | TDO                    | TDO        | TDO        |
+   3 | `tf.nn.max_pool*d` and<br>`tf.keras.layers.MaxPool*D` backprop                | TCD or TDP             | TDO                    | TDO        | TDO        |
+   4 | `tf.nn.bias_add` backprop                                                     | TDP                    | TDO                    | TDO        | TDO        |
+   5 | XLA reductions on GPU                                                         | NS                     | NS                     | TDO        | TDO        |
+   6 | `tf.nn.ctc_loss` backprop                                                     | NS                     | NS                     | NS         | TDO        |
+   7 | Fused sofmax/crossentropy:<br>`tf.nn.*_cross_entropy_with_logits`<br>backprop | NS                     | NS                     | NS         | NS         |
 
 Note | Source                                                                                                                                  | TF < 2.4  | NGC 20.03+ | TF 2.4 |
 ----:|:----------------------------------------------------------------------------------------------------------------------------------------|:----------|:-----------|:-------|
@@ -432,12 +432,26 @@ Note | Source                                                                   
      suggest that this is not true and that `tf.nn.ctc_loss` has
      nondeterministic backprop when operating on either CPU or GPU.
   7. Fused softmax/cross-entropy ops `tf.nn.softmax_cross_entropy_with_logits`
-     and `tf.nn.sparse_softmax_cross_entropy_with_logits`. See TensorFlow
+     and `tf.nn.sparse_softmax_cross_entropy_with_logits`, accessed via
+     `tf.keras.losses.categorical_crossentropy`,
+     `tf.keras.losses.CategoricalCrossentropy`,
+     `tf.keras.losses.sparse_categorical_crossentropy`, and
+     `tf.keras.losses.SparseCategoricalCrossentropy`), are known to inject
+     nondetermininsm in backprop. See TensorFlow
      [issue 38185](https://github.com/tensorflow/tensorflow/issues/38185).
-     Work-around: use non-fused softmax and cross-entropy. For example, assuming
-     you're using `tf.keras`, select the activation on the final `Dense` layer to
-     be 'softmax' and then select `tf.keras.losses.categorical_crossentropy` for
-     the loss function. A patch is
+     A confirmed work-around is to use separate non-fused softmax and
+     cross-entropy. For example, assuming you're using `tf.keras`, select the
+     activation on the final layer (e.g. a `Dense` layer) to be 'softmax' (which
+     chooses `tf.nn.softmax`) and then, for the loss function, continue to use
+     `tf.keras.losses.categorical_crossentropy` (possibly by using its wrapper
+     class `tf.keras.losses.CategoricalCrossentropy`) or
+     `tf.keras.losses.sparse_categorical_crossentropy` (possibly by using its
+     wrapper class `tf.keras.losses.SparseCategoricalCrossentropy`). Since it
+     uses non-fused kernels, the work-around will be lower performance.
+     Theoretically, you should also set the loss function parameter
+     `from_logits` to `False`, perhaps only for performance reasons, since
+     setting it to `True` is a no-op arithmetically and does not appear to
+     contribute to nondeterminism. A patch is
      [in development](https://github.com/NVIDIA/framework-determinism/pull/21).
   8. `tf.image.resize` with `method=ResizeMethod.BILINEAR` (TF2 API):
      `BILINEAR` is the default `method` setting. In the TF1 API, this
