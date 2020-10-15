@@ -448,10 +448,10 @@ Note | Source                                                                   
      `tf.keras.losses.sparse_categorical_crossentropy` (possibly by using its
      wrapper class `tf.keras.losses.SparseCategoricalCrossentropy`). Since it
      uses non-fused kernels, the work-around will be lower performance.
-     Theoretically, you should also set the loss function parameter
-     `from_logits` to `False`, perhaps only for performance reasons since
-     setting it to `True` is a no-op arithmetically and does not appear to
-     contribute to nondeterminism. A patch is
+     Theoretically, you should ensure that the loss function parameter
+     `from_logits` is set to `False` (the default), perhaps only for performance
+     reasons since setting it to `True` is a no-op arithmetically and does not
+     appear to contribute to nondeterminism. A patch is
      [in development](https://github.com/NVIDIA/framework-determinism/pull/21).
   8. `tf.image.resize` with `method=ResizeMethod.BILINEAR` (TF2 API):
      `BILINEAR` is the default `method` setting. In the TF1 API, this
