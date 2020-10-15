@@ -437,19 +437,19 @@ Note | Source                                                                   
      `tf.keras.losses.CategoricalCrossentropy`,
      `tf.keras.losses.sparse_categorical_crossentropy`, and
      `tf.keras.losses.SparseCategoricalCrossentropy`), are known to inject
-     nondetermininsm in backprop. See TensorFlow
+     nondetermininsm into backprop. See TensorFlow
      [issue 38185](https://github.com/tensorflow/tensorflow/issues/38185).
      A confirmed work-around is to use separate non-fused softmax and
-     cross-entropy. For example, assuming you're using `tf.keras`, select the
-     activation on the final layer (e.g. a `Dense` layer) to be 'softmax' (which
-     chooses `tf.nn.softmax`) and then, for the loss function, continue to use
-     `tf.keras.losses.categorical_crossentropy` (possibly by using its wrapper
-     class `tf.keras.losses.CategoricalCrossentropy`) or
+     cross-entropy ops. For example, assuming you're using `tf.keras`, select
+     the activation on the final layer (e.g. a `Dense` layer) to be 'softmax'
+     (which chooses `tf.nn.softmax`) and then, for the loss function, continue
+     to use `tf.keras.losses.categorical_crossentropy` (possibly by using its
+     wrapper class `tf.keras.losses.CategoricalCrossentropy`) or
      `tf.keras.losses.sparse_categorical_crossentropy` (possibly by using its
      wrapper class `tf.keras.losses.SparseCategoricalCrossentropy`). Since it
      uses non-fused kernels, the work-around will be lower performance.
      Theoretically, you should also set the loss function parameter
-     `from_logits` to `False`, perhaps only for performance reasons, since
+     `from_logits` to `False`, perhaps only for performance reasons since
      setting it to `True` is a no-op arithmetically and does not appear to
      contribute to nondeterminism. A patch is
      [in development](https://github.com/NVIDIA/framework-determinism/pull/21).
