@@ -50,6 +50,21 @@ from tensorflow.python.ops import nn_ops
 import tensorflow.python.ops.nn_grad  # pylint: disable=unused-import
 from tensorflow.python.platform import test
 
+# The tests in the following class were originally copied from
+# https://github.com/tensorflow/tensorflow/blob/v1.14.0/tensorflow/python/kernel_tests/bias_op_test.py
+# and were then enhanced.
+#
+# The enhanced test code was then merged back into the
+# stock TensorFlow repo (via PR 31465:
+# https://github.com/tensorflow/tensorflow/pull/31465) and are represented, with
+# additional deterministic op functionality and the determinism tests at the
+# end of this file, in stock TensorFlow version 2.1.0.
+#
+# The three test functions testInputDims, testBiasVec, and testBiasInputsMatch,
+# which are present in the stock TensorFlow test class, and which run on the
+# nondeterministic version of the bias_add op, are not included in the following
+# test class because the error-check functionality that they test is missing
+# from the deterministic op patch.
 @test_util.run_all_in_graph_and_eager_modes
 class BiasAddTest(test.TestCase):
 
@@ -394,6 +409,16 @@ class BiasAddTestDeterministic(test.TestCase):
             for data_type in (dtypes.float16, dtypes.float32, dtypes.float64):
               self._testDeterministicGradientsCase(op_binding, data_layout,
                                                    data_rank, data_type)
+
+
+class BiasAddTestMisc(test.TestCase):
+
+  def testDocstringCopy(self):
+    docstring = tf.nn.bias_add.__doc__
+    if not docstring: # falsy (None or "")
+      self.fail("The patched op has no docstring")
+    if docstring.startswith('ERROR'):
+      self.fail("The docstring for the patched op has not been assigned")
 
 
 if __name__ == "__main__":

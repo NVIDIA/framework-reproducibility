@@ -1,4 +1,4 @@
-# Copyright 2019 NVIDIA Corporation. All Rights Reserved
+# Copyright 2019-2020 NVIDIA Corporation. All Rights Reserved
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -82,40 +82,19 @@ def _patch():
                     (__name__, tf_vers.original_version_string))
 
 def _patch_bias_add():
-  tf.nn.bias_add = _new_bias_add_1_14 # access via public API
-  nn.bias_add = _new_bias_add_1_14 # called from tf.keras.layers.convolutional.Conv
-  nn_ops.bias_add = _new_bias_add_1_14 # called from tests
+  _new_bias_add.__doc__ = tf.nn.bias_add.__doc__
+  tf.nn.bias_add = _new_bias_add # access via public API
+  nn.bias_add = _new_bias_add # called from tf.keras.layers.convolutional.Conv
+  nn_ops.bias_add = _new_bias_add # called from tests
 
 # The original, pre-patched method can be viewed at
 # https://github.com/tensorflow/tensorflow/blob/v1.14.0/tensorflow/python/ops/nn_ops.py#L2628
-def _new_bias_add_1_14(value, bias, data_format=None, name=None):
-  """Adds `bias` to `value`.
-
-  This is (mostly) a special case of `tf.add` where `bias` is restricted to 1-D.
-  Broadcasting is supported, so `value` may have any number of dimensions.
-  Unlike `tf.add`, the type of `bias` is allowed to differ from `value` in the
-  case where both types are quantized.
-
-  Args:
-    value: A `Tensor` with type `float`, `double`, `int64`, `int32`, `uint8`,
-      `int16`, `int8`, `complex64`, or `complex128`.
-    bias: A 1-D `Tensor` with size matching the channel dimension of `value`.
-      Must be the same type as `value` unless `value` is a quantized type,
-      in which case a different quantized type may be used.
-    data_format: A string. 'N...C' and 'NC...' are supported. If `None` (the
-      default) is specified then 'N..C' is assumed.
-    name: A name for the operation (optional).
-
-  Returns:
-    A `Tensor` with the same type as `value`.
-
-  Raises:
-    ValueError if data format is unrecognized, if `value` has less than two
-    dimensions when `data_format` is 'N..C'/`None` or `value` has less
-    then three dimensions when `data_format` is `NC..`, if `bias` does not
-    have exactly one dimension (is a vector), or if the size of `bias`
-    does not match the size of the channel dimension of `value`.
-  """
+#
+# This patched version of bias_add does not implement some of the error checks
+# provided by the original op. For more information, see the list of test cases
+# excluded from the testing of the patched op functionality.
+def _new_bias_add(value, bias, data_format=None, name=None):
+  """ERROR: docstring should have been added programatically. """
   with ops.name_scope(name, "BiasAdd", [value, bias]) as name:
     if data_format is not None:
       if data_format.startswith("NC"):
