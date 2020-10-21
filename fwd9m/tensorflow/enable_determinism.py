@@ -24,6 +24,8 @@ import re
 import tensorflow as tf
 
 from .patch import _patch_bias_add
+from .patch import _patch_unsorted_segment_sum
+from .patch import _patch_segment_sum
 from ..utils import _Version as Version
 from ..version import __version__ as package_version
 
@@ -58,7 +60,12 @@ def _enable_determinism(seed=None):
   if in_ngc_cont and ngc_vers.at_least('19.06') or tf_vers.at_least('1.14'):
     # Apply the fused softmax/cross-entropy patch here
     pass
+
+  # For all possible version, patch these two
+  _patch_unsorted_segment_sum()
+  _patch_segment_sum()
   # TODO: Add other recipe items
   print("%s (version %s) has been applied to TensorFlow "
         "version %s" % (__name__, package_version,
                         tf_vers.original_version_string))
+

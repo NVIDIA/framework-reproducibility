@@ -32,6 +32,7 @@ class _Version:
     self.major_minor_version_string = major + '.' + minor
     self.major = int(major)
     self.minor = int(minor)
+    self.tf_force_gpu_bug_version = ('2.0','1.15')# tf2.1 onwards and 1.4, force_gpu bug is fixed
 
   def in_list(self, list_of_versions):
     """Is the version in the list of version provided?"""

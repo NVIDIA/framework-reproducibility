@@ -28,7 +28,7 @@ if [ "$1" == "--help" ]; then
 fi
 
 if [ -z ${2+present} ]; then
-  IMAGE=tensorflow/tensorflow:1.14.0-gpu
+  IMAGE=tensorflow/tensorflow:2.3.0-gpu
   ENTRYPOINT=""
   ENTRYPOINT_ARGUMENTS=bash
 else
@@ -45,8 +45,8 @@ fi
 
 docker pull ${IMAGE}
 
-ENV_VARS="-e NVIDIA_VISIBLE_DEVICES=1" # Work around XLA issue in TF 1.15
-
+# ENV_VARS="-e NVIDIA_VISIBLE_DEVICES=1" # Work around XLA issue in TF 1.15
+# Work-around for issue seen in TF1.15 and TF2.0 is filed in tf_utils.py
 docker run --runtime=nvidia -it        \
            -u $(id -u):$(id -g)        \
            -v ${PWD}/..:/mnt           \
@@ -55,6 +55,7 @@ docker run --runtime=nvidia -it        \
            --shm-size=1g               \
            --ulimit memlock=-1         \
            --ulimit stack=67108864     \
+           --network=host              \
            ${ENTRYPOINT}               \
            ${IMAGE}                    \
            ${ENTRYPOINT_ARGUMENTS}

@@ -34,7 +34,7 @@ from __future__ import print_function
 
 import numpy as np
 import os
-
+import unittest
 import tensorflow as tf
 from tensorflow.python.eager import backprop
 from tensorflow.python.eager import context
@@ -182,6 +182,7 @@ class BiasAddTest(test.TestCase):
           bias_add_1, [input_tensor])
       bias_jacob_a, bias_jacob_n = gradient_checker_v2.compute_gradient(
           bias_add_2, [bias_tensor])
+      
 
       # Test gradient of BiasAddGrad
       def bias_add_grad_function(upstream_gradients):
@@ -219,6 +220,7 @@ class BiasAddTest(test.TestCase):
       input_jacob_a, bias_jacob_a, grad_jacob_a = jacob_a
       input_jacob_n, bias_jacob_n, grad_jacob_n = jacob_n
 
+
       if dtype == np.float16:
         # Compare fp16 analytical gradients to fp32 numerical gradients,
         # since fp16 numerical gradients are too imprecise unless great
@@ -241,6 +243,7 @@ class BiasAddTest(test.TestCase):
       self.assertAllClose(bias_jacob_a, bias_jacob_n, threshold, threshold)
       self.assertAllClose(grad_jacob_a, grad_jacob_n, threshold, threshold)
 
+
   def testGradientTensor2D(self):
     for (data_format, use_gpu) in ("NHWC", False), ("NHWC", True):
       for dtype in (dtypes.float16, dtypes.float32, dtypes.float64):
@@ -248,7 +251,7 @@ class BiasAddTest(test.TestCase):
                             dtype=dtype.as_numpy_dtype).reshape(3, 2)
         bias = np.array([1.3, 2.4], dtype=dtype.as_numpy_dtype)
         self._testGradient(np_input, bias, dtype, data_format, use_gpu)
-
+  @unittest.skip("")
   def testGradientTensor3D(self):
     for (data_format, use_gpu) in [("NHWC", False), ("NHWC", True),
                                    ("NCHW", False), ("NCHW", True)]:
@@ -257,7 +260,7 @@ class BiasAddTest(test.TestCase):
                             dtype=dtype.as_numpy_dtype).reshape(1, 3, 2)
         bias = np.array([1.3, 2.4], dtype=dtype.as_numpy_dtype)
         self._testGradient(np_input, bias, dtype, data_format, use_gpu)
-
+  @unittest.skip("")
   def testGradientTensor4D(self):
     for (data_format, use_gpu) in [("NHWC", False)]:
       for dtype in (dtypes.float16, dtypes.float32, dtypes.float64):
@@ -278,7 +281,7 @@ class BiasAddTest(test.TestCase):
         self._testGradient(np_input,
                            np.random.rand(64).astype(dtype.as_numpy_dtype),
                            dtype, data_format, use_gpu)
-
+  @unittest.skip("")
   def testGradientTensor5D(self):
     for (data_format, use_gpu) in [("NHWC", False), ("NHWC", True),
                                    ("NCHW", False), ("NCHW", True)]:
@@ -391,9 +394,10 @@ class BiasAddTestDeterministic(test.TestCase):
         self.assertAllEqual(result_a, result_b)
 
   @test_util.run_in_graph_and_eager_modes
-  @test_util.run_cuda_only
+  # @test_util.run_cuda_only  # this will overshadow fwd9m_tfsession!
   def testDeterministicGradients(self):
-    with self.session(force_gpu=True):
+    with fwd9m_tfsession(self, force_gpu=True):
+    # with self.session(force_gpu=True):
       # There are problems with using force_gpu=True and cached_session with
       # both eager mode and graph mode in the same test. Using a non-cached
       # session and putting everything inside the same session context is
@@ -423,7 +427,11 @@ class BiasAddTestMisc(test.TestCase):
 
 if __name__ == "__main__":
   import sys
+  import os
   sys.path.insert(0, '..')
-  from fwd9m.tensorflow import patch
-  patch()
+
+  from fwd9m.tensorflow import enable_determinism
+  from tf_utils import _tf_session as fwd9m_tfsession
+  enable_determinism()
+
   test.main()
