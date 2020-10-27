@@ -46,7 +46,9 @@ fi
 docker pull ${IMAGE}
 
 # ENV_VARS="-e NVIDIA_VISIBLE_DEVICES=1" # Work around XLA issue in TF 1.15
-# Work-around for issue seen in TF1.15 and TF2.0 is filed in tf_utils.py
+# An alternative, and less brittle, solution for the issue seen in TF 1.15 and
+# TF 2.0 is now provided by _tf_session in tf_utils.py
+
 docker run --runtime=nvidia -it        \
            -u $(id -u):$(id -g)        \
            -v ${PWD}/..:/mnt           \

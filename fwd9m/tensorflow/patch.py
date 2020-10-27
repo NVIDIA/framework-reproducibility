@@ -50,6 +50,9 @@ from tensorflow.python.ops import gen_math_ops
 from ..utils import _Version as Version
 from ..version import __version__ as package_version
 
+# This function was used to patch tf.nn.bias_add in a limited range of stock
+# TensorFlow versions. It is now deprecated and we are no longer developing it.
+# enable_determinism should be used.
 def _patch():
   """Patches TensorFlow to increase determinism when running on GPUs.
 
@@ -65,18 +68,15 @@ def _patch():
       yet been implemented), or (2) if there is an attempt to apply the patch
       inside an NGC TF container (where it should not be needed).
   """
-  # NOTE: Figure out later
   print("WARNING: %s has been deprecated. Please use enable_determinism (which "
         "supports all versions of TensorFlow)." % __name__)
   if os.environ.get('NVIDIA_TENSORFLOW_VERSION'):
     raise TypeError("%s: TensorFlow inside NGC containers does not "
                     "require patching" % __name__)
   tf_vers = Version(tf.version.VERSION)
-  if tf_vers.between('1.14', '2.3'):
+  if tf_vers.between('1.14', '2.0'):
     os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
     _patch_bias_add()
-    _patch_unsorted_segment_sum()
-    _patch_segment_sum()
     # Apply the fused softmax/cross-entropy patch here
     print("TensorFlow version %s has been patched using %s version %s" %
           (tf_vers.original_version_string, __name__,
@@ -125,31 +125,30 @@ def _new_bias_add(value, bias, data_format=None, name=None):
 
 
 def _patch_unsorted_segment_sum():
-  math_ops.unsorted_segment_sum = _new_unsorted_segment_sum_2_3 # access via public API
-  tf.math.unsorted_segment_sum = _new_unsorted_segment_sum_2_3 # access via public API
+  _new_unsorted_segment_sum.__doc__ = tf.math.unsorted_segment_sum.__doc__
+  math_ops.unsorted_segment_sum = _new_unsorted_segment_sum # access via public API
+  tf.math.unsorted_segment_sum = _new_unsorted_segment_sum # access via public API
 
 def _patch_segment_sum():
-  math_ops.segment_sum = _new_segment_sum_2_3 # access via public API
-  tf.math.segment_sum = _new_segment_sum_2_3 # access via public API
+  _new_segment_sum.__doc__ = tf.math.segment_sum.__doc__
+  math_ops.segment_sum = _new_segment_sum # access via public API
+  tf.math.segment_sum = _new_segment_sum # access via public API
 
-# The original, pre-patched method is a self-generated function. 
-def _new_unsorted_segment_sum_2_3(data, segment_ids, num_segments, name=None):
-  """ Computes the sum along segments of a tensor
-  Args:
-    data: A `Tensor`. Must be one of the following types: float32, float64, 
-      int32, uint8, int16, int8, complex64, int64, qint8, quint8, qint32, 
-      bfloat16, uint16, complex128, half, uint32, uint64.
-    segment_ids: A `Tensor`. Must be one of the following types: int32, int64. 
-      A 1-D tensor whose size is equal to the size of data's first dimension. 
-      Values should be sorted and can be repeated.
-    num_segments: A `Tensor`. Must be one of the following types: int32, int64.
-    name: A name for the operation (optional).
-  Returns:
-    A `Tensor`. Has the same type as data.
-  """
-  with ops.name_scope(name, "UnsortedSegSum", [data, segment_ids, num_segments]) as name:
+# The original, pre-patched function is automatically-generated. Therefore, we
+# cannot provide a URL to its location in the source repository.
+# For the history of this patch, please refer to
+# https://github.com/tensorflow/tensorflow/issues/39751
+def _new_unsorted_segment_sum(data, segment_ids, num_segments, name=None):
+  """ERROR: docstring should have been added programatically. """
+  with ops.name_scope(
+      name, "UnsortedSegmentSum", [data, segment_ids, num_segments]) as name:
+    # Note that data can be a vector-like list (or an n-dimensional
+    # tensor-like list of lists). We convert to tensor here to replicate the
+    # behavior of the pre-existing op.
     data = tf.convert_to_tensor(data)
-    
+
+    # Note that this patch does not provide determinism when the dtype of the
+    # data argument is tf.float64 or tf.complex128.
     orig_dtype = data.dtype
     if 'float' in str(orig_dtype):
       data = tf.cast(data, dtype=tf.float64)
@@ -160,37 +159,33 @@ def _new_unsorted_segment_sum_2_3(data, segment_ids, num_segments, name=None):
       data = ops.convert_to_tensor(data, name="input_data")
       segment_ids = ops.convert_to_tensor(segment_ids, name="segment_ids")
       num_segments = ops.convert_to_tensor(num_segments, name="num_segments")
-    
+
     result = gen_math_ops.unsorted_segment_sum(data, segment_ids, num_segments)
     return tf.cast(result, dtype=orig_dtype)
 
-# The original, pre-patched method is a self-generated function. 
-def _new_segment_sum_2_3(data, segment_ids, name=None):
-    """Computes the sum along segments of a tensor.
-    Args:
-      data: A `Tensor`. Must be one of the following types: float32, float64, 
-        int32, uint8, int16, int8, complex64, int64, qint8, quint8, qint32, 
-        bfloat16, uint16, complex128, half, uint32, uint64.
-      segment_ids: A `Tensor`. Must be one of the following types: int32, int64. 
-        A 1-D tensor whose size is equal to the size of data's first dimension. 
-        Values should be sorted and can be repeated.
-      name: A name for the operation (optional).
-    Returns:
-      A `Tensor`. Has the same type as data.
-    """
-    with ops.name_scope(name, "SortedSegSum", [data, segment_ids]) as name:
-      # Note: data can be a list. To quest the type of data, convert to tensor
-      # first.  
-      data = tf.convert_to_tensor(data)
-      orig_dtype = data.dtype
-      if 'float' in str(orig_dtype):
-        data = tf.cast(data, dtype=tf.float64)
-      elif 'complex' in str(orig_dtype):
-        data = tf.cast(data, dtype=tf.complex128)
+# The original, pre-patched function is automatically-generated. Therefore, we
+# cannot provide a URL to its location in the source repository.
+# For the history of this patch, please refer to
+# https://github.com/tensorflow/tensorflow/issues/39751
+def _new_segment_sum(data, segment_ids, name=None):
+  """ERROR: docstring should have been added programatically. """
+  with ops.name_scope(name, "SegmentSum", [data, segment_ids]) as name:
+    # Note that data can be a vector-like list (or an n-dimensional
+    # tensor-like list of lists). We convert to tensor here to replicate the
+    # behavior of the pre-existing op.
+    data = tf.convert_to_tensor(data)
 
-      if not context.executing_eagerly():
-        data = ops.convert_to_tensor(data, name="input_data")
-        segment_ids = ops.convert_to_tensor(segment_ids, name="segment_ids")
-      
-      result = gen_math_ops.segment_sum(data, segment_ids)
-      return tf.cast(result, dtype=orig_dtype)
+    # Note that this patch does not provide determinism when the dtype of the
+    # data argument is tf.float64 or tf.complex128.
+    orig_dtype = data.dtype
+    if 'float' in str(orig_dtype):
+      data = tf.cast(data, dtype=tf.float64)
+    elif 'complex' in str(orig_dtype):
+      data = tf.cast(data, dtype=tf.complex128)
+
+    if not context.executing_eagerly():
+      data = ops.convert_to_tensor(data, name="input_data")
+      segment_ids = ops.convert_to_tensor(segment_ids, name="segment_ids")
+
+    result = gen_math_ops.segment_sum(data, segment_ids)
+    return tf.cast(result, dtype=orig_dtype)

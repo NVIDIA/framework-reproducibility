@@ -24,5 +24,5 @@ python test_misc.py
 python test_utils.py
 
 # The following should be run in only some containers
-# python test_patch_bias_add.py
-python test_patch_segment_reduction.py
+python test_patch_bias_add.py
+# python test_patch_segment_reduction.py
