@@ -69,22 +69,26 @@ torch.backends.cudnn.benchmark = False
 ```
 
 The first line causes the deterministic algorithms to be selected in the NVIDIA
-librarie, when they are available for functionality that PyTorch uses in those
-libraries: convolution and max pooling (from cuDNN), and batch matrix-matrix
-product (from cuBLAS).
+libraries, when they are available for functionality that PyTorch uses in those
+libraries: convolution, max pooling, and CTC loss (all three from cuDNN), and
+batch matrix-matrix product (from cuBLAS).
 
 The second line disables dynamic selection of cuDNN convolution algorithms
 and ensures that the algorithm select itself is reproducible.
 
 The [reproducibilty page][1] contains a reasonable but non-comprehensive list of
 ops the are nondeterminsitic on GPU. Using these will cause nondeterminism to
-be injected into the operation of your model which will, as it typical, lead to
+be injected into the operation of your model which will, as is typical, lead to
 the entire operation of the model to become nondeterministic. Those ops should
 be avoided for now.
 
-PyTorch does not currently expose cuDNN's deterministic CTC loss functionality.
-A known work-around to obtain determinsitic CTC functionality is to use
-[WarpCTC][2].
+The non-cuDNN implementation of `torch.nn.CTCLoss` operates
+nondeterministically. In order to use the cuDNN implementation (so that its
+deterministic functionality can be selected via
+`torch.backends.cudnn.deterministic = True`), certain
+criteria must be met, as described in the PyTorch [documentation][4] for
+`torch.nn.CTCLoss`. Another way of obtaining determinsitic CTC functionality
+is to use [WarpCTC][2].
 
 PyTorch 1.7 will include a new function, `torch.set_determinism`, which will
 preclude the need to set eithe `torch.backends.cudnn.determinsitic` or
@@ -138,3 +142,4 @@ the content on this page.
 [1]: https://pytorch.org/docs/stable/notes/randomness.html
 [2]: https://github.com/SeanNaren/warp-ctc
 [3]: https://pytorch.org/tutorials/beginner/saving_loading_models.html
+[4]: https://pytorch.org/docs/stable/generated/torch.nn.CTCLoss.html
