@@ -40,6 +40,7 @@ expect () {
     echo "Expected: ${exp_exit_code}"
     FAIL_COUNT=$((FAIL_COUNT+1))
   fi
+  return $exit_code
 }
 
 VERSION=$(python get_version.py)
@@ -49,56 +50,71 @@ PACKAGE_NAME=fwd9m
 OK=0
 ERROR=1
 
-# Testing the installation
 
-expect $OK    "Successfully installed ${DISTRIBUTION_NAME}" \
-              ./install_package.sh
+# expect $OK    "" \
+#               ./container.sh nvcr.io/nvidia/tensorflow:19.10-py3 ./test_patch_deprecation_message.sh --expected-exception TypeError
+
+# expect $OK    "Successfully installed ${DISTRIBUTION_NAME}" \
+#               ./install_package.sh
 
 # Testing the patch
 
-expect $OK    "Expected exception (TypeError) caught: ${PACKAGE_NAME}.tensorflow.patch: TensorFlow inside NGC containers does not require patching" \
-              ./container.sh nvcr.io/nvidia/tensorflow:19.09-py2 python test_patch_apply.py --expected-exception TypeError
+# expect $OK    "Expected exception (TypeError) caught: ${PACKAGE_NAME}.tensorflow.patch: TensorFlow inside NGC containers does not require patching" \
+#               ./container.sh nvcr.io/nvidia/tensorflow:19.09-py2 python test_patch_apply.py --expected-exception TypeError
 
-expect $OK    "Expected exception (TypeError) caught: ${PACKAGE_NAME}.tensorflow.patch: No patch available for version 1.13.1 of TensorFlow" \
-              ./container.sh tensorflow/tensorflow:1.13.1-gpu python test_patch_apply.py --expected-exception TypeError
+# expect $OK    "Expected exception (TypeError) caught: ${PACKAGE_NAME}.tensorflow.patch: No patch available for version 1.13.1 of TensorFlow" \
+#               ./container.sh tensorflow/tensorflow:1.13.1-gpu python test_patch_apply.py --expected-exception TypeError
 
-expect $OK    "TensorFlow version 1.14.0 has been patched using ${PACKAGE_NAME}.tensorflow.patch version ${VERSION}"  \
-              ./container.sh tensorflow/tensorflow:1.14.0-gpu python test_patch_apply.py
+# expect $OK    "TensorFlow version 1.14.0 has been patched using ${PACKAGE_NAME}.tensorflow.patch version ${VERSION}"  \
+#               ./container.sh tensorflow/tensorflow:1.14.0-gpu python test_patch_apply.py
 
-expect $OK    "" \
-              ./container.sh tensorflow/tensorflow:1.14.0-gpu test_patch.sh
 
-expect $OK    "" \
-              ./container.sh tensorflow/tensorflow:1.14.0-gpu-py3 test_patch.sh
+if [ $# -ne 1 ];then
+   echo "Usage: $0 list-of-containers"
+   exit
+fi
+if [ ! -f $1 ];then
+   echo "the $1 is not a file"
+   exit
+fi 
 
-expect $OK    "" \
-              ./container.sh tensorflow/tensorflow:1.15.0-gpu test_patch.sh
+list_containers=()
+pass_list=()
+fail_list=()
+mapfile list_containers <$1
+for i in ${list_containers[@]}
+do
+   echo $i
+   ./build-image.sh $i
+   expect $OK    "" \
+             ./container.sh python enable_determinism_test.py
+   if [ $? -eq $OK ]; then
+     pass_list+="$i\n"
+   else
+     fail_list+="$i\n"
+   fi
+done
 
-expect $OK    "" \
-              ./container.sh tensorflow/tensorflow:2.0.0-gpu test_patch.sh
+echo "----------------------------------------------------------------------"
+if [ ${#pass_list[@]} -gt 0 ];then
+  echo "pass list:"
+  for i in ${pass_list[@]}
+  do
+    echo -e "$i"
+  done
+  echo "${PASS_COUNT} tests passed"
+  echo "----------------------------------------------------------------------"
+fi
 
-# enable_determinism tests
-
-expect $OK    "${PACKAGE_NAME}.tensorflow.enable_determinism (version ${VERSION}) has been applied to TensorFlow version 2.0.0" \
-              ./container.sh tensorflow/tensorflow:2.0.0-gpu python test_enable_determinism_apply.py
-
-# Testing the NGC TF containers (using integration test)
-# TODO: Add NGC TF 19.06 (TF 1.13) support to integration test
-
-expect $OK    "" \
-              ./container.sh nvcr.io/nvidia/tensorflow:19.07-py2 integration_test.sh
-
-expect $OK    "" \
-              ./container.sh nvcr.io/nvidia/tensorflow:19.08-py2 integration_test.sh
-
-expect $OK    "" \
-              ./container.sh nvcr.io/nvidia/tensorflow:19.09-py2 integration_test.sh
-
-expect $OK    "" \
-              ./container.sh nvcr.io/nvidia/tensorflow:19.10-py2 integration_test.sh
-
-echo "${PASS_COUNT} tests passed"
-echo "${FAIL_COUNT} tests failed"
+if [ ${#fail_list[@]} -gt 0 ];then 
+  echo "fail list:"
+  for i in ${fail_list[@]}
+  do
+    echo -e $i;
+  done
+  echo "${FAIL_COUNT} tests failed"
+  echo "----------------------------------------------------------------------"
+fi
 
 if [ $FAIL_COUNT -gt 0 ]; then
   echo "ERROR: NOT ALL TESTS PASSED"

@@ -19,3 +19,4 @@ from __future__ import print_function
 
 from .enable_determinism import _enable_determinism as enable_determinism
 from .patch import _patch as patch
+from .tf_utils import _tf_session as fwd9m_tfsession

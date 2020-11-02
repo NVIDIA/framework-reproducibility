@@ -135,7 +135,14 @@ version is based on:
  19.07 - 19.10        | 1.14               |
  19.11 - 20.01        | 1.15 / 2.0         |
  20.02 - 20.03        | 1.15 / 2.1         |
- 20.06 - 20.07        | 1.15 / 2.2         |
+ 20.06 - 20.08        | 1.15 / 2.2         |
+ 20.09 - 20.10        | 1.15 / 2.3         |
+ 
+Note that, for now, the NGC TensorFlow container images continue to support
+a GPU-performance-optimized TensorFlow API version 1 variant (using a `-tf1`
+docker image repository tag), for those who have not yet migrated to TensorFlow
+API version 2. The source code for this can be found at
+[GitHub/NVIDIA/TensorFlow](https://github.com/NVIDIA/tensorflow).
 
 For information about pulling and running the NVIDIA NGC Docker images, see
 [these instructions][2].
@@ -365,6 +372,10 @@ TensorFlow version 1.12. These ops now function deterministically
 by default when running on a GPU.
 
 #### Confirmed Current GPU-Specific Sources of Non-Determinism (With Solutions)
+
+Where it is indicated that solutions are available in NGC TensorFlow container
+images, it can be assumed that the solutions are available in both TensorFlow
+API version 1 and TensorFlow API version 2 variants of those container images.
 
 Note | Source                                                                        | TF 1.14, 1.15,<br>2.0  | NGC 19.06+ /<br>TF 2.1 | TF 2.2     | TF 2.3     |
 ----:|:------------------------------------------------------------------------------|:-----------------------|:-----------------------|:-----------|:-----------|

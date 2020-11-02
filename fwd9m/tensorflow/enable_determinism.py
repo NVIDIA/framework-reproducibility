@@ -24,23 +24,22 @@ import re
 import tensorflow as tf
 
 from .patch import _patch_bias_add
+from .patch import _patch_unsorted_segment_sum
+from .patch import _patch_segment_sum
 from ..utils import _Version as Version
 from ..version import __version__ as package_version
+
 
 def _enable_determinism(seed=None):
   """Provides a best-effort recipe to increase framework determinism when
     running on GPUs.
-
     Call this method either before or after explicitly importing TensorFlow,
     but always before constructing any graphs.
-
     This function cannot address all possible sources of non-determinism. Please 
     see further instructions at https://github.com/NVIDIA/tensorflow-determinism
     to understand how to use it in a larger deterministic context.
-
     Arguments:
       seed: <fill in>
-
     Returns: nothing
   """
   tf_vers = Version(tf.version.VERSION)
@@ -58,6 +57,10 @@ def _enable_determinism(seed=None):
   if in_ngc_cont and ngc_vers.at_least('19.06') or tf_vers.at_least('1.14'):
     # Apply the fused softmax/cross-entropy patch here
     pass
+
+  # For all possible version, patch these two
+  _patch_unsorted_segment_sum()
+  _patch_segment_sum()
   # TODO: Add other recipe items
   print("%s (version %s) has been applied to TensorFlow "
         "version %s" % (__name__, package_version,
