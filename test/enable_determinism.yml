@@ -1,0 +1,29 @@
+# specifies versions from which to test (test in this version onwards)
+cudnn_maxpool:
+  filename: cudnn_max_pool_deterministic_test.py
+  stock: 1.14
+  ngc: 19.06
+cudnn_conv:
+  filename: cudnn_conv2d_backprop_deterministic_test.py
+  stock: 1.14
+  ngc: 19.06
+bilinear_resize:
+  filename: bilinear_resize_deterministic_test.py
+  stock: 2.4
+  ngc: 20.03  #
+bias_add:
+  filename: bias_add_deterministic_test.py
+  stock: 1.14
+  ngc: 19.06
+segment_sum:
+  filename: segment_sum_deterministic_test.py
+  stock: 1.14
+  ngc: 19.06
+softmax_cross_entropy:
+  filename: softmax_cross_entropy_deterministic_test.py
+  stock: 1.14
+  ngc: 19.06
+misc:
+  filename: test_misc.py
+utils:
+  filename: test_utils.py

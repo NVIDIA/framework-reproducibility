@@ -15,40 +15,53 @@
 # limitations under the License.
 # ========================================================================
 
+# set -x
+
 if [ "$1" == "--help" ]; then
-	echo "Usage:"
-	echo
-	echo "  To run a program in a container:"
-	echo "    ${0} <docker_image> <executable> <arguments>"
-	echo "    <executable> may be either python or a file in the current directory"
-	echo
-	echo "  To run an interactive bash session in the default container:"
-	echo "    ${0}"
-	exit 0
+  echo "Usage:"
+  echo
+  echo "  To run a program in a container:"
+  echo "    ${0} <executable> <arguments>"
+  echo "    <executable> may be either python, mpirun, or a file in"
+  echo "      the current directory"
+  echo
+  echo "  To run an interactive bash session in the default container:"
+  echo "    ${0}"
+  exit 0
 fi
 
-if [ -z ${2+present} ]; then
-  IMAGE=tensorflow/tensorflow:2.3.0-gpu
+DIR=${PWD##*/}
+PARENT="$(dirname "${PWD}")"
+
+IMAGE=framework-determinism/${DIR}:latest
+if [[ -z ${1+present} ]]; then
   ENTRYPOINT=""
   ENTRYPOINT_ARGUMENTS=bash
 else
-  IMAGE=${1}
-  if [ "${2}" == "python" ]; then
-    ENTRYPOINT="--entrypoint python"
-  elif [ "${2}" == "bash" ]; then
-    ENTRYPOINT="--entrypoint bash"
+  # It seems kind of hacky to have to list each non-local-directory script or
+  # program that I want to be able to run in the container as the entrypoint
+  # script. I wonder if there is a more optimal way of doing all of this.
+  if [[ "${1}" == "python" || "${1}" == "bash" ]]; then
+    ENTRYPOINT="--entrypoint ${1}"
   else
-    ENTRYPOINT="--entrypoint /mnt/test/${2}"
+    # The following specifies the entrypoint relative to the current directory
+    # that this script is being run from. This enables it to use an entrypoint
+    # script either from the current directory or from the ../utils directory.
+    ENTRYPOINT="--entrypoint /mnt/test/${1}"
   fi
-  ENTRYPOINT_ARGUMENTS="${@:3}"
+  ENTRYPOINT_ARGUMENTS="${@:2}"
 fi
 
-docker pull ${IMAGE}
+# cuDNN API Logging: https://docs.nvidia.com/deeplearning/sdk/cudnn-developer-guide/index.html#api-logging
+# ENV_VARS="--env CUDNN_LOGINFO_DBG=1 --env CUDNN_LOGDEST_DBG=/mnt/${DIR}/cudnn.log"
+ENV_VARS=""
 
-# ENV_VARS="-e NVIDIA_VISIBLE_DEVICES=1" # Work around XLA issue in TF 1.15
-# An alternative, and less brittle, solution for the issue seen in TF 1.15 and
-# TF 2.0 is now provided by _tf_session in tf_utils.py
-
+# --network=host is a work-around to enable the internet to be reached from
+# inside the container when the host is using the Cisco VPN client. It also
+# happens to make the in-container networking higher performance (if you happen
+# to need that) but is less optimal from a security standpoint.
+# Check if this is still needed in Ubuntu 18.04
+# docker pull ${IMAGE}
 docker run --runtime=nvidia -it        \
            -u $(id -u):$(id -g)        \
            -v ${PWD}/..:/mnt           \

@@ -1,1 +1,2 @@
 virtualenv
+pyyaml==5.3.1
