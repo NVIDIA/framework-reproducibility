@@ -1,19 +1,47 @@
+# Copyright 2019 NVIDIA Corporation. All Rights Reserved
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ========================================================================
+
+# Copyright 2015 The TensorFlow Authors. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ========================================================================
 
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import numpy as np
 import os
 import sys
 
+import numpy as np
 import tensorflow as tf
 from tensorflow.python.eager import backprop
 from tensorflow.python.eager import context
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import test_util
-from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import gradient_checker
 from tensorflow.python.ops import gradient_checker_v2
@@ -23,14 +51,10 @@ from tensorflow.python.ops import nn_ops
 import tensorflow.python.ops.nn_grad  # pylint: disable=unused-import
 from tensorflow.python.platform import test
 
-import random
-
 sys.path.insert(0, '..')
-from fwd9m.tensorflow import enable_determinism
-from fwd9m.tensorflow import fwd9m_tfsession
-from fwd9m.utils import _Version as Version
+import fwd9m.tensorflow as fwd9m_tensorflow
+import utils
 
-enable_determinism()
 class BiasAddTestDeterministic(test.TestCase):
 
   def _makeShapeTuple(self, batch_size, channel_count, data_rank, data_dim,
@@ -57,7 +81,6 @@ class BiasAddTestDeterministic(test.TestCase):
 
   def _randomDataOp(self, shape, data_type):
     return constant_op.constant(self._randomNDArray(shape), dtype=data_type)
-  
 
   def _testDeterministicGradientsCase(self, op_binding, data_layout, data_rank,
                                       data_type):
@@ -112,12 +135,9 @@ class BiasAddTestDeterministic(test.TestCase):
         result_b = bias_gradients.eval(feed_dict=feed_dict)
         self.assertAllEqual(result_a, result_b)
 
-
-
   @test_util.run_in_graph_and_eager_modes
-  # @test_util.run_cuda_only
   def testDeterministicGradients(self):
-    with fwd9m_tfsession(self, force_gpu=True):
+    with utils.force_gpu_session(self):
       # There are problems with using force_gpu=True and cached_session with
       # both eager mode and graph mode in the same test. Using a non-cached
       # session and putting everything inside the same session context is
@@ -129,15 +149,12 @@ class BiasAddTestDeterministic(test.TestCase):
           # deterministically by default. I don't know if this is true for
           # all layer configurations. These cases are still being tested here,
           # for completeness.
-          # TF1.13 only includes 2 add a note here for users 
-          if Version(tf.version.VERSION).is_exactly("1.13"):
-            data_ranks = (2,)
-          else:
-            data_ranks = (1, 2, 3)
-            
-          for data_rank in data_ranks:
+          for data_rank in (1, 2, 3):
             for data_type in (dtypes.float16, dtypes.float32, dtypes.float64):
               self._testDeterministicGradientsCase(op_binding, data_layout,
-                                                    data_rank, data_type)
-if __name__=="__main__":
+                                                   data_rank, data_type)
+
+
+if __name__ == "__main__":
+  fwd9m_tensorflow.enable_determinism()
   test.main()

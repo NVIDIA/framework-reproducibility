@@ -32,9 +32,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import numpy as np
 import os
+import sys
 
+import numpy as np
 import tensorflow as tf
 from tensorflow.python.eager import backprop
 from tensorflow.python.eager import context
@@ -49,6 +50,10 @@ from tensorflow.python.ops import nn
 from tensorflow.python.ops import nn_ops
 import tensorflow.python.ops.nn_grad  # pylint: disable=unused-import
 from tensorflow.python.platform import test
+
+sys.path.insert(0, '..')
+import fwd9m.tensorflow as fwd9m_tensorflow
+import utils
 
 # The tests in the following class were originally copied from
 # https://github.com/tensorflow/tensorflow/blob/v1.14.0/tensorflow/python/kernel_tests/bias_op_test.py
@@ -65,6 +70,8 @@ from tensorflow.python.platform import test
 # nondeterministic version of the bias_add op, are not included in the following
 # test class because the error-check functionality that they test is missing
 # from the deterministic op patch.
+
+
 @test_util.run_all_in_graph_and_eager_modes
 class BiasAddTest(test.TestCase):
 
@@ -219,6 +226,7 @@ class BiasAddTest(test.TestCase):
       input_jacob_a, bias_jacob_a, grad_jacob_a = jacob_a
       input_jacob_n, bias_jacob_n, grad_jacob_n = jacob_n
 
+
       if dtype == np.float16:
         # Compare fp16 analytical gradients to fp32 numerical gradients,
         # since fp16 numerical gradients are too imprecise unless great
@@ -240,6 +248,7 @@ class BiasAddTest(test.TestCase):
       self.assertAllClose(input_jacob_a, input_jacob_n, threshold, threshold)
       self.assertAllClose(bias_jacob_a, bias_jacob_n, threshold, threshold)
       self.assertAllClose(grad_jacob_a, grad_jacob_n, threshold, threshold)
+
 
   def testGradientTensor2D(self):
     for (data_format, use_gpu) in ("NHWC", False), ("NHWC", True):
@@ -391,9 +400,8 @@ class BiasAddTestDeterministic(test.TestCase):
         self.assertAllEqual(result_a, result_b)
 
   @test_util.run_in_graph_and_eager_modes
-  @test_util.run_cuda_only
   def testDeterministicGradients(self):
-    with self.session(force_gpu=True):
+    with utils.force_gpu_session(self):
       # There are problems with using force_gpu=True and cached_session with
       # both eager mode and graph mode in the same test. Using a non-cached
       # session and putting everything inside the same session context is
@@ -422,8 +430,5 @@ class BiasAddTestMisc(test.TestCase):
 
 
 if __name__ == "__main__":
-  import sys
-  sys.path.insert(0, '..')
-  from fwd9m.tensorflow import patch
-  patch()
+  fwd9m_tensorflow.enable_determinism()
   test.main()

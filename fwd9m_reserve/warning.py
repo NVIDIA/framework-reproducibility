@@ -1,4 +1,4 @@
-# Copyright 2019 NVIDIA. All Rights Reserved.
+# Copyright 2020 NVIDIA Corporation. All Rights Reserved
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,10 +13,16 @@
 # limitations under the License.
 # ========================================================================
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+message = """
+WARNING:
 
-# What follows is the public API for fwd9m.tensorflow
-from .enable_determinism import _enable_determinism as enable_determinism
-from .patch import _patch as patch # deprecated
+framework-determinism version 0.0.0 is a placeholder distribution that is
+intended only to reserve the distribution name in the Python Package Index
+(PyPI).
+
+The fwd9m package has not yet been populated in this PyPI distribution.
+Install a newer version of this distribution (if one now exists) or install the
+latest version of the tensorflow-determinism PyPI distribution, which is the
+distribution that will evolve (or has evolved) into the framework-determinism
+PyPI distribution.
+"""

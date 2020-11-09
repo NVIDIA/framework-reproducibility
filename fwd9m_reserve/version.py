@@ -1,4 +1,4 @@
-# Copyright 2019 NVIDIA. All Rights Reserved.
+# Copyright 2020 NVIDIA Corporation. All Rights Reserved
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,10 +13,4 @@
 # limitations under the License.
 # ========================================================================
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-# What follows is the public API for fwd9m.tensorflow
-from .enable_determinism import _enable_determinism as enable_determinism
-from .patch import _patch as patch # deprecated
+__version__ = "0.0.0"

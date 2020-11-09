@@ -18,16 +18,16 @@
 # set -x
 
 if [ "$1" == "--help" ]; then
-	echo "Usage:"
-	echo
-	echo "  To run a program in a container:"
-	echo "    ${0} <executable> <arguments>"
-	echo "    <executable> may be either python, mpirun, or a file in"
+  echo "Usage:"
+  echo
+  echo "  To run a program in a container:"
+  echo "    ${0} <executable> <arguments>"
+  echo "    <executable> may be either python, mpirun, or a file in"
   echo "      the current directory"
-	echo
-	echo "  To run an interactive bash session in the default container:"
-	echo "    ${0}"
-	exit 0
+  echo
+  echo "  To run an interactive bash session in the default container:"
+  echo "    ${0}"
+  exit 0
 fi
 
 DIR=${PWD##*/}

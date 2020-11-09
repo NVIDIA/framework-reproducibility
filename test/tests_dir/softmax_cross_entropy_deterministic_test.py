@@ -18,7 +18,7 @@ class DeterministicTest(tf.test.TestCase):
       a = np.apply_along_axis(normalize, 1, a)
 
     return tf.constant(a)
-    
+
   def _testDeterministicGradients(self, exclusive_labels):
     with self.session(force_gpu=True):
       batch_size = 1024

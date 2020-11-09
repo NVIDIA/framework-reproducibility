@@ -36,11 +36,16 @@ def _enable_determinism(seed=None):
     Call this method either before or after explicitly importing TensorFlow,
     but always before constructing any graphs.
     This function cannot address all possible sources of non-determinism. Please 
-    see further instructions at https://github.com/NVIDIA/tensorflow-determinism
+    see further instructions at https://github.com/NVIDIA/framework-determinism
     to understand how to use it in a larger deterministic context.
     Arguments:
       seed: <fill in>
+<<<<<<< HEAD
     Returns: nothing
+=======
+
+    Returns: None
+>>>>>>> 265cc2dfa05e1049018fbfca063d0f774a5ea2d0
   """
   tf_vers = Version(tf.version.VERSION)
   ngc_tf_container_version_string = os.environ.get('NVIDIA_TENSORFLOW_VERSION')
@@ -55,13 +60,11 @@ def _enable_determinism(seed=None):
   if in_ngc_cont and ngc_vers.at_least('19.06') or tf_vers.at_least('2.1'):
     os.environ['TF_DETERMINISTIC_OPS'] = '1'
   if in_ngc_cont and ngc_vers.at_least('19.06') or tf_vers.at_least('1.14'):
+    _patch_unsorted_segment_sum()
+    _patch_segment_sum()
     # Apply the fused softmax/cross-entropy patch here
     pass
-
-  # For all possible version, patch these two
-  _patch_unsorted_segment_sum()
-  _patch_segment_sum()
-  # TODO: Add other recipe items
+  # TODO: Add other recipe items (e.g. seed)
   print("%s (version %s) has been applied to TensorFlow "
         "version %s" % (__name__, package_version,
                         tf_vers.original_version_string))

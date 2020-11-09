@@ -25,4 +25,4 @@ python test_utils.py
 
 # The following should be run in only some containers
 python test_patch_bias_add.py
-./integration_test.sh
+# python test_patch_segment_reduction.py

@@ -17,7 +17,8 @@ from setuptools import setup
 import os
 
 distribution_name = 'framework-determinism'
-package_name = 'fwd9m'
+package_name = 'fwd9m' + '_reserve'
+# package_name = 'fwd9m'
 
 # This file needs to be executed during installation. It's not possible to
 # import the full package during installation because it will fail to import if
@@ -26,11 +27,16 @@ package_name = 'fwd9m'
 import sys
 sys.path.append(package_name)
 from version import __version__ as version
+from warning import message as warning_message
 sys.path.remove(package_name)
 
-readme = os.path.join(os.path.dirname(os.path.realpath(__file__)), "README.md")
-with open(readme, "r") as fp:
-  long_description = fp.read()
+if warning_message:
+  long_description = warning_message
+else:
+  readme = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                        "README.md")
+  with open(readme, "r") as fp:
+    long_description = fp.read()
 
 description = ("Providing determinism in the DL frameworks")
 url = "https://github.com/NVIDIA/%s" % distribution_name
@@ -43,6 +49,8 @@ classifiers = [
     'License :: OSI Approved :: Apache Software License',
     'Programming Language :: Python'
 ]
+
+keywords = "framework tensorflow gpu deep-learning determinism"
 
 setup(
   name                          = distribution_name,
@@ -57,5 +65,6 @@ setup(
   long_description_content_type = 'text/markdown',
   install_requires              = install_requires,
   classifiers                   = classifiers,
-  keywords                      = "tensorflow gpu deep-learning determinism"
+  keywords                      = keywords,
+  platforms                     = ['TensorFlow']
 )

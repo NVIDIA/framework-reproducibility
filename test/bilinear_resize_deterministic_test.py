@@ -30,14 +30,12 @@ from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import gradients_impl
+import image_grad_test_base as test_base
 from tensorflow.python.ops import image_ops
-from tensorflow.python.ops import nn_ops
 from tensorflow.python.platform import test
-import fwd9m.tensorflow as fwd9m_tensorflow
-import utils
 
-fwd9m_tensorflow.enable_determinism()
-class MaxPoolingOpDeterministicTest(test.TestCase):
+
+class ResizeBilinearOpDeterministicTest(test_base.ResizeBilinearOpTestBase):
 
   def _randomNDArray(self, shape):
     return 2 * np.random.random_sample(shape) - 1
@@ -45,59 +43,87 @@ class MaxPoolingOpDeterministicTest(test.TestCase):
   def _randomDataOp(self, shape, data_type):
     return constant_op.constant(self._randomNDArray(shape), dtype=data_type)
 
-
-  # @test_util.run_cuda_only
+  @parameterized.parameters(
+      # Note that there is no 16-bit floating point format registered for GPU
+      {
+          'align_corners': False,
+          'half_pixel_centers': False,
+          'data_type': dtypes.float32
+      },
+      {
+          'align_corners': False,
+          'half_pixel_centers': False,
+          'data_type': dtypes.float64
+      },
+      {
+          'align_corners': True,
+          'half_pixel_centers': False,
+          'data_type': dtypes.float32
+      },
+      {
+          'align_corners': False,
+          'half_pixel_centers': True,
+          'data_type': dtypes.float32
+      })
   @test_util.run_in_graph_and_eager_modes
-  def testDeterministicGradients(self, data_type=dtypes.float32):
-    with utils.force_gpu_session(self):
-      seed = (hash(data_type) % 256)
+  @test_util.run_cuda_only
+  def testDeterministicGradients(self, align_corners, half_pixel_centers,
+                                 data_type):
+    if not align_corners and test_util.is_xla_enabled():
+      # Align corners is deprecated in TF2.0, but align_corners==False is not
+      # supported by XLA.
+      self.skipTest('align_corners==False not currently supported by XLA')
+    with self.session(force_gpu=True):
+      seed = (
+          hash(align_corners) % 256 + hash(half_pixel_centers) % 256 +
+          hash(data_type) % 256)
       np.random.seed(seed)
-      N = 100
-      image_size = 30
-      nchannels = 3
-      ksize = [1, 3, 3, 1]
-      strides = (1, 2, 2, 1)
-      input_shape = (N, image_size , image_size, nchannels)  # NHWC
-      output_shape = (N, 15, 15, 1)
+      input_shape = (1, 25, 12, 3)  # NHWC
+      output_shape = (1, 200, 250, 3)
       input_image = self._randomDataOp(input_shape, data_type)
       repeat_count = 3
       if context.executing_eagerly():
-        def maxpool_gradients(local_seed):
+
+        def resize_bilinear_gradients(local_seed):
           np.random.seed(local_seed)
           upstream_gradients = self._randomDataOp(output_shape, dtypes.float32)
           with backprop.GradientTape(persistent=True) as tape:
             tape.watch(input_image)
-            output_image = nn_ops.max_pool(input_image, ksize, strides,
-                                           padding="SAME")
+            output_image = image_ops.resize_bilinear(
+                input_image,
+                output_shape[1:3],
+                align_corners=align_corners,
+                half_pixel_centers=half_pixel_centers)
             gradient_injector_output = output_image * upstream_gradients
           return tape.gradient(gradient_injector_output, input_image)
 
         for i in range(repeat_count):
           local_seed = seed + i  # select different upstream gradients
-          result_a = maxpool_gradients(local_seed)
-          result_b = maxpool_gradients(local_seed)
+          result_a = resize_bilinear_gradients(local_seed)
+          result_b = resize_bilinear_gradients(local_seed)
           self.assertAllEqual(result_a, result_b)
       else:  # graph mode
         upstream_gradients = array_ops.placeholder(
-            data_type, shape=output_shape, name='upstream_gradients')
-
-        output_image = nn_ops.max_pool(input_image, ksize, strides,
-                                       padding="SAME")
-
+            dtypes.float32, shape=output_shape, name='upstream_gradients')
+        output_image = image_ops.resize_bilinear(
+            input_image,
+            output_shape[1:3],
+            align_corners=align_corners,
+            half_pixel_centers=half_pixel_centers)
         gradient_injector_output = output_image * upstream_gradients
         # The gradient function behaves as if grad_ys is multiplied by the op
         # gradient result, not passing the upstram gradients through the op's
         # gradient generation graph. This is the reason for using the
         # gradient injector
-        maxpool_gradients = gradients_impl.gradients(
+        resize_bilinear_gradients = gradients_impl.gradients(
             gradient_injector_output,
             input_image,
             grad_ys=None,
             colocate_gradients_with_ops=True)[0]
         for i in range(repeat_count):
           feed_dict = {upstream_gradients: self._randomNDArray(output_shape)}
-          result_a = maxpool_gradients.eval(feed_dict=feed_dict)
-          result_b = maxpool_gradients.eval(feed_dict=feed_dict)
+          result_a = resize_bilinear_gradients.eval(feed_dict=feed_dict)
+          result_b = resize_bilinear_gradients.eval(feed_dict=feed_dict)
           self.assertAllEqual(result_a, result_b)
 
 
@@ -112,4 +138,5 @@ if __name__ == '__main__':
   # functionality, for this op and for other ops, will be able to be included in
   # the same file with the regular tests, simplifying the organization of tests
   # and test files.
+  # os.environ['TF_DETERMINISTIC_OPS'] = '1'
   test.main()

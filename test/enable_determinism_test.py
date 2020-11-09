@@ -46,7 +46,7 @@ def read_tests_yml(container_id, yml_file, tests_dir):
   file_data = file.read()
   file.close()
   yml_info = yaml.load(file_data)
-  
+
   tests_data = {}
 
   for key, val in yml_info.items():
@@ -55,25 +55,25 @@ def read_tests_yml(container_id, yml_file, tests_dir):
     if not os.path.isfile(file_path):
       raise Exception("Test file %s does not exist under folder %s!" 
                       % (val['filename'], tests_dir) )
-    
+
     if 'stock' not in val and 'ngc' not in val:
       tests_data[val['filename']] = False
     else:
       stock_vers_onwards = str(val['stock'])
       ngc_vers_onwards = str(val['ngc'])
-      
+
       if container_id[:3]=="NGC":
         in_ngc_cont = True
         ngc_vers = Version(container_id[4:])
       else:
         in_ngc_cont = False
         tf_vers = Version(tf.version.VERSION)
-      
+
       if not in_ngc_cont:
         tests_data[val['filename']] = False if tf_vers.at_least(stock_vers_onwards) else True
       else:
         tests_data[val['filename']] = False if ngc_vers.at_least(ngc_vers_onwards) else True
-  
+
   return tests_data
 
 class IntegrationTest():
@@ -87,7 +87,7 @@ class IntegrationTest():
     cls._tests_dir = tests_dir
     cls._tests_data = read_tests_yml(cls._container_id, yml, tests_dir)
     cls._runner = unittest.TextTestRunner()
-  
+
   @classmethod
   def run_tests(cls):
     _TestResult = collections.namedtuple("_TestResult", ["status", "message"])
@@ -110,9 +110,9 @@ class IntegrationTest():
           ret = _TestResult(status="ok", message="OK at %s" % file_name)
       else:
         ret = _TestResult(status="skipped", message="Skipped at %s" % file_name)
-        
+
       ret_summary.append(ret)
-    
+
     print("Summary for container %s:" % cls._container_id)
     for ret in ret_summary:
       if ret.message:

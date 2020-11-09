@@ -144,6 +144,12 @@ docker image repository tag), for those who have not yet migrated to TensorFlow
 API version 2. The source code for this can be found at
 [GitHub/NVIDIA/TensorFlow](https://github.com/NVIDIA/tensorflow).
 
+Note that, for now, the NGC TensorFlow container images continue to support
+a GPU-performance-optimized TensorFlow API version 1 variant (using a `-tf1`
+docker image repository tag), for those who have not yet migrated to TensorFlow
+API version 2. The source code for this can be found at
+[GitHub/NVIDIA/TensorFlow](https://github.com/NVIDIA/tensorflow).
+
 For information about pulling and running the NVIDIA NGC Docker images, see
 [these instructions][2].
 
