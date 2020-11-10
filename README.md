@@ -618,7 +618,8 @@ ID                                                           | Title            
 [38089](https://github.com/tensorflow/tensorflow/pull/38089) | Add reminder to test deterministic cuDNN CTC loss                | closed |             |         |
 [38509](https://github.com/tensorflow/tensorflow/pull/38509) | List deterministic op func bug fixes in v2.2<br>release notes    | merged | 2020-04-15  | 2.2     |
 [39243](https://github.com/tensorflow/tensorflow/pull/39243) | GPU-deterministic tf.image.resize (bilinear)                     | merged | 2020-09-22  | 2.4     |
- 
+[44717](https://github.com/tensorflow/tensorflow/pull/44717) | Add to rel notes: deterministic tf.image.resize (bilinear)       | open   |             | 2.4     |
+
 Notes:
   1. These are individual commits.
 
