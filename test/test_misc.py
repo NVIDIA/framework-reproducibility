@@ -17,8 +17,8 @@ import sys
 import unittest
 
 sys.path.insert(0, '..')
-from fwd9m import __version__ as fwd9m_version
 import fwd9m
+from fwd9m import __version__ as fwd9m_version
 from get_version import get_version
 
 class TestMisc(unittest.TestCase):
