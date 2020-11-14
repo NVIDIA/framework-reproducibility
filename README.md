@@ -502,10 +502,10 @@ Note | Source                                                                   
           embeddings.dtype) @ embeddings
       ```
 
-      Note that the backward (and forward) functionality of `tf.gather` is
-      deterministic. The backprop for `tfa.image.dense_image_warp` may introduce
-      truly random noise because it also uses the nondeterministic segment sum
-      functionality. See
+      Note that the backward (and forward) functionality of `tf.gather` itself
+      _is_ deterministic. The backprop for `tfa.image.dense_image_warp` may
+      introduce truly random noise because it also uses the nondeterministic
+      segment sum functionality. See
       [Issue 39751](https://github.com/tensorflow/tensorflow/issues/39751). A
       patch that will make the segment sum ops function deterministically is in
       development.
