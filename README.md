@@ -386,13 +386,13 @@ Note | Source                                                                   
    6 | `tf.nn.ctc_loss` backprop                                                     | NS                     | NS                     | NS         | TDO        |
    7 | Fused sofmax/crossentropy:<br>`tf.nn.*_cross_entropy_with_logits`<br>backprop | NS                     | NS                     | NS         | NS         |
 
-Note | Source                                                                                                                                  | TF < 2.4  | NGC 20.03+ | TF 2.4 |
-----:|:----------------------------------------------------------------------------------------------------------------------------------------|:----------|:-----------|:-------|
-   8 | `tf.image.resize` with `method=ResizeMethod.BILINEAR`<br>and `tf.keras.layers.UpSampling2D` with<br>`interpolation='bilinear'` backprop | NS        | TDO        | TDO    |
-   9 | `tf.image.resize` with `method=ResizeMethod.NEAREST`<br>and `tf.keras.layers.UpSampling2D` with<br>`interpolation='nearest'` backprop   | NS        | NS         | NS     |
-  10 | `tf.math.segment_sum` and `tf.math.unsorted_segment_sum`<br>forward, and `tf.gather` and `tfa.image.dense_image_warp`<br>backprop       | NS        | NS         | NS     |
-  11 | `tf.image.crop_and_resize` backprop to `image` (on CPU<br>or GPU) and backprop to `boxes`                                               | NS        | NS         | NS     |
-  12 | `tf.sparse.sparse_dense_matmul` forward                                                                                                 | NS        | NS         | NS     |
+Note | Source                                                                                                                                                        | TF < 2.4  | NGC 20.03+ | TF 2.4 |
+----:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------|:-----------|:-------|
+   8 | `tf.image.resize` with `method=ResizeMethod.BILINEAR`<br>and `tf.keras.layers.UpSampling2D` with<br>`interpolation='bilinear'` backprop                       | NS        | TDO        | TDO    |
+   9 | `tf.image.resize` with `method=ResizeMethod.NEAREST`<br>and `tf.keras.layers.UpSampling2D` with<br>`interpolation='nearest'` backprop                         | NS        | NS         | NS     |
+  10 | `tf.math.segment_sum`, `tf.math.unsorted_segment_sum`,<br>and `tf.convert_to_tensor` forward.<br>And `tf.gather` and `tfa.image.dense_image_warp`<br>backprop | NS        | NS         | NS     |
+  11 | `tf.image.crop_and_resize` backprop to `image` (on CPU<br>or GPU) and backprop to `boxes`                                                                     | NS        | NS         | NS     |
+  12 | `tf.sparse.sparse_dense_matmul` forward                                                                                                                       | NS        | NS         | NS     |
 
 ##### Key to the Solutions Referenced Above
 
@@ -479,11 +479,35 @@ Note | Source                                                                   
      issues [#12](https://github.com/NVIDIA/framework-determinism/issues/12) and
      [#24](https://github.com/NVIDIA/framework-determinism/issues/24))
   10. Segment reduction ops `tf.math.segment_sum` and
-     `tf.math.unsorted_segment_sum` have nondeterministic forward operation on
-     GPU. Other ops that are dependent on these ops, including `tf.gather` and
-     `tfa.image.dense_image_warp` (both in backprop), therefore also operate
-     nondeterministically. See
-     [Issue 39751](https://github.com/tensorflow/tensorflow/issues/39751).
+      `tf.math.unsorted_segment_sum` can exhibit nondeterministic forward
+      operation when running on a GPU. `tf.convert_to_tensor`, when fed with
+      (sparse) `tf.IndexedSlices`, uses this potentially nondeterminitic
+      segment sum functionality in its forward direction and therefore may
+      introduce truly random noise into its output when a slice index is
+      represented more than twice in its input (such as when reducing the word
+      embedding gradients from multiple instances of the same word in a sentence
+      or across a batch of sentences). `tf.gather` is often used to select word
+      embeddings from an embedding matrix in a model's forward direction and
+      `tf.gather`'s backprop generates sparse gradients conveyed as
+      `tf.IndexedSlices`. The reduction of the back-propagated sparse gradients
+      from `tf.gather` by `tf.convert_to_tensor` can therefore introduce truly
+      random noise into an embedding trainable variable. A lower-performance
+      work-around for this nondeterminism related to the use of `tf.gather` is
+      to use `tf.linalg.matmul` instead:
+
+      ```
+      # inputs_embeds = tf.gather(embeddings, input_ids)
+      input_embeds = tf.dtypes.cast(
+          tf.one_hot(input_ids, embeddings.shape[0]),
+          embeddings.dtype) @ embeddings
+      ```
+
+      The backprop for `tfa.image.dense_image_warp` may introduce
+      truly random noise because it also uses the
+      nondeterministic segment sum functionality. See
+      [Issue 39751](https://github.com/tensorflow/tensorflow/issues/39751). A
+      patch that will make the segment sum ops function deterministically is in
+      development.
   11. Backprop to `image` on `tf.image.crop_and_resize` introduces
       nondeterministic noise when running on either CPU or GPU. Backprop to
       `boxes` introduces nondeterministic noise when running on GPU. See
