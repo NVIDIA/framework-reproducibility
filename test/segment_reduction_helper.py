@@ -41,7 +41,6 @@ import unittest
 import numpy as np
 import tensorflow as tf
 
-from tensorflow.python.client import session
 from tensorflow.python.eager import backprop
 from tensorflow.python.eager import context
 from tensorflow.python.framework import constant_op

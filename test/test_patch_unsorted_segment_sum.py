@@ -27,16 +27,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-"""Functional tests for segment reduction ops."""
-
+"""Functional tests for unsorted segment reduction ops."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import itertools
 import os
 import sys
-import unittest
+import warnings
 
 import numpy as np
 import tensorflow as tf
@@ -53,18 +51,33 @@ from tensorflow.python.ops import gradient_checker
 from tensorflow.python.ops import gradient_checker_v2
 from tensorflow.python.ops import gradients_impl
 from tensorflow.python.ops import math_ops
-from tensorflow.python.ops import variables
 from tensorflow.python.platform import test
 
-sys.path.insert(0, '..')
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from segment_reduction_helper import SegmentReductionHelper
 
+sys.path.insert(0, '..')
 import fwd9m.tensorflow as fwd9m_tensorflow
 import utils
 
-from segment_reduction_helper import SegmentReductionHelper
-
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # Simplifies logging
+
+# The tests in the following class were originally copied from
+# https://github.com/tensorflow/tensorflow/blob/1e9b9b1568d550e6779d2ddd5d193968254d3029/tensorflow/python/kernel_tests/segment_reduction_ops_test.py
+# and were then enhanced.
+
+# NOTE: gen_math_ops.unsorted_segment_sum has GPU kernels for the following
+# data types, float16/32/64, complex64/128. The dynamic patch adopts a
+# "super-accumulator" approach which does the operation in higher precision with
+# necessary pre-conversion and post-conversion. Also note that integer operation
+# generally has no issue with the non-associativity of floating-point rounding
+# errors. Therefore the patch will not provide determinism for float64,
+# complex128 or integer operands. For bfloat16, no GPU kernel is available for
+# TF version less than(and equal to) 2.3. But it is likely that the patched ops
+# will operate, in any given configuration, faster using float32 on GPU than
+# using bfloat16 on a CPU. Therefore, we demonstrate a proof-of-concept for
+# rapidly providing accelerated GPU support in frameworks for new data formats
+# before they are implemented natively in hardware.
 
 # Upstream class name: UnsortedSegmentTest
 class UnsortedSegmentSumTest(SegmentReductionHelper):
@@ -190,6 +203,10 @@ class UnsortedSegmentSumTest(SegmentReductionHelper):
       for indices in indices_flat, indices_flat.reshape(5, 2):
         shape = indices.shape + (num_cols,)
         # test CPU and GPU as tf.gather behaves differently on each device
+        # fwd9m note: the upstream test uses test_util.use_gpu, which seems to
+        # suffer from the same problem, and presumably does the same thing, as
+        # self.session(force_gpu=true). So we replaced test_util.use_gpu with
+        # utils.force_gpu_session(self).
         for use_gpu in [utils.force_gpu_session(self), test_util.force_cpu()]:
           with use_gpu:
           # with utils.force_gpu_session(self):
@@ -298,10 +315,9 @@ class UnsortedSegmentSumDeterministicTest(SegmentReductionHelper):
                               tf.math.unsorted_segment_sum, lambda t: 0)]
 
     self.differentiable_dtypes = [dtypes_lib.float16, dtypes_lib.float32]
+
     self.all_dtypes = (self.differentiable_dtypes +
-                       [dtypes_lib.bfloat16,
-                        dtypes_lib.int64, dtypes_lib.int32,
-                        dtypes_lib.complex64])
+                       [dtypes_lib.complex64, dtypes_lib.bfloat16])
     self.repeat_count = 5
     super(
         UnsortedSegmentSumDeterministicTest, self).__init__(
@@ -347,36 +363,6 @@ class UnsortedSegmentSumDeterministicTest(SegmentReductionHelper):
         result_b = op_gradients.eval(feed_dict=feed_dict)
         self.assertAllEqual(result_a, result_b)
 
-  @test_util.run_in_graph_and_eager_modes
-  def testForward(self):
-    num_cols = 2
-    num_rows = 64
-    num_segments = 64
-    segment_size = num_cols * num_rows
-    indices_flat = np.random.randint(low=-1, high=num_segments,
-                                     size=(segment_size,))
-    skip_dtypes = (dtypes_lib.int64, dtypes_lib.bfloat16)
-    # NOTE: The data types in `skip_dtypes` may throw a error for `tf.cast`
-    # under graph mode on GPU. TF Issue 28610 explains the cause as: failure
-    # will be triggerd if the integer buffer on CPU but force tf.cast on GPU.
-    # https://github.com/tensorflow/tensorflow/issues/28610
-
-    for dtype in self.all_dtypes:
-      if dtype in skip_dtypes:
-        continue
-
-      for indices in indices_flat, indices_flat.reshape(num_rows, num_cols):
-        shape = indices.shape + (num_cols,)
-        ops_list = self.complex_ops_list if dtype.is_complex else self.ops_list
-        x, _  = self._random_input(shape, dtype=dtype)
-
-        for use_gpu in [utils.force_gpu_session(self), test_util.force_cpu()]:
-          with use_gpu:
-            for _, _, tf_op, _ in ops_list:
-              for _ in range(self.repeat_count):
-                result_a = self.evaluate(tf_op(x, indices, num_segments))
-                result_b = self.evaluate(tf_op(x, indices, num_segments))
-                self.assertAllEqual(result_a, result_b)
 
   # The backward operation is not known or expected to introduce nondeterminism
   # but we're testing it for completeness.
@@ -389,16 +375,61 @@ class UnsortedSegmentSumDeterministicTest(SegmentReductionHelper):
     indices_flat = np.random.randint(low=-1, high=num_segments,
                                      size=(segment_size,))
 
-    for use_gpu in [utils.force_gpu_session(self), test_util.force_cpu()]:
-      with use_gpu:
-        for dtype in self.differentiable_dtypes:
-          ops_list = self.complex_ops_list if dtype.is_complex else self.ops_list
+    with utils.force_gpu_session(self):
+      for dtype in self.differentiable_dtypes:
+        for indices in indices_flat, indices_flat.reshape(num_rows, num_cols):
+          ops_list = self.complex_ops_list if dtype.is_complex \
+              else self.ops_list
           for op_binding in ops_list:
-            for indices in indices_flat, indices_flat.reshape(num_rows,
-                                                              num_cols):
-              shape = indices.shape + (num_cols,)
-              self._testBackwardCase(
-                  dtype, indices, num_segments, op_binding, shape)
+            shape = indices.shape + (num_cols,)
+            self._testBackwardCase(dtype, indices, num_segments,
+                                   op_binding, shape)
+
+  @test_util.run_in_graph_and_eager_modes
+  def testForward(self):
+    num_cols = 2
+    num_rows = 64
+    num_segments = 64
+    segment_size = num_cols * num_rows
+    indices_flat = np.random.randint(low=-1, high=num_segments,
+                                     size=(segment_size,))
+    with utils.force_gpu_session(self):
+      for dtype in self.all_dtypes:
+        for indices in indices_flat, indices_flat.reshape(num_rows, num_cols):
+          shape = indices.shape + (num_cols,)
+          ops_list = self.complex_ops_list if dtype.is_complex else self.ops_list
+          x, _  = self._random_input(shape, dtype=dtype)
+
+          for _, _, tf_op, _ in ops_list:
+            for _ in range(self.repeat_count):
+              result_a = self.evaluate(tf_op(x, indices, num_segments))
+              result_b = self.evaluate(tf_op(x, indices, num_segments))
+              self.assertAllEqual(result_a, result_b)
+
+
+  # Op `gen_math_ops.unsorted_segment_sum()` is not patched for data type
+  # float64 and complex128 on GPU. A warning will be thrown to indicate users
+  # float64/complex128 is still exposed to GPU-nondeterminism.
+  @test_util.run_deprecated_v1
+  def testNonSupportedDataTypes(self):
+    non_supported_types = (dtypes_lib.float64, dtypes_lib.complex128)
+    indices = np.array([0, 4, 0, 8, 3, 8, 4, 7, 7, 3])
+    num_segments = 12
+    shape = indices.shape + (2,)
+    with utils.force_gpu_session(self):
+      for dtype in non_supported_types:
+        ops_list = self.complex_ops_list if dtype.is_complex \
+            else self.ops_list
+        tf_x, _ = self._input(shape, dtype)
+
+        for _, _, tf_op, _ in ops_list:
+          with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            s = tf_op(tf_x, indices, num_segments)
+            self.evaluate(s)
+            self.assertEqual(len(w), 1)
+            self.assertIsInstance(w[0].message, UserWarning)
+            self.assertTrue("GPU-determinism" in str(w[-1].message))
 
 
 class SegmentReductionTestMisc(test.TestCase):
@@ -414,5 +445,5 @@ class SegmentReductionTestMisc(test.TestCase):
                 % op.__name__)
 
 if __name__ == "__main__":
-#   fwd9m_tensorflow.enable_determinism()
+  fwd9m_tensorflow.enable_determinism()
   test.main()
