@@ -13,6 +13,7 @@ from tensorflow.python.ops import gen_math_ops
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import nn
 from tensorflow.python.ops import nn_ops
+from tensorflow.python.framework import dtypes as dtypes_lib
 
 # The original, pre-patched function is automatically-generated. Therefore, we
 # cannot provide a URL to its location in the source repository.
@@ -30,9 +31,9 @@ def _new_unsorted_segment_sum(data, segment_ids, num_segments, name=None):
     # Note that this patch does not provide determinism when the dtype of the
     # data argument is tf.float64 or tf.complex128.
     orig_dtype = data.dtype
-    if 'float' in str(orig_dtype):
+    if 'float' in str(orig_dtype) and orig_dtype != tf.float64:
       data = tf.cast(data, dtype=tf.float64)
-    elif 'complex' in str(orig_dtype):
+    elif 'complex' in str(orig_dtype) and orig_dtype != tf.complex128:
       data = tf.cast(data, dtype=tf.complex128)
 
     if not context.executing_eagerly():
@@ -41,7 +42,11 @@ def _new_unsorted_segment_sum(data, segment_ids, num_segments, name=None):
       num_segments = ops.convert_to_tensor(num_segments, name="num_segments")
 
     result = gen_math_ops.unsorted_segment_sum(data, segment_ids, num_segments)
-    return tf.cast(result, dtype=orig_dtype)
+
+    if orig_dtype == data.dtype:
+      return result
+    else:
+      return tf.cast(result, dtype=orig_dtype)
 
 # The original, pre-patched function is automatically-generated. Therefore, we
 # cannot provide a URL to its location in the source repository.
@@ -53,14 +58,15 @@ def _new_segment_sum(data, segment_ids, name=None):
     # Note that data can be a vector-like list (or an n-dimensional
     # tensor-like list of lists). We convert to tensor here to replicate the
     # behavior of the pre-existing op.
+
     data = tf.convert_to_tensor(data)
 
     # Note that this patch does not provide determinism when the dtype of the
     # data argument is tf.float64 or tf.complex128.
     orig_dtype = data.dtype
-    if 'float' in str(orig_dtype):
+    if 'float' in str(orig_dtype) and orig_dtype != tf.float64:
       data = tf.cast(data, dtype=tf.float64)
-    elif 'complex' in str(orig_dtype):
+    elif 'complex' in str(orig_dtype) and orig_dtype != tf.complex128:
       data = tf.cast(data, dtype=tf.complex128)
 
     if not context.executing_eagerly():
@@ -68,4 +74,9 @@ def _new_segment_sum(data, segment_ids, name=None):
       segment_ids = ops.convert_to_tensor(segment_ids, name="segment_ids")
 
     result = gen_math_ops.segment_sum(data, segment_ids)
-    return tf.cast(result, dtype=orig_dtype)
+
+    if orig_dtype == data.dtype:
+      return result
+    else:
+      return tf.cast(result, dtype=orig_dtype)
+
