@@ -393,6 +393,7 @@ Note | Source                                                                   
   10 | `tf.math.segment_sum`, `tf.math.unsorted_segment_sum`,<br>and `tf.convert_to_tensor` forward.<br>And `tf.gather` and `tfa.image.dense_image_warp`<br>backprop | NS        | NS         | NS     |
   11 | `tf.image.crop_and_resize` backprop to `image` (on CPU<br>or GPU) and backprop to `boxes`                                                                     | NS        | NS         | NS     |
   12 | `tf.sparse.sparse_dense_matmul` forward                                                                                                                       | NS        | NS         | NS     |
+  13 | `tf.math.unsorted_segment_mean`,<br>`tf.math.unsorted_segment_prod`,<br>`tf.math.unsorted_segment_sqrt`                                                       | NS        | NS         | NS     |
 
 ##### Key to the Solutions Referenced Above
 
@@ -518,6 +519,13 @@ Note | Source                                                                   
   12. The forward path of `tf.sparse.sparse_dense_matmul` introduces
       nondeterminism for `tf.float32` and (allegedly) for `tf.float64`. See
       TF [Issue 18037](https://github.com/tensorflow/tensorflow/issues/18037).
+  13. Based on initial work from [Lin Lan](https://github.com/llan-ml), we may
+      have have ruled-out nondeterminism in other `tf.math.segment_*` ops beyond
+      `tf.math.segment_sum` and in other `tf.math_unsorted_segment_*` ops beyond
+      `tf.math.unsorted_segment_sum`, `tf.math.unsorted_segment_mean`,
+      `tf.math.unsorted_segment_prod`, and `tf.math_unsorted_segment_sqrt`; see
+      [issue 31](https://github.com/NVIDIA/framework-determinism/issues/31).
+      Also see note 10, above.
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
 
@@ -711,6 +719,7 @@ Andrew Kerr,
 Xiang Bo Kong,
 Nicolas Koumchatzky,
 Jorge Albericio Latorre,
+Lin Lan,
 Simon Layton,
 Ned Letcher,
 Jose Alvarez Lopez,
