@@ -1,4 +1,4 @@
-# Copyright 2019 NVIDIA Corporation. All Rights Reserved
+# Copyright 2019-2020 NVIDIA Corporation. All Rights Reserved
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,23 +37,19 @@ import re
 import sys
 
 import tensorflow as tf
-from tensorflow.python.eager import context
-from tensorflow.python.framework import dtypes
-from tensorflow.python.framework import ops
-from tensorflow.python.keras import backend as K
-from tensorflow.python.ops import array_ops
+
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import nn
 from tensorflow.python.ops import nn_ops
-from tensorflow.python.ops import gen_math_ops
 
-from ..utils import _Version as Version
-from ..version import __version__ as package_version
+from . import patch_bias_add
+from .. import utils
+from .. import version
 
 # This function was used to patch tf.nn.bias_add in a limited range of stock
 # TensorFlow versions. It is now deprecated and we are no longer developing it.
 # enable_determinism should be used.
-def _patch():
+def _patch(_silent=False):
   """Patches TensorFlow to increase determinism when running on GPUs.
     Calling this method either before or after explicitly importing TensorFlow,
     but always before constructing any graphs, will increase the determinsism
@@ -65,144 +61,20 @@ def _patch():
       yet been implemented), or (2) if there is an attempt to apply the patch
       inside an NGC TF container (where it should not be needed).
   """
-  # NOTE: Figure out later
-  print("WARNING: %s has been deprecated. Please use enable_determinism (which "
-        "supports all versions of TensorFlow)." % __name__)
+  if not _silent:
+    print("WARNING: %s has been deprecated. Please use enable_determinism "
+          "(which supports all versions of TensorFlow)." % __name__)
   if os.environ.get('NVIDIA_TENSORFLOW_VERSION'):
     raise TypeError("%s: TensorFlow inside NGC containers does not "
                     "require patching" % __name__)
-  tf_vers = Version(tf.version.VERSION)
-  if tf_vers.between('1.14', '2.3'):
+  tf_vers = utils._Version(tf.version.VERSION)
+  if tf_vers.between('1.14', '2.0'):
     os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
-    _patch_bias_add()
-    _patch_unsorted_segment_sum()
-    _patch_segment_sum()
-    # Apply the fused softmax/cross-entropy patch here
-    print("TensorFlow version %s has been patched using %s version %s" %
-          (tf_vers.original_version_string, __name__,
-           package_version))
+    patch_bias_add._patch_bias_add()
+    if not _silent:
+      print("TensorFlow version %s has been patched using %s version %s" %
+            (tf_vers.original_version_string, __name__,
+             version.__version__))
   else:
     raise TypeError("%s: No patch available for version %s of TensorFlow" %
                     (__name__, tf_vers.original_version_string))
-
-def _patch_bias_add():
-  tf.nn.bias_add = _new_bias_add_1_14 # access via public API
-  nn.bias_add = _new_bias_add_1_14 # called from tf.keras.layers.convolutional.Conv
-  nn_ops.bias_add = _new_bias_add_1_14 # called from tests
-
-# The original, pre-patched method can be viewed at
-# https://github.com/tensorflow/tensorflow/blob/v1.14.0/tensorflow/python/ops/nn_ops.py#L2628
-def _new_bias_add_1_14(value, bias, data_format=None, name=None):
-  """Adds `bias` to `value`.
-  This is (mostly) a special case of `tf.add` where `bias` is restricted to 1-D.
-  Broadcasting is supported, so `value` may have any number of dimensions.
-  Unlike `tf.add`, the type of `bias` is allowed to differ from `value` in the
-  case where both types are quantized.
-  Args:
-    value: A `Tensor` with type `float`, `double`, `int64`, `int32`, `uint8`,
-      `int16`, `int8`, `complex64`, or `complex128`.
-    bias: A 1-D `Tensor` with size matching the channel dimension of `value`.
-      Must be the same type as `value` unless `value` is a quantized type,
-      in which case a different quantized type may be used.
-    data_format: A string. 'N...C' and 'NC...' are supported. If `None` (the
-      default) is specified then 'N..C' is assumed.
-    name: A name for the operation (optional).
-  Returns:
-    A `Tensor` with the same type as `value`.
-  Raises:
-    ValueError if data format is unrecognized, if `value` has less than two
-    dimensions when `data_format` is 'N..C'/`None` or `value` has less
-    then three dimensions when `data_format` is `NC..`, if `bias` does not
-    have exactly one dimension (is a vector), or if the size of `bias`
-    does not match the size of the channel dimension of `value`.
-  """
-  with ops.name_scope(name, "BiasAdd", [value, bias]) as name:
-    if data_format is not None:
-      if data_format.startswith("NC"):
-        data_format = "NCHW"
-      elif data_format.startswith("N") and data_format.endswith("C"):
-        data_format = "NHWC"
-      else:
-        raise ValueError("data_format must be of the form `N...C` or `NC...`")
-
-    if not context.executing_eagerly():
-      value = ops.convert_to_tensor(value, name="input")
-      bias = ops.convert_to_tensor(bias, dtype=value.dtype, name="bias")
-
-    if data_format == 'NCHW':
-      broadcast_shape_head = [1, array_ops.size(bias)]
-      broadcast_shape_tail = array_ops.ones(array_ops.rank(value) - 2,
-                                            dtype=dtypes.int32)
-      broadcast_shape = array_ops.concat(
-          [broadcast_shape_head, broadcast_shape_tail], 0)
-      return math_ops.add(
-          value, array_ops.reshape(bias, broadcast_shape), name=name)
-    else: # data_format == 'NHWC' or data_format == None
-      return math_ops.add(value, bias, name=name)
-
-
-def _patch_unsorted_segment_sum():
-  _new_unsorted_segment_sum.__doc__ = tf.math.unsorted_segment_sum.__doc__
-  math_ops.unsorted_segment_sum = _new_unsorted_segment_sum # access via public API
-  tf.math.unsorted_segment_sum = _new_unsorted_segment_sum # access via public API
-
-def _patch_segment_sum():
-  _new_segment_sum.__doc__ = tf.math.segment_sum.__doc__
-  math_ops.segment_sum = _new_segment_sum # access via public API
-  tf.math.segment_sum = _new_segment_sum # access via public API
-
-# The original, pre-patched function is automatically-generated. Therefore, we
-# cannot provide a URL to its location in the source repository.
-# For the history of this patch, please refer to
-# https://github.com/tensorflow/tensorflow/issues/39751
-def _new_unsorted_segment_sum(data, segment_ids, num_segments, name=None):
-  """ERROR: docstring should have been added programatically. """
-  with ops.name_scope(
-      name, "UnsortedSegmentSum", [data, segment_ids, num_segments]) as name:
-    # Note that data can be a vector-like list (or an n-dimensional
-    # tensor-like list of lists). We convert to tensor here to replicate the
-    # behavior of the pre-existing op.
-    data = tf.convert_to_tensor(data)
-
-    # Note that this patch does not provide determinism when the dtype of the
-    # data argument is tf.float64 or tf.complex128.
-    orig_dtype = data.dtype
-    if 'float' in str(orig_dtype):
-      data = tf.cast(data, dtype=tf.float64)
-    elif 'complex' in str(orig_dtype):
-      data = tf.cast(data, dtype=tf.complex128)
-
-    if not context.executing_eagerly():
-      data = ops.convert_to_tensor(data, name="input_data")
-      segment_ids = ops.convert_to_tensor(segment_ids, name="segment_ids")
-      num_segments = ops.convert_to_tensor(num_segments, name="num_segments")
-
-    result = gen_math_ops.unsorted_segment_sum(data, segment_ids, num_segments)
-    return tf.cast(result, dtype=orig_dtype)
-
-# The original, pre-patched function is automatically-generated. Therefore, we
-# cannot provide a URL to its location in the source repository.
-# For the history of this patch, please refer to
-# https://github.com/tensorflow/tensorflow/issues/39751
-def _new_segment_sum(data, segment_ids, name=None):
-  """ERROR: docstring should have been added programatically. """
-  with ops.name_scope(name, "SegmentSum", [data, segment_ids]) as name:
-    # Note that data can be a vector-like list (or an n-dimensional
-    # tensor-like list of lists). We convert to tensor here to replicate the
-    # behavior of the pre-existing op.
-    data = tf.convert_to_tensor(data)
-
-    # Note that this patch does not provide determinism when the dtype of the
-    # data argument is tf.float64 or tf.complex128.
-    orig_dtype = data.dtype
-    if 'float' in str(orig_dtype):
-      data = tf.cast(data, dtype=tf.float64)
-    elif 'complex' in str(orig_dtype):
-      data = tf.cast(data, dtype=tf.complex128)
-
-    if not context.executing_eagerly():
-      data = ops.convert_to_tensor(data, name="input_data")
-      segment_ids = ops.convert_to_tensor(segment_ids, name="segment_ids")
-
-    result = gen_math_ops.segment_sum(data, segment_ids)
-    return tf.cast(result, dtype=orig_dtype)

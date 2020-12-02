@@ -19,6 +19,10 @@ segment_sum:
   filename: segment_sum_deterministic_test.py
   stock: 1.14
   ngc: 19.06
+unsorted_segment_sum:
+  filename: unsorted_segment_sum_deterministic_test.py
+  stock: 1.14
+  ngc: 19.06
 misc:
   filename: test_misc.py
 utils:

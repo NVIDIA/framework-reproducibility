@@ -23,48 +23,44 @@ import re
 
 import tensorflow as tf
 
-from .patch import _patch_bias_add
-from .patch import _patch_unsorted_segment_sum
-from .patch import _patch_segment_sum
-from ..utils import _Version as Version
-from ..version import __version__ as package_version
-
+# By calling the deprecated patch API here, we continue to test its effect
+# without having to test is explicitly.
+from . import patch_bias_add
+from . import patch_segment_sum
+from . import patch_unsorted_segment_sum
+from .. import utils
+from .. import version
 
 def _enable_determinism(seed=None):
   """Provides a best-effort recipe to increase framework determinism when
     running on GPUs.
     Call this method either before or after explicitly importing TensorFlow,
     but always before constructing any graphs.
-    This function cannot address all possible sources of non-determinism. Please 
+    This function cannot address all possible sources of non-determinism. Please
     see further instructions at https://github.com/NVIDIA/framework-determinism
     to understand how to use it in a larger deterministic context.
     Arguments:
       seed: <fill in>
-<<<<<<< HEAD
-    Returns: nothing
-=======
-
     Returns: None
->>>>>>> 265cc2dfa05e1049018fbfca063d0f774a5ea2d0
   """
-  tf_vers = Version(tf.version.VERSION)
+  tf_vers = utils._Version(tf.version.VERSION)
   ngc_tf_container_version_string = os.environ.get('NVIDIA_TENSORFLOW_VERSION')
   if ngc_tf_container_version_string:
     in_ngc_cont = True
-    ngc_vers = Version(ngc_tf_container_version_string)
+    ngc_vers = utils._Version(ngc_tf_container_version_string)
   else:
     in_ngc_cont = False
   if not in_ngc_cont and tf_vers.between('1.14', '2.0'):
     os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
-    _patch_bias_add()
+    patch_bias_add._patch_bias_add()
   if in_ngc_cont and ngc_vers.at_least('19.06') or tf_vers.at_least('2.1'):
     os.environ['TF_DETERMINISTIC_OPS'] = '1'
   if in_ngc_cont and ngc_vers.at_least('19.06') or tf_vers.at_least('1.14'):
-    _patch_unsorted_segment_sum()
-    _patch_segment_sum()
+    patch_segment_sum._patch_segment_sum()
+    patch_unsorted_segment_sum._patch_unsorted_segment_sum()
     # Apply the fused softmax/cross-entropy patch here
     pass
   # TODO: Add other recipe items (e.g. seed)
   print("%s (version %s) has been applied to TensorFlow "
-        "version %s" % (__name__, package_version,
+        "version %s" % (__name__, version.__version__,
                         tf_vers.original_version_string))

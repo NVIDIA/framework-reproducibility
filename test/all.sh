@@ -76,7 +76,7 @@ fi
 if [ ! -f $1 ];then
    echo "the $1 is not a file"
    exit
-fi 
+fi
 
 list_containers=()
 pass_list=()

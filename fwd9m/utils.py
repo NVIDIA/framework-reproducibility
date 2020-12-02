@@ -32,7 +32,6 @@ class _Version:
     self.major_minor_version_string = major + '.' + minor
     self.major = int(major)
     self.minor = int(minor)
-    self.tf_force_gpu_bug_version = ('2.0','1.15')# tf2.1 onwards and 1.4, force_gpu bug is fixed
 
   def in_list(self, list_of_versions):
     """Is the version in the list of version provided?"""
@@ -71,7 +70,7 @@ class _Version:
       return True
     else:
       return False
-  
+
   def is_exactly(self, target_version):
     """Is the version exactly the the version provided?"""
     target_major, target_minor = self._only_major_and_minor(target_version)

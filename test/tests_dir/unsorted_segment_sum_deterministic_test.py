@@ -52,11 +52,11 @@ from tensorflow.python.ops import math_ops
 from tensorflow.python.platform import test
 
 from segment_reduction_helper import SegmentReductionHelper
-
+from utils import force_gpu_session
 sys.path.insert(0, '..')
 
 import fwd9m.tensorflow as fwd9m_tensorflow
-from utils import force_gpu_session
+
 
 # The deterministic tests in the following class were originally copied from
 # test_patch_segment_sum.py.
@@ -75,39 +75,43 @@ from utils import force_gpu_session
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # Simplifies logging
 fwd9m_tensorflow.enable_determinism()
 
-class SegmentSumDeterministicTest(SegmentReductionHelper):
+class UnsortedSegmentSumDeterministicTest(SegmentReductionHelper):
 
   def __init__(self, methodName='runTest'):
-  # Each item is np_op1, np_op2, tf_op, initial_value functor
+    # Each item is np_op1, np_op2, tf_op, initial_value functor
     self.ops_list = [(np.add, None,
-                      math_ops.segment_sum, lambda t: 0),
+                      math_ops.unsorted_segment_sum, lambda t: 0),
                      (np.add, None,
-                      tf.math.segment_sum, lambda t: 0)]
+                      tf.math.unsorted_segment_sum, lambda t: 0)]
 
     # A subset of ops has been enabled for complex numbers
     self.complex_ops_list = [(np.add, None,
-                              math_ops.segment_sum, lambda t: 0),
+                              math_ops.unsorted_segment_sum, lambda t: 0),
                              (np.add, None,
-                              tf.math.segment_sum, lambda t: 0)]
+                              tf.math.unsorted_segment_sum, lambda t: 0)]
 
     self.differentiable_dtypes = [dtypes_lib.float16, dtypes_lib.float32]
 
-    self.all_dtypes = (self.differentiable_dtypes + [dtypes_lib.bfloat16])
+    self.all_dtypes = (self.differentiable_dtypes +
+                       [dtypes_lib.complex64, dtypes_lib.bfloat16])
     self.repeat_count = 5
-    super(SegmentSumDeterministicTest,
-          self).__init__(methodName=methodName)
+    super(
+        UnsortedSegmentSumDeterministicTest, self).__init__(
+            methodName=methodName)
 
-  def _testBackwardCase(self, dtype, indices, tf_op, shape):
+  def _testBackwardCase(self, dtype, indices, num_segments, op_binding, shape):
     numpy_seed = 123
+    _, _, tf_op, _ = op_binding
 
     input_val = self._randomDataOp(shape, dtype, seed=None)
-    output_shape = [indices[-1]+1, shape[1]]
+
     if context.executing_eagerly():
       def op_gradients(local_seed):
         with backprop.GradientTape() as tape:
           tape.watch(input_val)
-          op_output = tf_op(input_val, indices)
-          upstream_gradients = self._randomDataOp(output_shape, dtype, local_seed)
+          op_output = tf_op(input_val, indices, num_segments)
+          upstream_gradients = self._randomDataOp(op_output.shape,
+                                                  dtype, local_seed)
           gradient_injector_output = op_output * upstream_gradients
         return tape.gradient(gradient_injector_output, input_val)
 
@@ -118,7 +122,8 @@ class SegmentSumDeterministicTest(SegmentReductionHelper):
         self.assertAllEqual(result_a, result_b)
 
     else:
-      op_output = tf_op(input_val, indices)
+      op_output = tf_op(input_val, indices, num_segments)
+      output_shape = op_output.shape
       upstream_gradients = array_ops.placeholder(dtype, shape=output_shape,
                                                  name='upstream_gradients')
       gradient_injector_output = op_output * upstream_gradients
@@ -134,47 +139,49 @@ class SegmentSumDeterministicTest(SegmentReductionHelper):
         result_b = op_gradients.eval(feed_dict=feed_dict)
         self.assertAllEqual(result_a, result_b)
 
-  @test_util.run_in_graph_and_eager_modes
-  def testForward(self):
-    num_cols = 8
-    num_segments = 32
-    segment_size = 256
-
-    shape = [segment_size, num_cols]
-    indices = np.random.randint(low=0, high=num_segments, size=(segment_size,))
-    indices = np.sort(indices)
-
-    with force_gpu_session(self):
-      for dtype in self.all_dtypes:#(dtypes_lib.complex64,)
-        ops_list = self.complex_ops_list if dtype.is_complex \
-            else self.ops_list
-        tf_x, _ = self._random_input(shape, dtype=dtype)
-        # have to use float to exec nond9m
-        for _, _, tf_op, _ in ops_list:
-          for _ in range(self.repeat_count):
-            # pass
-            result_a=tf_op(data=tf_x, segment_ids=indices)
-            result_b=tf_op(data=tf_x, segment_ids=indices)
-            self.assertAllEqual(result_a, result_b)
 
   # The backward operation is not known or expected to introduce nondeterminism
   # but we're testing it for completeness.
   @test_util.run_in_graph_and_eager_modes
   def testBackward(self):
-    num_cols = 8
-    num_segments = 32
-    segment_size = 256
-    shape = [segment_size, num_cols]
-    indices = np.random.randint(low=0, high=num_segments, size=(segment_size,))
-    indices = np.sort(indices)
+    num_cols = 2
+    num_rows = 64
+    num_segments = 64
+    segment_size = num_cols * num_rows
+    indices_flat = np.random.randint(low=-1, high=num_segments,
+                                     size=(segment_size,))
 
     with force_gpu_session(self):
-    # with self.session(force_gpu=True):#force_gpu=True leads to XLA issue
       for dtype in self.differentiable_dtypes:
-        ops_list = self.complex_ops_list if dtype.is_complex \
-            else self.ops_list
-        for _, _, tf_op, _ in ops_list:
-          self._testBackwardCase(dtype, indices, tf_op, shape)
+        for indices in indices_flat, indices_flat.reshape(num_rows, num_cols):
+          ops_list = self.complex_ops_list if dtype.is_complex \
+              else self.ops_list
+          for op_binding in ops_list:
+            shape = indices.shape + (num_cols,)
+            self._testBackwardCase(dtype, indices, num_segments,
+                                   op_binding, shape)
+
+  @test_util.run_in_graph_and_eager_modes
+  def testForward(self):
+    num_cols = 2
+    num_rows = 64
+    num_segments = 64
+    segment_size = num_cols * num_rows
+    indices_flat = np.random.randint(low=-1, high=num_segments,
+                                     size=(segment_size,))
+    with force_gpu_session(self):
+      for dtype in self.all_dtypes:
+        for indices in indices_flat, indices_flat.reshape(num_rows, num_cols):
+          shape = indices.shape + (num_cols,)
+          ops_list = self.complex_ops_list if dtype.is_complex else self.ops_list
+          x, _  = self._random_input(shape, dtype=dtype)
+
+          for _, _, tf_op, _ in ops_list:
+            for _ in range(self.repeat_count):
+              result_a = self.evaluate(tf_op(x, indices, num_segments))
+              result_b = self.evaluate(tf_op(x, indices, num_segments))
+              self.assertAllEqual(result_a, result_b)
+
 
 if __name__ == "__main__":
   fwd9m_tensorflow.enable_determinism()
