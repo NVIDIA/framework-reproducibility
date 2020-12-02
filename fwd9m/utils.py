@@ -70,3 +70,11 @@ class _Version:
       return True
     else:
       return False
+
+  def is_exactly(self, target_version):
+    """Is the version exactly the the version provided?"""
+    target_major, target_minor = self._only_major_and_minor(target_version)
+    if (self.major == target_major and self.minor == target_minor):
+      return True
+    else:
+      return False
