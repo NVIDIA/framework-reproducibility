@@ -53,7 +53,7 @@ def read_tests_yml(container_id, yml_file, tests_dir):
     file_path = tests_dir+'/'+val['filename']
     print(file_path)
     if not os.path.isfile(file_path):
-      raise Exception("Test file %s does not exist under folder %s!" 
+      raise Exception("Test file %s does not exist under folder %s!"
                       % (val['filename'], tests_dir) )
 
     if 'stock' not in val and 'ngc' not in val:

@@ -87,7 +87,7 @@ do
    echo $i
    ./build-image.sh $i
    expect $OK    "" \
-             ./container.sh python enable_determinism_test.py
+             ./container.sh python test_enable_determinism.py
    if [ $? -eq $OK ]; then
      pass_list+="$i\n"
    else
@@ -106,7 +106,7 @@ if [ ${#pass_list[@]} -gt 0 ];then
   echo "----------------------------------------------------------------------"
 fi
 
-if [ ${#fail_list[@]} -gt 0 ];then 
+if [ ${#fail_list[@]} -gt 0 ];then
   echo "fail list:"
   for i in ${fail_list[@]}
   do
