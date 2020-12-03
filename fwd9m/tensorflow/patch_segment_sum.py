@@ -25,14 +25,14 @@ from tensorflow.python.eager import context
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import gen_math_ops
 from tensorflow.python.ops import math_ops
-from tensorflow.python.framework import dtypes as dtypes_lib
+from tensorflow.python.framework import dtypes
 
 # NOTE: This patch only provides GPU-determinism for data type float16/32 and
 # bfloat16.
 
 def _patch_segment_sum():
   _new_segment_sum.__doc__ = tf.math.segment_sum.__doc__
-  math_ops.segment_sum = _new_segment_sum # access via public API
+  math_ops.segment_sum = _new_segment_sum
   tf.math.segment_sum = _new_segment_sum # access via public API
 
 # The original, pre-patched function is automatically-generated. Therefore, we
@@ -42,29 +42,25 @@ def _patch_segment_sum():
 def _new_segment_sum(data, segment_ids, name=None):
   """ERROR: docstring should have been added programatically. """
   with ops.name_scope(name, "SegmentSum", [data, segment_ids]) as name:
-    # Note that data can be a vector-like list (or an n-dimensional
-    # tensor-like list of lists). We convert to tensor here to replicate the
-    # behavior of the pre-existing op.
-    data = tf.convert_to_tensor(data)
+    if not context.executing_eagerly():
+      # Note that data can be a vector-like list (or an n-dimensional
+      # tensor-like list of lists). We convert to tensor here to replicate the
+      # behavior of the pre-existing op.
+      data = ops.convert_to_tensor(data, name="input_data")
+      segment_ids = ops.convert_to_tensor(segment_ids, name="segment_ids")
 
     orig_dtype = data.dtype
 
-    if orig_dtype is dtypes_lib.float32:
+    if orig_dtype is dtypes.float32:
       data = tf.cast(data, dtype=tf.float64)
-    elif orig_dtype is dtypes_lib.float16:
+    elif orig_dtype is dtypes.float16:
       data = tf.cast(data, dtype=tf.float32)
-    elif orig_dtype is dtypes_lib.bfloat16:
+    elif orig_dtype is dtypes.bfloat16:
       data = tf.cast(data, dtype=tf.float32)
-    elif orig_dtype is dtypes_lib.float64:
+    elif orig_dtype is dtypes.float64:
       warnings.warn(
           "Data type %s is not supported for GPU-determinism" %
           data.dtype, UserWarning)
-    else:
-      return gen_math_ops.segment_sum(data, segment_ids)
-
-    if not context.executing_eagerly():
-      data = ops.convert_to_tensor(data, name="input_data")
-      segment_ids = ops.convert_to_tensor(segment_ids, name="segment_ids")
 
     result = gen_math_ops.segment_sum(data, segment_ids)
 
