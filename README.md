@@ -393,7 +393,7 @@ Note | Source                                                                   
   10 | `tf.math.segment_sum`, `tf.math.unsorted_segment_sum`,<br>and `tf.convert_to_tensor` forward.<br>And `tf.gather` and `tfa.image.dense_image_warp`<br>backprop | NS        | NS         | NS     |
   11 | `tf.image.crop_and_resize` backprop to `image` (on CPU<br>or GPU) and backprop to `boxes`                                                                     | NS        | NS         | NS     |
   12 | `tf.sparse.sparse_dense_matmul` forward                                                                                                                       | NS        | NS         | NS     |
-  13 | `tf.math.unsorted_segment_mean`,<br>`tf.math.unsorted_segment_prod`,<br>`tf.math.unsorted_segment_sqrt`                                                       | NS        | NS         | NS     |
+  13 | `tf.math.unsorted_segment_mean`,<br>`tf.math.unsorted_segment_prod`, and <br>`tf.math.unsorted_segment_sqrt` forward                                          | NS        | NS         | NS     |
 
 ##### Key to the Solutions Referenced Above
 
