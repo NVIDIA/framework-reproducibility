@@ -43,10 +43,8 @@ from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import random_ops
 from tensorflow.python.ops import variables as variables_lib
 
-from tensorflow.python.platform import device_context
 from tensorflow.python.util import deprecation
 from tensorflow.python.util import dispatch
-from tensorflow.python.util.compat import collections_abc
 from tensorflow.python.util.deprecation import deprecated_args
 from tensorflow.python.util.deprecation import deprecated_argument_lookup
 
@@ -61,6 +59,7 @@ def _core_op(labels, logits):
   softmax = tf.nn.softmax(logits=logits, axis=dim)
   epsilon_ = constant_op.constant(K.epsilon(), dtype=softmax.dtype.base_dtype)
   softmax = clip_ops.clip_by_value(softmax, epsilon_, 1. - epsilon_)
+  # ??? * needs the data type to be the same
   return -tf.reduce_sum(tf.math.log(softmax) * labels, axis=dim)
 
 _XENT_DEPRECATION = """

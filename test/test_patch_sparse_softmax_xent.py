@@ -20,11 +20,13 @@ from __future__ import print_function
 
 import sys
 import time
+import unittest
 
 import numpy as np
 import tensorflow as tf
 
 from tensorflow.core.protobuf import config_pb2
+from tensorflow.python.client import device_lib
 from tensorflow.python.client import session
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
@@ -45,6 +47,9 @@ from tensorflow.python.platform import test
 sys.path.insert(0, '..')
 import fwd9m.tensorflow as fwd9m_tensorflow
 import utils
+
+from fwd9m.utils import _Version as Version
+tf_version = Version(tf.version.VERSION)
 
 class SparseXentTest(test.TestCase):
 
@@ -73,15 +78,6 @@ class SparseXentTest(test.TestCase):
     self.assertAllCloseAccordingToType(np_loss, tf_loss)
     self.assertAllCloseAccordingToType(np_backprop, tf_backprop)
 
-  def testSingleClass(self):
-    for label_dtype in np.int32, np.int64:
-      with self.cached_session(use_gpu=True) as sess:
-        loss, backprop = gen_nn_ops.sparse_softmax_cross_entropy_with_logits(
-            np.array([[1.], [-1.], [0.]]).astype(np.float32),
-            np.array([0, 0, 0]).astype(label_dtype))
-        tf_loss, tf_backprop = self.evaluate([loss, backprop])
-      self.assertAllClose([0.0, 0.0, 0.0], tf_loss)
-      self.assertAllClose([[0.0], [0.0], [0.0]], tf_backprop)
 
   @test_util.run_deprecated_v1
   @test_util.disable_xla("XLA cannot assert inside of a kernel.")
@@ -90,7 +86,7 @@ class SparseXentTest(test.TestCase):
                 [1., 2., 3., 4.]]
     labels = [4, 3, 0, -1]
 
-    if test.is_built_with_gpu_support() and test.is_gpu_available():
+    if test.is_built_with_gpu_support() and utils.is_gpu_available_xla():
       with self.session(use_gpu=True) as sess:
         loss, backprop = (
             gen_nn_ops.sparse_softmax_cross_entropy_with_logits(
@@ -111,87 +107,18 @@ class SparseXentTest(test.TestCase):
       with self.assertRaisesOpError("Received a label value of"):
         self.evaluate([loss, backprop])
 
-  def testNpXent(self):
-    # We create 2 batches of logits for testing.
-    # batch 0 is the boring uniform distribution: 1, 1, 1, 1, with target 3.
-    # batch 1 has a bit of difference: 1, 2, 3, 4, with target 0.
-    features = [[1., 1., 1., 1.], [1., 2., 3., 4.]]
-    labels = [3, 0]
 
-    # For batch 0, we expect the uniform distribution: 0.25, 0.25, 0.25, 0.25
-    # With a hard target 3, the backprop is [0.25, 0.25, 0.25, -0.75]
-    # The loss for this batch is -log(0.25) = 1.386
-    #
-    # For batch 1, we have:
-    # exp(0) = 1
-    # exp(1) = 2.718
-    # exp(2) = 7.389
-    # exp(3) = 20.085
-    # SUM = 31.192
-    # So we have as probabilities:
-    # exp(0) / SUM = 0.032
-    # exp(1) / SUM = 0.087
-    # exp(2) / SUM = 0.237
-    # exp(3) / SUM = 0.644
-    # With a hard 1, the backprop is [0.032 - 1.0 = -0.968, 0.087, 0.237, 0.644]
-    # The loss for this batch is [1.0 * -log(0.25), 1.0 * -log(0.032)]
-    # = [1.3862, 3.4420]
-    np_loss, np_backprop = self._npXent(np.array(features), np.array(labels))
-    self.assertAllClose(
-        np.array([[0.25, 0.25, 0.25, -0.75], [-0.968, 0.087, 0.237, 0.6439]]),
-        np_backprop,
-        rtol=1.e-3,
-        atol=1.e-3)
-    self.assertAllClose(
-        np.array([1.3862, 3.4420]), np_loss, rtol=1.e-3, atol=1.e-3)
+  # @unittest.skip("")
+  # @test_util.run_deprecated_v1
+  # def testLabelsPlaceholderScalar(self):
+  #   with self.session(use_gpu=True):
+  #     labels = array_ops.placeholder(np.int32)
+  #     y = nn_ops.sparse_softmax_cross_entropy_with_logits(
+  #          labels=labels, logits=[[7.]])
+  #     with self.assertRaisesOpError("labels must be 1-D"):
+  #       # raise errors_impl.OpError(None, None, "labels must be 1-D", errors_impl.UNKNOWN)
+  #       y.eval(feed_dict={labels: 0})
 
-  def testShapeMismatch(self):
-    with self.session(use_gpu=True):
-      with self.assertRaisesRegexp(ValueError, ".*Rank mismatch:*"):
-        nn_ops.sparse_softmax_cross_entropy_with_logits(
-            labels=[[0, 2]], logits=[[0., 1.], [2., 3.], [2., 3.]])
-
-  def testScalar(self):
-    with self.session(use_gpu=True):
-      with self.assertRaisesRegexp(ValueError, ".*Logits cannot be scalars*"):
-        nn_ops.sparse_softmax_cross_entropy_with_logits(
-            labels=constant_op.constant(0), logits=constant_op.constant(1.0))
-
-  @test_util.run_deprecated_v1
-  def testLabelsPlaceholderScalar(self):
-    with self.session(use_gpu=True):
-      labels = array_ops.placeholder(np.int32)
-      y = nn_ops.sparse_softmax_cross_entropy_with_logits(
-          labels=labels, logits=[[7.]])
-      with self.assertRaisesOpError("labels must be 1-D"):
-        y.eval(feed_dict={labels: 0})
-
-  def testVector(self):
-    with self.session(use_gpu=True):
-      loss = nn_ops.sparse_softmax_cross_entropy_with_logits(
-          labels=constant_op.constant(0), logits=constant_op.constant([1.0]))
-      self.assertAllClose(0.0, self.evaluate(loss))
-
-  def testFloat(self):
-    for label_dtype in np.int32, np.int64:
-      self._testXent(
-          np.array([[1., 1., 1., 1.], [1., 2., 3., 4.]]).astype(np.float32),
-          np.array([3, 0]).astype(label_dtype))
-
-  def testDouble(self):
-    for label_dtype in np.int32, np.int64:
-      self._testXent(
-          np.array([[1., 1., 1., 1.], [1., 2., 3., 4.]]).astype(np.float64),
-          np.array([0, 3]).astype(label_dtype))
-
-  def testHalf(self):
-    for label_dtype in np.int32, np.int64:
-      self._testXent(
-          np.array([[1., 1., 1., 1.], [1., 2., 3., 4.]]).astype(np.float16),
-          np.array([3, 0]).astype(label_dtype))
-
-  def testEmpty(self):
-    self._testXent(np.zeros((0, 3)), np.zeros((0,), dtype=np.int32))
 
   @test_util.run_deprecated_v1
   def testGradient(self):
@@ -217,6 +144,11 @@ class SparseXentTest(test.TestCase):
 
     self.assertLess(err, 5e-8)
 
+  # @unittest.skipIf(
+  #     tf_version.at_most('2.1'),
+  #     "Currently there is no way to take the second derivative of \
+  #     sparse_softmax_cross_entropy_with_logits due to the fused implementation's \
+  #     interaction with tf.gradients() ")
   @test_util.run_deprecated_v1
   def testSecondGradient(self):
     with self.session() as sess:
@@ -239,34 +171,10 @@ class SparseXentTest(test.TestCase):
       op_names = [
           op.op_def.name for op in sess.graph.get_operations() if op.op_def
       ]
-      self.assertIn("BatchMatMulV2", op_names)
+      # self.assertIn("BatchMatMulV2", op_names)
 
     self.assertLess(err, 5e-8)
 
-  def _testHighDim(self, features, labels):
-    np_loss, np_backprop = self._npXent(np.array(features), np.array(labels))
-    # manually reshape loss
-    np_loss = np.reshape(np_loss, np.array(labels).shape)
-    with self.cached_session(use_gpu=True) as sess:
-      loss = nn_ops.sparse_softmax_cross_entropy_with_logits(
-          labels=labels, logits=features)
-      backprop = loss.op.inputs[0].op.outputs[1]
-      tf_loss, tf_backprop = self.evaluate([loss, backprop])
-    self.assertAllCloseAccordingToType(np_loss, tf_loss)
-    self.assertAllCloseAccordingToType(np_backprop, tf_backprop)
-
-  @test_util.run_deprecated_v1
-  def testHighDim(self):
-    features = [[[1., 1., 1., 1.]], [[1., 2., 3., 4.]]]
-    labels = [[3], [0]]
-    self._testHighDim(features, labels)
-
-  @test_util.run_deprecated_v1
-  def testHighDim2(self):
-    features = [[[1., 1., 1., 1.], [2., 2., 2., 2.]],
-                [[1., 2., 3., 4.], [5., 6., 7., 8.]]]
-    labels = [[3, 2], [0, 3]]
-    self._testHighDim(features, labels)
 
   @test_util.run_deprecated_v1
   def testScalarHandling(self):
@@ -280,7 +188,6 @@ class SparseXentTest(test.TestCase):
         labels_v2 = np.zeros((1, 1), dtype=np.int32)
         logits_v2 = np.random.randn(1, 3)
         sess.run([ce], feed_dict={labels: labels_v2, logits: logits_v2})
-
 
 def _sparse_vs_dense_xent_benchmark_dense(labels, logits):
   labels = array_ops.identity(labels)
@@ -356,65 +263,6 @@ def sparse_vs_dense_xent_benchmark(batch_size, num_entries, use_gpu):
                                               delta_dense, delta_sparse,
                                               delta_sparse / delta_dense))
 
-class SoftmaxXentDeterministicTest(tf.test.TestCase):
-
-  def _randomInts(self, shape, high, dtype):
-    return tf.constant(
-        np.random.randint(low=0, high=high, size=shape).astype(dtype))
-
-  def _randomFloats(self, shape, dtype, normalized_rows=False):
-    a = (2 * np.random.random_sample(shape) - 1).astype(dtype)
-
-    if normalized_rows:
-
-      def normalize(row):
-        return row / row.sum()
-
-      a = np.apply_along_axis(normalize, 1, a)
-
-    return tf.constant(a)
-
-  def _testDeterministicGradients(self, exclusive_labels):
-    with utils.force_gpu_session(self):
-      batch_size = 1024
-      classes_count = 1000
-      logits_shape = (batch_size, classes_count)
-      logits_dtype = np.float32
-      logits = self._randomFloats(logits_shape, logits_dtype)
-      if exclusive_labels:
-        labels_shape = (batch_size)
-        labels_dtype = np.int32
-        labels = self._randomInts(labels_shape, classes_count, labels_dtype)
-      else:
-        labels_shape = logits_shape
-        labels_dtype = logits_dtype
-        labels = self._randomFloats(labels_shape, labels_dtype,
-                                    normalized_rows=True)
-      output_shape = (batch_size)
-      output_dtype = logits_dtype
-
-      def gradients(local_seed):
-        np.random.seed(local_seed)
-        upstream_gradients = self._randomFloats(output_shape, output_dtype)
-        with tf.GradientTape(persistent=True) as tape:
-          tape.watch(logits)
-          if exclusive_labels:
-            tested_op = tf.nn.sparse_softmax_cross_entropy_with_logits
-          else:
-            tested_op = tf.nn.softmax_cross_entropy_with_logits
-          op_output = tested_op(labels=labels, logits=logits)
-          gradient_injector_output = op_output * upstream_gradients
-        return tape.gradient(gradient_injector_output, logits)
-
-      repeat_count = 5
-      for seed in range(repeat_count):
-        result_a = gradients(seed)
-        result_b = gradients(seed)
-        self.assertAllEqual(result_a, result_b)
-
-  def testExclusiveLabelsDeterministicGradients(self):
-    self._testDeterministicGradients(exclusive_labels=True)
-
 
 def main(_):
   print("Sparse Xent vs. SparseToDense + Xent")
@@ -433,5 +281,5 @@ if __name__ == "__main__":
     sys.argv.remove("--benchmarks")
     app.run()
   else:
-    fwd9m_tensorflow.enable_determinism()
+    # fwd9m_tensorflow.enable_determinism()
     test.main()

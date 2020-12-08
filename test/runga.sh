@@ -3,7 +3,7 @@
 set -e # If any test fails, this script will exit and forward the error code
 
 #./container.sh tensorflow/tensorflow:2.3.0-gpu python test_patch_segment_reduction.py
-./container.sh tensorflow/tensorflow:2.1.0-gpu python test_patch_sparse_softmax_xent.py
+./container.sh tensorflow/tensorflow:2.3.0-gpu python gagaga.py
 
 
 # The segment sum patch has been shown to pass on the following NGC containers:

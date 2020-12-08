@@ -1,5 +1,8 @@
 import tensorflow as tf
+from tensorflow.python.platform import test
+
 from fwd9m.utils import _Version as Version
+
 
 # Notes about force_gpu_session:
 #
@@ -61,3 +64,18 @@ def force_gpu_session(test_object):
     return test_object.session(use_gpu=True)
   else:
     return test_object.session(force_gpu=True)
+
+
+def is_gpu_available_xla():
+  tf_version = Version(tf.version.VERSION)
+  if tf_version.in_list(['1.15', '2.0']):
+    print("WARNING:"
+          "an exception will not be thrown if there is no GPU present.")
+    gpus = tf.config.experimental.list_physical_devices('GPU')
+    if len(gpus)>0:
+      return True
+    else:
+      print("WARNING: no GPU present.")
+      return False
+  else:
+    return test.is_gpu_available()

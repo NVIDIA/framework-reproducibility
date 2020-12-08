@@ -22,7 +22,7 @@ import itertools
 import sys
 
 import numpy as np
-import tensorflow as tf
+
 from tensorflow.python.client import session
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
@@ -37,9 +37,6 @@ from tensorflow.python.ops import nn_ops
 import tensorflow.python.ops.nn_grad  # pylint: disable=unused-import
 from tensorflow.python.platform import test
 
-sys.path.insert(0, '..')
-import fwd9m.tensorflow as fwd9m_tensorflow
-import utils
 
 class XentTest(test.TestCase):
 
@@ -78,7 +75,7 @@ class XentTest(test.TestCase):
         loss, backprop = gen_nn_ops.softmax_cross_entropy_with_logits(
             np_features, np_labels)
         tf_loss, tf_backprop = self.evaluate([loss, backprop])
-    self.assertAllCloseAccordingToType(np_loss, tf_loss, half_rtol=1e-2)
+    self.assertAllCloseAccordingToType(np_loss, tf_loss)
     self.assertAllCloseAccordingToType(np_backprop, tf_backprop)
 
   def _testXentWrapper(self, np_features, np_labels, dim=-1, use_gpu=False):
@@ -120,9 +117,9 @@ class XentTest(test.TestCase):
                                                     4.]]]).astype(dtype)
       np_labels = np.array([[[0., 0., 0., 1.]], [[0., .5, .5,
                                                   0.]]]).astype(dtype)
-      self.assertRaisesRegex(ValueError, "rank 2, but is rank 3",
-                             gen_nn_ops.softmax_cross_entropy_with_logits,
-                             np_features, np_labels)
+      self.assertRaisesRegexp(ValueError, "rank 2, but is rank 3",
+                              gen_nn_ops.softmax_cross_entropy_with_logits,
+                              np_features, np_labels)
 
   def testNpXent(self):
     # We create 2 batches of logits for testing.
@@ -220,18 +217,6 @@ class XentTest(test.TestCase):
         np.array([[1., 1., 1., 1.], [1., 2., 3., 4.]]).astype(np.float64),
         np.array([[0., 0., 0., 1.], [0., .5, .5, 0.]]).astype(np.float64))
 
-  def testLargeNegative(self):
-    np_features = np.array(
-        [[-1000., 0., 1000., 2000.], [1., 2., 3., 4.]]).astype(np.float32)
-    np_labels = np.array(
-        [[0., 0., 0., 1.], [0., .5, .5, 0.]]).astype(np.float32)
-
-    loss = nn_ops.softmax_cross_entropy_with_logits(
-        labels=np_labels, logits=np_features)
-    tf.debugging.check_numerics(
-         loss, "Nan in loss when logit has large negative Num")
-
-
   @test_util.run_deprecated_v1
   def testGradient(self):
     with self.cached_session() as sess:
@@ -256,7 +241,6 @@ class XentTest(test.TestCase):
           op.op_def.name for op in sess.graph.get_operations() if op.op_def
       ]
       self.assertNotIn("BatchMatMul", op_names)
-      self.assertNotIn("BatchMatMulV2", op_names)
 
     print("cross entropy gradient err = ", err)
     self.assertLess(err, 5e-8)
@@ -279,7 +263,7 @@ class XentTest(test.TestCase):
       err = gradient_checker.compute_gradient_error(l, [3, 4], x, [3])
 
     self.assertLess(err, 5e-8)
-  # @unittest.skip("")
+
   @test_util.run_deprecated_v1
   def testSecondGradient(self):
     with self.cached_session() as sess:
@@ -304,12 +288,12 @@ class XentTest(test.TestCase):
 
       err = gradient_checker.compute_gradient_error(f, [12], gradients, [12])
 
-      # Check that second derivative is calculated. is it important? Ian comment?
+      # Check that second derivative is calculated.
       # (it is equivalent to being `BatchMatMul` op in the graph because of implementation of xentropy grad)
       op_names = [
           op.op_def.name for op in sess.graph.get_operations() if op.op_def
       ]
-      # self.assertIn("BatchMatMulV2", op_names)
+      self.assertIn("BatchMatMulV2", op_names)
 
     print("cross entropy hessian err = ", err)
     self.assertLess(err, 5e-8)
@@ -395,56 +379,6 @@ class XentBenchmark(test.Benchmark):
                 "Throughput: %0.03g GB/s" % (name, r["wall_time"], throughput))
           sys.stdout.flush()
 
-class SoftmaxXentDeterministicTest(tf.test.TestCase):
-
-  def _randomInts(self, shape, high, dtype):
-    return tf.constant(
-        np.random.randint(low=0, high=high, size=shape).astype(dtype))
-
-  def _randomFloats(self, shape, dtype, normalized_rows=False):
-    a = (2 * np.random.random_sample(shape) - 1).astype(dtype)
-
-    if normalized_rows:
-
-      def normalize(row):
-        return row / row.sum()
-
-      a = np.apply_along_axis(normalize, 1, a)
-
-    return tf.constant(a)
-
-  def gradients(self, seed, output_shape, output_dtype, labels, logits):
-    np.random.seed(seed)
-    upstream_gradients = self._randomFloats(output_shape, output_dtype)
-    with tf.GradientTape(persistent=True) as tape:
-      tape.watch(logits)
-      op_output = tf.nn.softmax_cross_entropy_with_logits(
-          labels=labels, logits=logits)
-      gradient_injector_output = op_output * upstream_gradients
-    return tape.gradient(gradient_injector_output, logits)
-
-  def testDistributionLabelsDeterministicGradients(self):
-    with utils.force_gpu_session(self):
-      batch_size = 1024
-      classes_count = 1000
-      logits_shape = (batch_size, classes_count)
-      logits_dtype = np.float32
-      logits = self._randomFloats(logits_shape, logits_dtype)
-
-      labels_shape = logits_shape
-      labels_dtype = logits_dtype
-      labels = self._randomFloats(labels_shape, labels_dtype,
-                                  normalized_rows=True)
-      output_shape = (batch_size)
-      output_dtype = logits_dtype
-
-      args = (output_shape, output_dtype, labels, logits)
-      repeat_count = 5
-      for seed in range(repeat_count):
-        result_a = self.gradients(seed, *args)
-        result_b = self.gradients(seed, *args)
-        self.assertAllEqual(result_a, result_b)
 
 if __name__ == "__main__":
-  fwd9m_tensorflow.enable_determinism()
   test.main()

@@ -29,12 +29,9 @@ from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import random_ops
 from tensorflow.python.ops import variables as variables_lib
 
-from tensorflow.python.platform import device_context
 from tensorflow.python.util import deprecation
 from tensorflow.python.util import dispatch
-from tensorflow.python.util.compat import collections_abc
 from tensorflow.python.util.deprecation import deprecated_args
-from tensorflow.python.util.deprecation import deprecated_argument_lookup
 
 from tensorflow.python.util.tf_export import tf_export
 
@@ -44,6 +41,8 @@ def _core_op(labels, logits):
   softmax = tf.nn.softmax(logits=logits, axis=dim)
   epsilon_ = constant_op.constant(K.epsilon(), dtype=softmax.dtype.base_dtype)
   softmax = clip_ops.clip_by_value(softmax, epsilon_, 1. - epsilon_)
+  print("HERE", labels, softmax)
+  # labels = math_ops.cast(labels, softmax.dtype.base_dtype)
   return -tf.reduce_sum(tf.math.log(softmax) * labels, axis=dim)
 
 @tf_export("nn.sparse_softmax_cross_entropy_with_logits", v1=[])
@@ -107,9 +106,17 @@ def _new_sparse_softmax_cross_entropy_with_logits(
 
     # Check if no reshapes are required.
     if logits.get_shape().ndims == 2:
-      onehot_encoding = tf.one_hot(labels, logits.shape[-1])
-      cost = _core_op(logits=logits, labels=onehot_encoding)
-      if logits.dtype == dtypes.float16:
+      # Has to be here, because it really tests gen_nn_ops.sparse_xent
+      if labels.get_shape().ndims is None:
+        raise errors_impl.InvalidArgumentError(None, None,
+                                               ".*labels must be 1-D.*")
+        # raise errors_impl.OpError(None, None, "labels must be 1-D", errors_impl.OpError)
+      onehot_encoding = tf.one_hot(labels, precise_logits.shape[-1],
+                                   dtype=dtypes.as_dtype(precise_logits.dtype))
+      print("onehot_encoding"*100, onehot_encoding, precise_logits)
+      cost = _core_op(labels=onehot_encoding, logits=precise_logits)
+
+      if precise_logits.dtype == dtypes.float16:
         return math_ops.cast(cost, dtypes.float16)
       else:
         return cost
@@ -135,10 +142,14 @@ def _new_sparse_softmax_cross_entropy_with_logits(
       num_classes = array_ops.shape(logits)[array_ops.rank(logits) - 1]
       precise_logits = array_ops.reshape(precise_logits, [-1, num_classes])
       labels = array_ops.reshape(labels, [-1])
+      if labels.get_shape().ndims is None:
+        raise errors_impl.InvalidArgumentError(None, None,
+                                               ".*labels must be 1-D.*")
       # The second output tensor contains the gradients.  We use it in
       # _CrossEntropyGrad() in nn_grad but not here.
       # cost, _ = gen_nn_ops.sparse_softmax_cross_entropy_with_logits(
       #     precise_logits, labels, name=name)
+      print("##"*1000)
       onehot_encoding = tf.one_hot(labels, num_classes)
       cost = _core_op(logits=precise_logits, labels=onehot_encoding)
 
