@@ -1,4 +1,4 @@
-# Copyright 2020 NVIDIA Corporation. All Rights Reserved
+# Copyright 2021 NVIDIA Corporation. All Rights Reserved
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,10 +36,14 @@ from __future__ import print_function
 import os
 import sys
 import warnings
+sys.path.insert(0, '..')
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 import numpy as np
 import tensorflow as tf
 
+from fwd9m import tensorflow as fwd9m_tensorflow
+from segment_reduction_helper import SegmentReductionHelper
 from tensorflow.python.client import session
 from tensorflow.python.eager import backprop
 from tensorflow.python.eager import context
@@ -52,13 +56,7 @@ from tensorflow.python.ops import gradient_checker
 from tensorflow.python.ops import gradients_impl
 from tensorflow.python.ops import math_ops
 from tensorflow.python.platform import test
-
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from segment_reduction_helper import SegmentReductionHelper
-
-sys.path.insert(0, '..')
-import fwd9m.tensorflow as fwd9m_tensorflow
-import utils
+import utils as tests_utils
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # Simplifies logging
 
@@ -315,7 +313,7 @@ class SegmentSumDeterministicTest(SegmentReductionHelper):
     indices = np.random.randint(low=0, high=num_segments, size=(segment_size,))
     indices = np.sort(indices)
 
-    with utils.force_gpu_session(self):
+    with tests_utils.force_gpu_session(self):
       for dtype in self.all_dtypes:#(dtypes_lib.complex64,)
         ops_list = self.complex_ops_list if dtype.is_complex \
             else self.ops_list
@@ -339,7 +337,7 @@ class SegmentSumDeterministicTest(SegmentReductionHelper):
     indices = np.random.randint(low=0, high=num_segments, size=(segment_size,))
     indices = np.sort(indices)
 
-    with utils.force_gpu_session(self):
+    with tests_utils.force_gpu_session(self):
     # with self.session(force_gpu=True):#force_gpu=True leads to XLA issue
       for dtype in self.differentiable_dtypes:
         ops_list = self.complex_ops_list if dtype.is_complex \

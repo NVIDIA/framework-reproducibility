@@ -36,10 +36,13 @@ from __future__ import print_function
 import os
 import sys
 import warnings
+sys.path.insert(0, '..')
 
 import numpy as np
 import tensorflow as tf
 
+from fwd9m import tensorflow as fwd9m_tensorflow
+from segment_reduction_helper import SegmentReductionHelper
 from tensorflow.python.client import session
 from tensorflow.python.eager import backprop
 from tensorflow.python.eager import context
@@ -50,13 +53,7 @@ from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import gradients_impl
 from tensorflow.python.ops import math_ops
 from tensorflow.python.platform import test
-
-from segment_reduction_helper import SegmentReductionHelper
-
-sys.path.insert(0, '..')
-
-import fwd9m.tensorflow as fwd9m_tensorflow
-from utils import force_gpu_session
+import utils as tests_utils
 
 # The deterministic tests in the following class were originally copied from
 # test_patch_segment_sum.py.
@@ -144,7 +141,7 @@ class SegmentSumDeterministicTest(SegmentReductionHelper):
     indices = np.random.randint(low=0, high=num_segments, size=(segment_size,))
     indices = np.sort(indices)
 
-    with force_gpu_session(self):
+    with tests_utils.force_gpu_session(self):
       for dtype in self.all_dtypes:#(dtypes_lib.complex64,)
         ops_list = self.complex_ops_list if dtype.is_complex \
             else self.ops_list
@@ -168,7 +165,7 @@ class SegmentSumDeterministicTest(SegmentReductionHelper):
     indices = np.random.randint(low=0, high=num_segments, size=(segment_size,))
     indices = np.sort(indices)
 
-    with force_gpu_session(self):
+    with tests_utils.force_gpu_session(self):
     # with self.session(force_gpu=True):#force_gpu=True leads to XLA issue
       for dtype in self.differentiable_dtypes:
         ops_list = self.complex_ops_list if dtype.is_complex \

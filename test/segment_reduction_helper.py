@@ -57,11 +57,12 @@ from tensorflow.python.platform import test
 
 sys.path.insert(0, '..')
 import fwd9m.tensorflow as fwd9m_tensorflow
-import utils
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # Simplifies logging
 
 # Notes:
+# 0. These notes are relevant to this current file and also
+#    test_patch_segment_sum.py and test_patch_unsorted_segment_sum.py
 # 1. The ops were expected to operate deterministically on the CPU and they do
 #    indeed operate deterministically if forcely pinned to the CPU with
 #    tf.device('/device:CPU:0'). What is not fully understood is why when they

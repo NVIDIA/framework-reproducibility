@@ -1,4 +1,4 @@
-# Copyright 2020 NVIDIA Corporation. All Rights Reserved
+# Copyright 2021 NVIDIA Corporation. All Rights Reserved
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,8 +24,10 @@ import re
 import tensorflow as tf
 
 # By calling the deprecated patch API here, we continue to test its effect
-# without having to test is explicitly.
-from . import patch_bias_add
+# without having to test it explicitly. Note that this form of import
+# necessarily breaks the Google Python Style Guide rule to import packages
+# and modules only (and not individual functions).
+from ..tensorflow import patch as patch_bias_add
 from . import patch_segment_sum
 from . import patch_unsorted_segment_sum
 from .. import utils
@@ -52,7 +54,7 @@ def _enable_determinism(seed=None):
     in_ngc_cont = False
   if not in_ngc_cont and tf_vers.between('1.14', '2.0'):
     os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
-    patch_bias_add._patch_bias_add()
+    patch_bias_add._patch(_silent=True)
   if in_ngc_cont and ngc_vers.at_least('19.06') or tf_vers.at_least('2.1'):
     os.environ['TF_DETERMINISTIC_OPS'] = '1'
   if in_ngc_cont and ngc_vers.at_least('19.06') or tf_vers.at_least('1.14'):

@@ -27,7 +27,6 @@ from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import nn
 from tensorflow.python.ops import nn_ops
 
-
 def _patch_bias_add():
   _new_bias_add.__doc__ = tf.nn.bias_add.__doc__
   tf.nn.bias_add = _new_bias_add # access via public API

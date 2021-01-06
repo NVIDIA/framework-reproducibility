@@ -34,7 +34,7 @@ from tensorflow.python.ops import image_ops
 from tensorflow.python.ops import nn_ops
 from tensorflow.python.platform import test
 import fwd9m.tensorflow as fwd9m_tensorflow
-import utils
+import utils as tests_utils
 
 fwd9m_tensorflow.enable_determinism()
 class MaxPoolingOpDeterministicTest(test.TestCase):
@@ -49,7 +49,7 @@ class MaxPoolingOpDeterministicTest(test.TestCase):
   # @test_util.run_cuda_only
   @test_util.run_in_graph_and_eager_modes
   def testDeterministicGradients(self, data_type=dtypes.float32):
-    with utils.force_gpu_session(self):
+    with tests_utils.force_gpu_session(self):
       seed = (hash(data_type) % 256)
       np.random.seed(seed)
       N = 100

@@ -19,16 +19,17 @@ from __future__ import division
 from __future__ import print_function
 
 import collections
+import os
 
 import numpy as np
-import os
+import utils as tests_utils
+
+from fwd9m import tensorflow as fwd9m_tensorflow
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops import nn_ops
 from tensorflow.python.platform import test
-import fwd9m.tensorflow as fwd9m_tensorflow
-import utils
 
 fwd9m_tensorflow.enable_determinism()
 # os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
@@ -86,7 +87,7 @@ class ConvolutionTest(test.TestCase):
     return out_op
 
   def _assert_reproducible(self, operation):
-    with utils.force_gpu_session(self):
+    with tests_utils.force_gpu_session(self):
       result_1 = self.evaluate(operation)
       result_2 = self.evaluate(operation)
     self.assertAllEqual(result_1, result_2)

@@ -34,8 +34,8 @@ from tensorflow.python.framework import dtypes as dtypes_lib
 
 def _patch_unsorted_segment_sum():
   _new_unsorted_segment_sum.__doc__ = tf.math.unsorted_segment_sum.__doc__
-  math_ops.unsorted_segment_sum = _new_unsorted_segment_sum # access via public API
-  tf.math.unsorted_segment_sum = _new_unsorted_segment_sum # access via public API
+  math_ops.unsorted_segment_sum = _new_unsorted_segment_sum
+  tf.math.unsorted_segment_sum = _new_unsorted_segment_sum # via public API
 
 # The original, pre-patched function is automatically-generated. Therefore, we
 # cannot provide a URL to its location in the source repository.
@@ -48,7 +48,9 @@ def _new_unsorted_segment_sum(data, segment_ids, num_segments, name=None):
     # Note that data can be a vector-like list (or an n-dimensional
     # tensor-like list of lists). We convert to tensor here to replicate the
     # behavior of the pre-existing op.
-    data = tf.convert_to_tensor(data)
+    data = ops.convert_to_tensor(data, name="input_data")
+    segment_ids = ops.convert_to_tensor(segment_ids, name="segment_ids")
+    num_segments = ops.convert_to_tensor(num_segments, name="num_segments")
 
     orig_dtype = data.dtype
     if orig_dtype is dtypes_lib.float32:
@@ -63,14 +65,6 @@ def _new_unsorted_segment_sum(data, segment_ids, num_segments, name=None):
       warnings.warn(
           "Data type %s is not supported for GPU-determinism" % data.dtype,
           UserWarning)
-    else:
-      return gen_math_ops.unsorted_segment_sum(data, segment_ids, num_segments)
-
-
-    if not context.executing_eagerly():
-      data = ops.convert_to_tensor(data, name="input_data")
-      segment_ids = ops.convert_to_tensor(segment_ids, name="segment_ids")
-      num_segments = ops.convert_to_tensor(num_segments, name="num_segments")
 
     result = gen_math_ops.unsorted_segment_sum(data, segment_ids, num_segments)
 

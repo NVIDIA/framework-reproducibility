@@ -36,10 +36,13 @@ from __future__ import print_function
 import os
 import sys
 import warnings
+sys.path.insert(0, '..')
 
 import numpy as np
 import tensorflow as tf
 
+from fwd9m import tensorflow as fwd9m_tensorflow
+from segment_reduction_helper import SegmentReductionHelper
 from tensorflow.python.client import session
 from tensorflow.python.eager import backprop
 from tensorflow.python.eager import context
@@ -50,13 +53,7 @@ from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import gradients_impl
 from tensorflow.python.ops import math_ops
 from tensorflow.python.platform import test
-
-from segment_reduction_helper import SegmentReductionHelper
-from utils import force_gpu_session
-sys.path.insert(0, '..')
-
-import fwd9m.tensorflow as fwd9m_tensorflow
-
+import utils as tests_utils
 
 # The deterministic tests in the following class were originally copied from
 # test_patch_segment_sum.py.
@@ -151,7 +148,7 @@ class UnsortedSegmentSumDeterministicTest(SegmentReductionHelper):
     indices_flat = np.random.randint(low=-1, high=num_segments,
                                      size=(segment_size,))
 
-    with force_gpu_session(self):
+    with tests_utils.force_gpu_session(self):
       for dtype in self.differentiable_dtypes:
         for indices in indices_flat, indices_flat.reshape(num_rows, num_cols):
           ops_list = self.complex_ops_list if dtype.is_complex \
@@ -169,7 +166,7 @@ class UnsortedSegmentSumDeterministicTest(SegmentReductionHelper):
     segment_size = num_cols * num_rows
     indices_flat = np.random.randint(low=-1, high=num_segments,
                                      size=(segment_size,))
-    with force_gpu_session(self):
+    with tests_utils.force_gpu_session(self):
       for dtype in self.all_dtypes:
         for indices in indices_flat, indices_flat.reshape(num_rows, num_cols):
           shape = indices.shape + (num_cols,)
