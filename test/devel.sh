@@ -5,7 +5,8 @@ set -e # If any test fails, this script will exit and forward the error code
 IMAGE=tensorflow/tensorflow:2.2.0-gpu
 # IMAGE=nvcr.io/nvidia/tensorflow:19.06-py3
 
-./container.sh ${IMAGE} python test_patch_segment_reduction.py
+./build-image.sh ${IMAGE}
+./container.sh python test_patch_bias_add.py
 
 # The segment sum patch has been shown to pass on the following NGC containers:
 #   19.06-py2/3

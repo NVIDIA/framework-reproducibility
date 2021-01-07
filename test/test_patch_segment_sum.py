@@ -353,7 +353,7 @@ class SegmentSumDeterministicTest(SegmentReductionHelper):
     shape = [10, 2]
     indices = [i // 3 for i in range(10)]
     non_supported_types = (dtypes_lib.float64,)
-    with utils.force_gpu_session(self):
+    with tests_utils.force_gpu_session(self):
       for dtype in non_supported_types:
         ops_list = self.complex_ops_list if dtype.is_complex \
             else self.ops_list

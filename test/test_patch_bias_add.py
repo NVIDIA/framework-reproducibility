@@ -53,7 +53,7 @@ from tensorflow.python.ops import gradients_impl
 from tensorflow.python.ops import nn
 from tensorflow.python.ops import nn_ops
 from tensorflow.python.platform import test
-import utils as test_utils
+import utils as tests_utils
 
 # The tests in the following class were originally copied from
 # https://github.com/tensorflow/tensorflow/blob/v1.14.0/tensorflow/python/kernel_tests/bias_op_test.py
@@ -401,7 +401,7 @@ class BiasAddTestDeterministic(test.TestCase):
 
   @test_util.run_in_graph_and_eager_modes
   def testDeterministicGradients(self):
-    with test_utils.force_gpu_session(self):
+    with tests_utils.force_gpu_session(self):
       # There are problems with using force_gpu=True and cached_session with
       # both eager mode and graph mode in the same test. Using a non-cached
       # session and putting everything inside the same session context is
