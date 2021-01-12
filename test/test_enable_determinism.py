@@ -82,7 +82,7 @@ class IntegrationTest():
   _runner = None
 
   @classmethod
-  def initialize(cls, yml="enable_determinism.yml", tests_dir='./tests_dir'):
+  def initialize(cls, yml="enable_determinism.yml", tests_dir='./determinism_test'):
     cls._container_id = get_container()
     cls._tests_dir = tests_dir
     cls._tests_data = read_tests_yml(cls._container_id, yml, tests_dir)
