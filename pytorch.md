@@ -30,6 +30,11 @@ np.random.seed(SEED) # if you're using numpy
 torch.manual_seed(SEED) # torch.cuda.manual_seed_all(SEED) is not required
 ```
 
+It's often worth confirming that the trainable variables are being reproducibly
+initialized by creating and printing some kind of digest of all the trainable
+variables before beginning to train. Appropriate digests include a sum or a
+hash.
+
 ## Data Loader
 
 You'll need to make sure that your data loader process is reproducible, so that
@@ -60,7 +65,7 @@ Then call `set_epoch` at the start of each epoch.
 
 Once the trainable variables are initializing reproducibly and training
 examples are being delivered reproducibly, the next step is to maximally enable
-deterministic ops. The way you do this currently (in version 1.6) of PyTorch
+deterministic ops. The way you do this in versions of PyTorch earlier than 1.7
 is a follows:
 
 ```
@@ -74,7 +79,7 @@ libraries: convolution, max pooling, and CTC loss (all three from cuDNN), and
 batch matrix-matrix product (from cuBLAS).
 
 The second line disables dynamic selection of cuDNN convolution algorithms
-and ensures that the algorithm select itself is reproducible.
+and ensures that the algorithm selection itself is reproducible.
 
 The [reproducibilty page][1] contains a reasonable but non-comprehensive list of
 ops the are nondeterminsitic on GPU. Using these will cause nondeterminism to
@@ -90,16 +95,16 @@ criteria must be met, as described in the PyTorch [documentation][4] for
 `torch.nn.CTCLoss`. Another way of obtaining determinsitic CTC functionality
 is to use [WarpCTC][2].
 
-PyTorch 1.7 will include a new function, `torch.set_determinism`, which will
-preclude the need to set eithe `torch.backends.cudnn.determinsitic` or
-`torch.backends.cudnn.benchmark`. An additional advantage of using this this
-function is that it will cause an exception to be thrown if you try to use an
-op that could inject nondeterminism into your model. It's impossible for an
-exception to be thrown in all circumstances when nondeterminism could be
-introduced by an op, let alone by the many other possible sources, but this
-feature will reduce the amount of time spend isolating sources of nondeterminism
-coming from ops that have already been identified as currently not able to
-operate deterministically on a GPU.
+PyTorch 1.7 includes a new function, `torch.set_determinism`, which precludes
+the need to set either `torch.backends.cudnn.determinsitic` or
+`torch.backends.cudnn.benchmark`. An additional advantage of using this function
+is that it will cause an exception to be thrown if you try to use an op that
+could inject nondeterminism into your model. It's impossible for an exception to
+be thrown in all circumstances when nondeterminism could be introduced by an op,
+let alone by the many other possible sources, but this feature will reduce the
+amount of time spent isolating sources of nondeterminism coming from ops that
+have already been identified as currently not able to operate deterministically
+on a GPU.
 
 ## Save and Resume
 
