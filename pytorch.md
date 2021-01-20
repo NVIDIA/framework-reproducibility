@@ -7,7 +7,9 @@ models, but our level of experience, so far, is not as extensive as for
 TensorFlow.
 
 PyTorch documentation includes some guidance for attaining GPU-determinism on
-its [reproducibility page][1], which we have contributed to.
+its [reproducibility page][1], which we have contributed to. Please refer to
+that page also because it probably has different or additional information to
+this current one.
 
 Getting reproducible functionality on a single GPU, as with other frameworks,
 involves several considerations:
@@ -95,8 +97,8 @@ criteria must be met, as described in the PyTorch [documentation][4] for
 `torch.nn.CTCLoss`. Another way of obtaining determinsitic CTC functionality
 is to use [WarpCTC][2].
 
-PyTorch 1.7 includes a new function, `torch.set_determinism`, which precludes
-the need to set either `torch.backends.cudnn.determinsitic` or
+PyTorch 1.7 includes a new function, [`torch.set_deterministic`][5], which
+precludes the need to set either `torch.backends.cudnn.determinsitic` or
 `torch.backends.cudnn.benchmark`. An additional advantage of using this function
 is that it will cause an exception to be thrown if you try to use an op that
 could inject nondeterminism into your model. It's impossible for an exception to
@@ -148,3 +150,4 @@ the content on this page.
 [2]: https://github.com/SeanNaren/warp-ctc
 [3]: https://pytorch.org/tutorials/beginner/saving_loading_models.html
 [4]: https://pytorch.org/docs/stable/generated/torch.nn.CTCLoss.html
+[5]: https://pytorch.org/docs/stable/generated/torch.set_deterministic.html
