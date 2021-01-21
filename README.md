@@ -591,7 +591,7 @@ This section catalogs relevant links.
 
 ### TensorFlow Issues
 
-GitHiub issues in the TensorFlow project:
+GitHub issues in the TensorFlow project:
 
 Number                                                         | Title                                                                                    | Date Opened | Status |
 --------------------------------------------------------------:|:-----------------------------------------------------------------------------------------|:------------|:-------|
@@ -623,7 +623,8 @@ GitHub issues in dependent or related projects:
 ### TensorFlow Pull Requests
 
 The following pull requests (and some inidividual commits) are those in the
-TensorFlow GitHub repo that are directly related to this project. As we have
+TensorFlow GitHub repo (`github.com/tensorflow/tensorflow`) that are directly
+related to this project. As we have
 [discovered](scripts/README.md#find-tensorflow-commits), 1.8% of all commits
 seem to reference, or have some relationship with, "determinism" or
 "deterministic". As of 2020-01-30, that was 1,391 commits.
@@ -661,6 +662,15 @@ Notes:
 [1003]: https://github.com/tensorflow/tensorflow/pull/34951
 [1004]: https://github.com/tensorflow/tensorflow/commit/8b7a3db0b6e09415b5640be4986fb4d7c6e5209a
 [1005]: https://github.com/tensorflow/tensorflow/commit/9e096debc4a0909deb69970f38bee7b77e5e5f7d
+
+### Other TensorFlow Organization Pull Requests
+
+These are relevant pull requests against repositories in
+`github.com/tensorflow` other than `github.com/tensorflow/tensorflow`
+
+ Repository | Number                                                   | Title                                                                 | Date Opened | Status |
+:-----------|---------------------------------------------------------:|:----------------------------------------------------------------------|:------------|:-------|
+ community  | [346](https://github.com/tensorflow/community/pull/346)  | RFC: Enhancing determinism in TF                                      | 2021-01-19  | Open   |
 
 ### PyTorch Pull Requests
 
