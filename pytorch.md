@@ -41,9 +41,9 @@ hash.
 
 You'll need to make sure that your data loader process is reproducible, so that
 the sequence of examples or batches of examples delivered to your model are
-prefectly reproducible. If you have a mutli-threaded data loader, then it's
+perfectly reproducible. If you have a mutlithreaded data loader, then it's
 important not to share PRNG state between threads. There may be other
-dataloader restrictions that I'm not yet aware of.
+data loader restrictions that I'm not yet aware of.
 
 Reproducible inter-epoch re-shuffling can be attained by creating
 an instance (`self.g`) of `torch.Generator` in your
@@ -54,7 +54,7 @@ def set_epoch(self, epoch):
   self.epoch = epoch
   if self.shuffle:
     # We want every epoch to shuffle differently, but in a reproducible way.
-	# Therefore, reset the generator differently buy reproducibly on each
+	# Therefore, reset the generator differently but reproducibly on each
 	# epoch. It is recommended for the seed to have a good balance of zero and
 	# one bits.
 	# See https://pytorch.org/docs/stable/generated/torch.Generator.html
