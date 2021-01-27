@@ -98,7 +98,7 @@ criteria must be met, as described in the PyTorch [documentation][4] for
 is to use [WarpCTC][2].
 
 PyTorch 1.7 includes a new function, [`torch.set_deterministic`][5], which
-precludes the need to set either `torch.backends.cudnn.determinsitic` or
+precludes the need to set either `torch.backends.cudnn.deterministic` or
 `torch.backends.cudnn.benchmark`. An additional advantage of using this function
 is that it will cause an exception to be thrown if you try to use an op that
 could inject nondeterminism into your model. It's impossible for an exception to
