@@ -14,10 +14,9 @@ included in the next release tag (and PyPI version).
 
 ## Enhanced Testing / Higher Quality
 
-  * Integration testing of the patch on stock TensorFlow versions 1.14 and 1.15.
-  * Integration testing of the built-in deterministic functionality
-    (via `TF_DETERMINISTIC_OPS`) in NGC TF container versions 19.06 through
-    19.10.
+  * Thorough testing of `fwd9m.tensorflow.enable_determinism` going back to
+    stock TensorFlow version 1.14 and NGC TF contain image versions back to
+    19.06.
 
 # Release 0.3.0
 

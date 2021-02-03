@@ -1,3 +1,6 @@
+# The following code was copied from
+# https://github.com/tensorflow/tensorflow/blob/498026c3a59115e8c6e9993e89aae791f9113c4e/tensorflow/python/ops/image_grad_deterministic_test.py
+
 # Copyright 2020 The TensorFlow Authors. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,11 +21,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import os
 import numpy as np
 
 from absl.testing import parameterized
-
+sys.path.insert(0, '..')
+from fwd9m import tensorflow as fwd9m_tensorflow
 from tensorflow.python.eager import backprop
 from tensorflow.python.eager import context
 from tensorflow.python.framework import constant_op
@@ -30,12 +33,11 @@ from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import gradients_impl
-import image_grad_test_base as test_base
 from tensorflow.python.ops import image_ops
 from tensorflow.python.platform import test
 
 
-class ResizeBilinearOpDeterministicTest(test_base.ResizeBilinearOpTestBase):
+class ResizeBilinearOpDeterministicTest(test.TestCase):
 
   def _randomNDArray(self, shape):
     return 2 * np.random.random_sample(shape) - 1
@@ -128,15 +130,5 @@ class ResizeBilinearOpDeterministicTest(test_base.ResizeBilinearOpTestBase):
 
 
 if __name__ == '__main__':
-  # Note that the effect of setting the following environment variable to
-  # 'true' is not tested. Unless we can find a simpler pattern for testing these
-  # environment variables, it would require this file to be made into a base
-  # and then two more test files to be created.
-  #
-  # When deterministic op functionality can be enabled and disabled between test
-  # cases in the same process, then the tests for deterministic op
-  # functionality, for this op and for other ops, will be able to be included in
-  # the same file with the regular tests, simplifying the organization of tests
-  # and test files.
-  # os.environ['TF_DETERMINISTIC_OPS'] = '1'
+  fwd9m_tensorflow.enable_determinism()
   test.main()

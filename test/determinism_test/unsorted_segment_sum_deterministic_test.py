@@ -69,8 +69,6 @@ import utils as tests_utils
 # 3. GPU-nondeterminism of float64 cannot be fixed by this patch, so it's not
 #    tested.
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # Simplifies logging
-fwd9m_tensorflow.enable_determinism()
 
 class UnsortedSegmentSumDeterministicTest(SegmentReductionHelper):
 
@@ -181,5 +179,6 @@ class UnsortedSegmentSumDeterministicTest(SegmentReductionHelper):
 
 
 if __name__ == "__main__":
+  os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # Simplifies logging
   fwd9m_tensorflow.enable_determinism()
   test.main()

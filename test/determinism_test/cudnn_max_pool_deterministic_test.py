@@ -1,4 +1,4 @@
-# Copyright 2020 The TensorFlow Authors. All Rights Reserved.
+# Copyright 2020 NVIDIA Corporation. All Rights Reserved
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,18 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# ==============================================================================
-"""Functional tests for deterministic image op gradient functions."""
+# ========================================================================
+"""Functional tests for deterministic max pooling gradient functions."""
 
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import os
 import numpy as np
 
-from absl.testing import parameterized
-
+sys.path.insert(0, '..')
+from fwd9m import tensorflow as fwd9m_tensorflow
 from tensorflow.python.eager import backprop
 from tensorflow.python.eager import context
 from tensorflow.python.framework import constant_op
@@ -30,13 +29,10 @@ from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import gradients_impl
-from tensorflow.python.ops import image_ops
 from tensorflow.python.ops import nn_ops
 from tensorflow.python.platform import test
-import fwd9m.tensorflow as fwd9m_tensorflow
 import utils as tests_utils
 
-fwd9m_tensorflow.enable_determinism()
 class MaxPoolingOpDeterministicTest(test.TestCase):
 
   def _randomNDArray(self, shape):
@@ -45,8 +41,6 @@ class MaxPoolingOpDeterministicTest(test.TestCase):
   def _randomDataOp(self, shape, data_type):
     return constant_op.constant(self._randomNDArray(shape), dtype=data_type)
 
-
-  # @test_util.run_cuda_only
   @test_util.run_in_graph_and_eager_modes
   def testDeterministicGradients(self, data_type=dtypes.float32):
     with tests_utils.force_gpu_session(self):
@@ -102,14 +96,5 @@ class MaxPoolingOpDeterministicTest(test.TestCase):
 
 
 if __name__ == '__main__':
-  # Note that the effect of setting the following environment variable to
-  # 'true' is not tested. Unless we can find a simpler pattern for testing these
-  # environment variables, it would require this file to be made into a base
-  # and then two more test files to be created.
-  #
-  # When deterministic op functionality can be enabled and disabled between test
-  # cases in the same process, then the tests for deterministic op
-  # functionality, for this op and for other ops, will be able to be included in
-  # the same file with the regular tests, simplifying the organization of tests
-  # and test files.
+  fwd9m_tensorflow.enable_determinism()
   test.main()

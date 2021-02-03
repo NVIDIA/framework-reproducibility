@@ -137,7 +137,7 @@ version is based on:
  20.02 - 20.03        | 1.15 / 2.1         |
  20.06 - 20.08        | 1.15 / 2.2         |
  20.09 - 20.10        | 1.15 / 2.3         |
- 
+
 Note that, for now, the NGC TensorFlow container images continue to support
 a GPU-performance-optimized TensorFlow API version 1 variant (using a `-tf1`
 docker image repository tag), for those who have not yet migrated to TensorFlow

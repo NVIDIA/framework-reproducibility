@@ -36,11 +36,11 @@ from __future__ import print_function
 import os
 import sys
 import warnings
-sys.path.insert(0, '..')
 
 import numpy as np
 import tensorflow as tf
 
+sys.path.insert(0, '..')
 from fwd9m import tensorflow as fwd9m_tensorflow
 from segment_reduction_helper import SegmentReductionHelper
 from tensorflow.python.client import session
@@ -69,8 +69,6 @@ import utils as tests_utils
 # 3. GPU-nondeterminism of float64 cannot be fixed by this patch, so it's not
 #    tested.
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # Simplifies logging
-fwd9m_tensorflow.enable_determinism()
 
 class SegmentSumDeterministicTest(SegmentReductionHelper):
 
@@ -174,5 +172,6 @@ class SegmentSumDeterministicTest(SegmentReductionHelper):
           self._testBackwardCase(dtype, indices, tf_op, shape)
 
 if __name__ == "__main__":
+  os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # Simplifies logging
   fwd9m_tensorflow.enable_determinism()
   test.main()

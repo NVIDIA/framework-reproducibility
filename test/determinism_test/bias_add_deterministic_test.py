@@ -34,13 +34,13 @@ from __future__ import print_function
 
 import os
 import sys
-sys.path.insert(0, '..')
 
 import numpy as np
 import tensorflow as tf
 
-from fwd9m import utils as package_utils
+sys.path.insert(0, '..')
 from fwd9m import tensorflow as fwd9m_tensorflow
+from fwd9m import utils as package_utils
 from tensorflow.python.eager import backprop
 from tensorflow.python.eager import context
 from tensorflow.python.framework import constant_op
@@ -56,7 +56,6 @@ import tensorflow.python.ops.nn_grad  # pylint: disable=unused-import
 from tensorflow.python.platform import test
 import utils as tests_utils
 
-fwd9m_tensorflow.enable_determinism()
 
 class BiasAddTestDeterministic(test.TestCase):
 

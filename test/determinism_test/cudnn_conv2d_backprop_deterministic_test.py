@@ -1,3 +1,6 @@
+# The following code was copied from
+# https://github.com/tensorflow/tensorflow/blob/9b7ff60faa841f0473facf618cb5b66b9cb99b5e/tensorflow/python/kernel_tests/cudnn_deterministic_base.py
+
 # Copyright 2019 The TensorFlow Authors. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,8 +25,8 @@ import collections
 import os
 
 import numpy as np
-import utils as tests_utils
 
+sys.path.insert(0, '..')
 from fwd9m import tensorflow as fwd9m_tensorflow
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
@@ -31,8 +34,7 @@ from tensorflow.python.framework import test_util
 from tensorflow.python.ops import nn_ops
 from tensorflow.python.platform import test
 
-fwd9m_tensorflow.enable_determinism()
-# os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
+
 # Notes:
 #
 # Deterministic cuDNN operation is selected by setting either of the two
@@ -47,7 +49,7 @@ fwd9m_tensorflow.enable_determinism()
 # given layer configuration) for each of the forward and the two backward paths.
 #
 # These tests intend to confirm that deterministic algorithms are chosen (for
-# the back-prop paths) when desterministic operation is selected. The tested
+# the back-prop paths) when deterministic operation is selected. The tested
 # configurations were first confirmed to produce non-deterministic results when
 # the above-mentioned environment variables are not set.
 #
@@ -121,3 +123,8 @@ class ConvolutionTest(test.TestCase):
     input_gradient_op = nn_ops.conv2d_backprop_input(
         in_shape, filter_op, out_op, strides=strides, padding=padding)
     self._assert_reproducible(input_gradient_op)
+
+
+if __name__ == '__main__':
+  fwd9m_tensorflow.enable_determinism()
+  test.main()

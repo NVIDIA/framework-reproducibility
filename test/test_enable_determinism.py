@@ -1,7 +1,4 @@
-# Copyright 2019 The TensorFlow-Determinism Authors. All Rights Reserved
-#
-# Some code in this file was derived from the TensorFlow project and/or
-# has been, or will be, contributed to the TensorFlow project.
+# Copyright 2020-2021 NVIDIA Corporation. All Rights Reserved
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ========================================================================
+
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -50,7 +48,7 @@ def read_tests_yml(container_id, yml_file, tests_dir):
   tests_data = {}
 
   for key, val in yml_info.items():
-    file_path = tests_dir+'/'+val['filename']
+    file_path = tests_dir + '/' + val['filename']
     print(file_path)
     if not os.path.isfile(file_path):
       raise Exception("Test file %s does not exist under folder %s!"
@@ -76,7 +74,7 @@ def read_tests_yml(container_id, yml_file, tests_dir):
 
   return tests_data
 
-class IntegrationTest():
+class EnableDeterminismTest():
   _tests_data = {}
   _tests_dir = None
   _runner = None
@@ -105,7 +103,7 @@ class IntegrationTest():
           test_status = FAILURE
 
         if local_failures:
-          ret = _TestResult(status="failure", message="%d failues %d errors at %s" %(len(result.failures), len(result.errors) ,file_name))
+          ret = _TestResult(status="failure", message="%d failures %d errors at %s" %(len(result.failures), len(result.errors) ,file_name))
         else:
           ret = _TestResult(status="ok", message="OK at %s" % file_name)
       else:
@@ -120,5 +118,5 @@ class IntegrationTest():
     return test_status
 
 if __name__=="__main__":
-  IntegrationTest.initialize()
-  sys.exit(IntegrationTest.run_tests())
+  EnableDeterminismTest.initialize()
+  sys.exit(EnableDeterminismTest.run_tests())
