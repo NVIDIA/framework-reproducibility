@@ -108,22 +108,24 @@ amount of time spent isolating sources of nondeterminism coming from ops that
 have already been identified as currently not able to operate deterministically
 on a GPU.
 
-## Save and Resume
+## Reproducible Checkpointing
 
-When saving your model, you will need to save not only the `model.state_dict()`
-but also the `optimizer.state_dict()` (which includes the current
-learning rate and any other learning rate scheduler state), the iteration/epoch
-counter, `torch.cuda.GradScaler` statistics, as well as the following PRNG
-states:
+To save state and later resume reproducibly (ending the training process
+exactly as if it had not been interrupted) you should `torch.save` and
+`torch.load` the following state (as needed) using [the approach][6] given in
+the PyTorch documentation, including the [guidance][7] for saving and loading
+GPU state:
 
-```
-save_checkpoint["torch_rng_state"] = torch.get_rng_state()
-save_checkpoint["torch_cuda_rng_state"] = torch.cuda.get_rng_state()
-save_checkpoint["numpy_rng_state"] = np.random.get_state()
-save_checkpoint["python_rng_state"] = random.getstate()
-```
-
-Please also refer to the [Saving and Loading Models][3] documentation.
+  * data loader state,
+  * `model.state_dict()`,
+  * `optimizer.state_dict()`, which includes the current learning rate and any
+    other learning rate scheduler state,
+  * epoch / iteration counter,
+  * `torch.cuda.GradScaler` statistics,
+  * `torch.get_rng_state()`,
+  * `torch.cuda.get_rng_state()`,
+  * `np.random.get_state()`, and
+  * `random.getstate()`
 
 ## Multi-GPU
 
@@ -151,3 +153,5 @@ the content on this page.
 [3]: https://pytorch.org/tutorials/beginner/saving_loading_models.html
 [4]: https://pytorch.org/docs/stable/generated/torch.nn.CTCLoss.html
 [5]: https://pytorch.org/docs/stable/generated/torch.set_deterministic.html
+[6]: https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-a-general-checkpoint-for-inference-and-or-resuming-training
+[7]: https://pytorch.org/tutorials/beginner/saving_loading_models.html#save-on-gpu-load-on-gpu
