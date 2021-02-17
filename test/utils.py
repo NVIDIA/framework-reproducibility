@@ -65,7 +65,6 @@ def force_gpu_session(test_object):
   else:
     return test_object.session(force_gpu=True)
 
-
 def is_gpu_available_xla():
   tf_version = Version(tf.version.VERSION)
   if tf_version.in_list(['1.15', '2.0']):

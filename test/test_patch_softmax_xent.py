@@ -12,6 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
+
+# Copyright 2021 NVIDIA Corporation. All Rights Reserved
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ========================================================================
 """Tests for SoftmaxCrossEntropyWithLogits op."""
 
 from __future__ import absolute_import
@@ -40,6 +55,10 @@ from tensorflow.python.platform import test
 sys.path.insert(0, '..')
 import fwd9m.tensorflow as fwd9m_tensorflow
 import utils
+
+# The tests in the following class were originally copied from
+# https://github.com/tensorflow/tensorflow/blob/b36436b087bd8e8701ef51718179037cccdfc26e/tensorflow/python/kernel_tests/xent_op_test.py
+# and were then enhanced.
 
 class XentTest(test.TestCase):
 
@@ -279,7 +298,7 @@ class XentTest(test.TestCase):
       err = gradient_checker.compute_gradient_error(l, [3, 4], x, [3])
 
     self.assertLess(err, 5e-8)
-  # @unittest.skip("")
+
   @test_util.run_deprecated_v1
   def testSecondGradient(self):
     with self.cached_session() as sess:
@@ -405,10 +424,8 @@ class SoftmaxXentDeterministicTest(tf.test.TestCase):
     a = (2 * np.random.random_sample(shape) - 1).astype(dtype)
 
     if normalized_rows:
-
       def normalize(row):
         return row / row.sum()
-
       a = np.apply_along_axis(normalize, 1, a)
 
     return tf.constant(a)
@@ -416,13 +433,38 @@ class SoftmaxXentDeterministicTest(tf.test.TestCase):
   def gradients(self, seed, output_shape, output_dtype, labels, logits):
     np.random.seed(seed)
     upstream_gradients = self._randomFloats(output_shape, output_dtype)
+
     with tf.GradientTape(persistent=True) as tape:
       tape.watch(logits)
       op_output = tf.nn.softmax_cross_entropy_with_logits(
           labels=labels, logits=logits)
       gradient_injector_output = op_output * upstream_gradients
+
     return tape.gradient(gradient_injector_output, logits)
 
+  @test_util.run_in_graph_and_eager_modes
+  def testForward(self):
+    batch_size = 1024
+    classes_count = 1000
+    logits_shape = (batch_size, classes_count)
+    logits_dtype = np.float32
+    logits = self._randomFloats(logits_shape, logits_dtype)
+
+    labels_shape = logits_shape
+    labels_dtype = logits_dtype
+    labels = self._randomFloats(labels_shape, labels_dtype,
+                                normalized_rows=True)
+
+    with utils.force_gpu_session(self):
+      repeat_count = 5
+      for _ in range(repeat_count):
+        result_a = nn_ops.softmax_cross_entropy_with_logits(
+            labels=labels, logits=logits)
+        result_b = nn_ops.softmax_cross_entropy_with_logits(
+            labels=labels, logits=logits)
+        self.assertAllEqual(result_a, result_b)
+
+  @test_util.run_in_graph_and_eager_modes
   def testDistributionLabelsDeterministicGradients(self):
     with utils.force_gpu_session(self):
       batch_size = 1024
@@ -444,6 +486,16 @@ class SoftmaxXentDeterministicTest(tf.test.TestCase):
         result_a = self.gradients(seed, *args)
         result_b = self.gradients(seed, *args)
         self.assertAllEqual(result_a, result_b)
+
+class SoftmaxXentTestMisc(test.TestCase):
+  def testSDocstring(self):
+    op = tf.nn.softmax_cross_entropy_with_logits
+    docstring = op.__doc__
+    if not docstring: # falsy (None or "")
+        self.fail("The patched op %s has no docstring" % op.__name__)
+    if docstring.startswith('ERROR'):
+        self.fail("The docstring for the patched op %s has not been assigned"
+                % op.__name__)
 
 if __name__ == "__main__":
   fwd9m_tensorflow.enable_determinism()

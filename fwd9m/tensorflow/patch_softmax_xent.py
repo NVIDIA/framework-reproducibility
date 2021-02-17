@@ -1,23 +1,23 @@
+# Copyright 2021 NVIDIA Corporation. All Rights Reserved
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ========================================================================
+
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
 import tensorflow as tf
-
-# from tensorflow.python.eager import context
-# from tensorflow.python.framework import config
-# from tensorflow.python.framework import constant_op
-# from tensorflow.python.framework import dtypes
-# from tensorflow.python.framework import ops
-# from tensorflow.python.keras import backend as K
-# from tensorflow.python.ops import array_ops
-# from tensorflow.python.ops import clip_ops
-# from tensorflow.python.ops import gen_math_ops
-# from tensorflow.python.ops import math_ops
-# from tensorflow.python.ops import nn
-# from tensorflow.python.ops import nn_ops
-
-
 
 import functools
 import numbers
@@ -28,31 +28,38 @@ import numpy as np
 from tensorflow.python.eager import context
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
-from tensorflow.python.framework import errors_impl
-from tensorflow.python.framework import graph_util
 from tensorflow.python.framework import ops
-from tensorflow.python.framework import random_seed
-from tensorflow.python.framework import tensor_shape
-from tensorflow.python.framework import tensor_util
 from tensorflow.python.keras import backend as K
 from tensorflow.python.ops import array_ops
-from tensorflow.python.ops import check_ops
 from tensorflow.python.ops import clip_ops
 from tensorflow.python.ops import gen_math_ops
 from tensorflow.python.ops import math_ops
-from tensorflow.python.ops import random_ops
-from tensorflow.python.ops import variables as variables_lib
-
+from tensorflow.python.ops import nn
+from tensorflow.python.ops import nn_ops
 from tensorflow.python.util import deprecation
 from tensorflow.python.util import dispatch
 from tensorflow.python.util.deprecation import deprecated_args
 from tensorflow.python.util.deprecation import deprecated_argument_lookup
-
 from tensorflow.python.util.tf_export import tf_export
 
+# NOTE: This patch provides GPU-determinism for
+# `tf.nn.softmax_cross_entropy_with_logits` via overriding the fused op
+# `gen_nn_ops.softmax_cross_entropy_with_logit` with sequential calling of
+# softmax, logarithm and reduce_sum which are known deterministic.
 
-# The original, pre-patched method can be viewed at
-# https://github.com/tensorflow/tensorflow/blob/v1.14.0/tensorflow/python/ops/nn_ops.py#L3182
+def _patch_softmax_xent():
+  _new_softmax_xent_with_logits.__doc__ = \
+      tf.nn.softmax_cross_entropy_with_logits.__doc__
+  _new_softmax_cross_entropy_with_logits_v2_helper.__doc__ = \
+      nn_ops.softmax_cross_entropy_with_logits_v2_helper.__doc__
+  tf.nn.softmax_cross_entropy_with_logits = \
+      _new_softmax_xent_with_logits # access via public API
+  nn.softmax_cross_entropy_with_logits = _new_softmax_xent_with_logits
+  nn_ops.softmax_cross_entropy_with_logits = _new_softmax_xent_with_logits
+
+# The original, pre-patched python wrapper can be viewed at
+# https://github.com/tensorflow/tensorflow/blob/0c95acca049a05756f63bec731dbe9a11f9d8382/tensorflow/python/ops/nn_ops.py#L3998
+
 def _core_op(labels, logits):
   """Internal only. The shape should be checked equal eariler."""
   dim = -1
@@ -105,7 +112,7 @@ def _ensure_xent_args(name, sentinel, labels, logits):
 @tf_export(v1=["nn.softmax_cross_entropy_with_logits"])
 @dispatch.add_dispatch_support
 @deprecation.deprecated(date=None, instructions=_XENT_DEPRECATION)
-def _new_softmax_cross_entropy_with_logits(
+def _new_softmax_xent_with_logits(
     _sentinel=None,  # pylint: disable=invalid-name
     labels=None,
     logits=None,
@@ -124,102 +131,17 @@ def _new_softmax_cross_entropy_with_logits(
   return softmax_cross_entropy_with_logits_v2(
       labels=labels, logits=logits, axis=dim, name=name)
 
-
-
 @tf_export("nn.softmax_cross_entropy_with_logits", v1=[])
 @dispatch.add_dispatch_support
 def softmax_cross_entropy_with_logits_v2(labels, logits, axis=-1, name=None):
-  """Computes softmax cross entropy between `logits` and `labels`.
-  Measures the probability error in discrete classification tasks in which the
-  classes are mutually exclusive (each entry is in exactly one class).  For
-  example, each CIFAR-10 image is labeled with one and only one label: an image
-  can be a dog or a truck, but not both.
-  **NOTE:**  While the classes are mutually exclusive, their probabilities
-  need not be.  All that is required is that each row of `labels` is
-  a valid probability distribution.  If they are not, the computation of the
-  gradient will be incorrect.
-  If using exclusive `labels` (wherein one and only
-  one class is true at a time), see `sparse_softmax_cross_entropy_with_logits`.
-  Usage:
-  >>> logits = [[4.0, 2.0, 1.0], [0.0, 5.0, 1.0]]
-  >>> labels = [[1.0, 0.0, 0.0], [0.0, 0.8, 0.2]]
-  >>> tf.nn.softmax_cross_entropy_with_logits(labels=labels, logits=logits)
-  <tf.Tensor: shape=(2,), dtype=float32,
-  numpy=array([0.16984604, 0.82474494], dtype=float32)>
-  **WARNING:** This op expects unscaled logits, since it performs a `softmax`
-  on `logits` internally for efficiency.  Do not call this op with the
-  output of `softmax`, as it will produce incorrect results.
-  A common use case is to have logits and labels of shape
-  `[batch_size, num_classes]`, but higher dimensions are supported, with
-  the `axis` argument specifying the class dimension.
-  `logits` and `labels` must have the same dtype (either `float16`, `float32`,
-  or `float64`).
-  Backpropagation will happen into both `logits` and `labels`.  To disallow
-  backpropagation into `labels`, pass label tensors through `tf.stop_gradient`
-  before feeding it to this function.
-  **Note that to avoid confusion, it is required to pass only named arguments to
-  this function.**
-  Args:
-    labels: Each vector along the class dimension should hold a valid
-      probability distribution e.g. for the case in which labels are of shape
-      `[batch_size, num_classes]`, each row of `labels[i]` must be a valid
-      probability distribution.
-    logits: Per-label activations, typically a linear output. These activation
-      energies are interpreted as unnormalized log probabilities.
-    axis: The class dimension. Defaulted to -1 which is the last dimension.
-    name: A name for the operation (optional).
-  Returns:
-    A `Tensor` that contains the softmax cross entropy loss. Its type is the
-    same as `logits` and its shape is the same as `labels` except that it does
-    not have the last dimension of `labels`.
-  """
-  return softmax_cross_entropy_with_logits_v2_helper(
+  return _new_softmax_cross_entropy_with_logits_v2_helper(
       labels=labels, logits=logits, axis=axis, name=name)
-
 
 @tf_export(v1=["nn.softmax_cross_entropy_with_logits_v2"])
 @dispatch.add_dispatch_support
 @deprecated_args(None, "dim is deprecated, use axis instead", "dim")
-def softmax_cross_entropy_with_logits_v2_helper(
+def _new_softmax_cross_entropy_with_logits_v2_helper(
     labels, logits, axis=None, name=None, dim=None):
-  """Computes softmax cross entropy between `logits` and `labels`.
-  Measures the probability error in discrete classification tasks in which the
-  classes are mutually exclusive (each entry is in exactly one class).  For
-  example, each CIFAR-10 image is labeled with one and only one label: an image
-  can be a dog or a truck, but not both.
-  **NOTE:**  While the classes are mutually exclusive, their probabilities
-  need not be.  All that is required is that each row of `labels` is
-  a valid probability distribution.  If they are not, the computation of the
-  gradient will be incorrect.
-  If using exclusive `labels` (wherein one and only
-  one class is true at a time), see `sparse_softmax_cross_entropy_with_logits`.
-  **WARNING:** This op expects unscaled logits, since it performs a `softmax`
-  on `logits` internally for efficiency.  Do not call this op with the
-  output of `softmax`, as it will produce incorrect results.
-  A common use case is to have logits and labels of shape
-  `[batch_size, num_classes]`, but higher dimensions are supported, with
-  the `axis` argument specifying the class dimension.
-  `logits` and `labels` must have the same dtype (either `float16`, `float32`,
-  or `float64`).
-  Backpropagation will happen into both `logits` and `labels`.  To disallow
-  backpropagation into `labels`, pass label tensors through `tf.stop_gradient`
-  before feeding it to this function.
-  **Note that to avoid confusion, it is required to pass only named arguments to
-  this function.**
-  Args:
-    labels: Each vector along the class dimension should hold a valid
-      probability distribution e.g. for the case in which labels are of shape
-      `[batch_size, num_classes]`, each row of `labels[i]` must be a valid
-      probability distribution.
-    logits: Unscaled log probabilities.
-    axis: The class dimension. Defaulted to -1 which is the last dimension.
-    name: A name for the operation (optional).
-    dim: Deprecated alias for axis.
-  Returns:
-    A `Tensor` that contains the softmax cross entropy loss. Its type is the
-    same as `logits` and its shape is the same as `labels` except that it does
-    not have the last dimension of `labels`.
-  """
   # TODO(pcmurray) Raise an error when the labels do not sum to 1. Note: This
   # could break users who call this with bad labels, but disregard the bad
   # results.
@@ -276,8 +198,8 @@ def softmax_cross_entropy_with_logits_v2_helper(
 
     # Make shape inference work since reshape and transpose may erase its static
     # shape.
-    if not context.executing_eagerly(
-    ) and shape is not None and shape.dims is not None:
+    if not context.executing_eagerly() and shape is not None \
+       and shape.dims is not None:
       shape = shape.as_list()
       del shape[axis]
       cost.set_shape(shape)

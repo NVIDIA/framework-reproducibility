@@ -1,3 +1,18 @@
+# Copyright 2021 NVIDIA Corporation. All Rights Reserved
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ========================================================================
+
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -10,30 +25,41 @@ import os
 
 import numpy as np
 
-from tensorflow.python.eager import context
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import errors_impl
-from tensorflow.python.framework import graph_util
 from tensorflow.python.framework import ops
-from tensorflow.python.framework import random_seed
-from tensorflow.python.framework import tensor_shape
-from tensorflow.python.framework import tensor_util
 from tensorflow.python.keras import backend as K
 from tensorflow.python.ops import array_ops
-from tensorflow.python.ops import gen_nn_ops
 from tensorflow.python.ops import check_ops
 from tensorflow.python.ops import clip_ops
-from tensorflow.python.ops import gen_math_ops
 from tensorflow.python.ops import math_ops
-from tensorflow.python.ops import random_ops
-from tensorflow.python.ops import variables as variables_lib
-
-from tensorflow.python.util import deprecation
+from tensorflow.python.ops import nn
+from tensorflow.python.ops import nn_ops
 from tensorflow.python.util import dispatch
-from tensorflow.python.util.deprecation import deprecated_args
-
 from tensorflow.python.util.tf_export import tf_export
+
+# NOTE: This patch provides GPU-determinism for
+# `tf.nn.sparse_softmax_cross_entropy_with_logits` via overriding the fused op
+# `gen_nn_ops.sparse_softmax_cross_entropy_with_logit` with sequential calling
+# of softmax, logarithm and reduce_sum which are known deterministic.
+
+def _patch_sparse_softmax_xent():
+  _new_sparse_softmax_xent_with_logits.__doc__ = \
+      tf.nn.sparse_softmax_cross_entropy_with_logits.__doc__
+  tf.nn.sparse_softmax_cross_entropy_with_logits = \
+      _new_sparse_softmax_xent_with_logits  # access via public API
+  nn.sparse_softmax_cross_entropy_with_logits = \
+      _new_sparse_softmax_xent_with_logits
+  nn_ops.sparse_softmax_cross_entropy_with_logits = \
+      _new_sparse_softmax_xent_with_logits
+
+# The original, pre-patched python wrapper
+# `nn.sparse_softmax_cross_entropy_with_logits` can be found at
+# https://github.com/tensorflow/tensorflow/blob/0c95acca049a05756f63bec731dbe9a11f9d8382/tensorflow/python/ops/nn_ops.py#L4066
+# The fused op `gen_nn_ops.sparse_softmax_cross_entropy_with_logit` is
+# automatically-generated. Therefore, we cannot provide a URL to its location in
+# the source repository.
 
 def _core_op(labels, logits):
   """Internal only. The shape should be checked equal eariler."""
@@ -41,16 +67,14 @@ def _core_op(labels, logits):
   softmax = tf.nn.softmax(logits=logits, axis=dim)
   epsilon_ = constant_op.constant(K.epsilon(), dtype=softmax.dtype.base_dtype)
   softmax = clip_ops.clip_by_value(softmax, epsilon_, 1. - epsilon_)
-  print("HERE", labels, softmax)
-  # labels = math_ops.cast(labels, softmax.dtype.base_dtype)
+
   return -tf.reduce_sum(tf.math.log(softmax) * labels, axis=dim)
 
 @tf_export("nn.sparse_softmax_cross_entropy_with_logits", v1=[])
 @dispatch.add_dispatch_support
 def sparse_softmax_cross_entropy_with_logits_v2(labels, logits, name=None):
-  return sparse_softmax_cross_entropy_with_logits(
+  return nn.sparse_softmax_cross_entropy_with_logits(
       labels=labels, logits=logits, name=name)
-
 
 def _ensure_xent_args(name, sentinel, labels, logits):
   # Make sure that all arguments were passed as named arguments.
@@ -62,7 +86,7 @@ def _ensure_xent_args(name, sentinel, labels, logits):
 
 @tf_export(v1=["nn.sparse_softmax_cross_entropy_with_logits"])
 @dispatch.add_dispatch_support
-def _new_sparse_softmax_cross_entropy_with_logits(
+def _new_sparse_softmax_xent_with_logits(
     _sentinel=None,  # pylint: disable=invalid-name
     labels=None,
     logits=None,
@@ -106,28 +130,19 @@ def _new_sparse_softmax_cross_entropy_with_logits(
 
     # Check if no reshapes are required.
     if logits.get_shape().ndims == 2:
-      # Has to be here, because it really tests gen_nn_ops.sparse_xent
+      # Override of `gen_nn_ops.sparse_xent_with_logit`
       if labels.get_shape().ndims is None:
-        raise errors_impl.InvalidArgumentError(None, None,
-                                               ".*labels must be 1-D.*")
+        raise errors_impl.InvalidArgumentError(
+            None, None, ".*labels must be 1-D.*")
         # raise errors_impl.OpError(None, None, "labels must be 1-D", errors_impl.OpError)
       onehot_encoding = tf.one_hot(labels, precise_logits.shape[-1],
                                    dtype=dtypes.as_dtype(precise_logits.dtype))
-      print("onehot_encoding"*100, onehot_encoding, precise_logits)
       cost = _core_op(labels=onehot_encoding, logits=precise_logits)
 
       if precise_logits.dtype == dtypes.float16:
         return math_ops.cast(cost, dtypes.float16)
       else:
         return cost
-
-    # if logits.get_shape().ndims == 2:
-    #   cost, _ = gen_nn_ops.sparse_softmax_cross_entropy_with_logits(
-    #       precise_logits, labels, name=name)
-    #   if logits.dtype == dtypes.float16:
-    #     return math_ops.cast(cost, dtypes.float16)
-    #   else:
-    #     return cost
 
     # Perform a check of the dynamic shapes if the static shapes are not fully
     # defined.
@@ -145,16 +160,18 @@ def _new_sparse_softmax_cross_entropy_with_logits(
       if labels.get_shape().ndims is None:
         raise errors_impl.InvalidArgumentError(None, None,
                                                ".*labels must be 1-D.*")
-      # The second output tensor contains the gradients.  We use it in
-      # _CrossEntropyGrad() in nn_grad but not here.
+      # The second output tensor of `gen_nn_ops.sparse_xent_with_logits`
+      # contains the gradients. But it's used in _CrossEntropyGrad() in nn_grad
+      # but not here.
       # cost, _ = gen_nn_ops.sparse_softmax_cross_entropy_with_logits(
       #     precise_logits, labels, name=name)
-      print("##"*1000)
+
       onehot_encoding = tf.one_hot(labels, num_classes)
       cost = _core_op(logits=precise_logits, labels=onehot_encoding)
 
       cost = array_ops.reshape(cost, labels_shape)
       cost.set_shape(labels_static_shape)
+
       if logits.dtype == dtypes.float16:
         return math_ops.cast(cost, dtypes.float16)
       else:
