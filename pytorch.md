@@ -7,7 +7,9 @@ models, but our level of experience, so far, is not as extensive as for
 TensorFlow.
 
 PyTorch documentation includes some guidance for attaining GPU-determinism on
-its [reproducibility page][1], which we have contributed to.
+its [reproducibility page][1], which we have contributed to. Please refer to
+that page also because it probably has different or additional information to
+this current one.
 
 Getting reproducible functionality on a single GPU, as with other frameworks,
 involves several considerations:
@@ -30,13 +32,18 @@ np.random.seed(SEED) # if you're using numpy
 torch.manual_seed(SEED) # torch.cuda.manual_seed_all(SEED) is not required
 ```
 
+It's often worth confirming that the trainable variables are being reproducibly
+initialized by creating and printing some kind of digest of all the trainable
+variables before beginning to train. Appropriate digests include a sum or a
+hash.
+
 ## Data Loader
 
 You'll need to make sure that your data loader process is reproducible, so that
 the sequence of examples or batches of examples delivered to your model are
-prefectly reproducible. If you have a mutli-threaded data loader, then it's
+perfectly reproducible. If you have a mutlithreaded data loader, then it's
 important not to share PRNG state between threads. There may be other
-dataloader restrictions that I'm not yet aware of.
+data loader restrictions that I'm not yet aware of.
 
 Reproducible inter-epoch re-shuffling can be attained by creating
 an instance (`self.g`) of `torch.Generator` in your
@@ -47,7 +54,7 @@ def set_epoch(self, epoch):
   self.epoch = epoch
   if self.shuffle:
     # We want every epoch to shuffle differently, but in a reproducible way.
-	# Therefore, reset the generator differently buy reproducibly on each
+	# Therefore, reset the generator differently but reproducibly on each
 	# epoch. It is recommended for the seed to have a good balance of zero and
 	# one bits.
 	# See https://pytorch.org/docs/stable/generated/torch.Generator.html
@@ -60,7 +67,7 @@ Then call `set_epoch` at the start of each epoch.
 
 Once the trainable variables are initializing reproducibly and training
 examples are being delivered reproducibly, the next step is to maximally enable
-deterministic ops. The way you do this currently (in version 1.6) of PyTorch
+deterministic ops. The way you do this in versions of PyTorch earlier than 1.7
 is a follows:
 
 ```
@@ -74,7 +81,7 @@ libraries: convolution, max pooling, and CTC loss (all three from cuDNN), and
 batch matrix-matrix product (from cuBLAS).
 
 The second line disables dynamic selection of cuDNN convolution algorithms
-and ensures that the algorithm select itself is reproducible.
+and ensures that the algorithm selection itself is reproducible.
 
 The [reproducibilty page][1] contains a reasonable but non-comprehensive list of
 ops the are nondeterminsitic on GPU. Using these will cause nondeterminism to
@@ -90,33 +97,35 @@ criteria must be met, as described in the PyTorch [documentation][4] for
 `torch.nn.CTCLoss`. Another way of obtaining determinsitic CTC functionality
 is to use [WarpCTC][2].
 
-PyTorch 1.7 will include a new function, `torch.set_determinism`, which will
-preclude the need to set eithe `torch.backends.cudnn.determinsitic` or
-`torch.backends.cudnn.benchmark`. An additional advantage of using this this
-function is that it will cause an exception to be thrown if you try to use an
-op that could inject nondeterminism into your model. It's impossible for an
-exception to be thrown in all circumstances when nondeterminism could be
-introduced by an op, let alone by the many other possible sources, but this
-feature will reduce the amount of time spend isolating sources of nondeterminism
-coming from ops that have already been identified as currently not able to
-operate deterministically on a GPU.
+PyTorch 1.7 includes a new function, [`torch.set_deterministic`][5], which
+precludes the need to set either `torch.backends.cudnn.deterministic` or
+`torch.backends.cudnn.benchmark`. An additional advantage of using this function
+is that it will cause an exception to be thrown if you try to use an op that
+could inject nondeterminism into your model. It's impossible for an exception to
+be thrown in all circumstances when nondeterminism could be introduced by an op,
+let alone by the many other possible sources, but this feature will reduce the
+amount of time spent isolating sources of nondeterminism coming from ops that
+have already been identified as currently not able to operate deterministically
+on a GPU.
 
-## Save and Resume
+## Reproducible Checkpointing
 
-When saving your model, you will need to save not only the `model.state_dict()`
-but also the `optimizer.state_dict()` (which includes the current
-learning rate and any other learning rate scheduler state), the iteration/epoch
-counter, `torch.cuda.GradScaler` statistics, as well as the following PRNG
-states:
+To save state and later resume reproducibly (ending the training process
+exactly as if it had not been interrupted) you should `torch.save` and
+`torch.load` the following state (as needed) using [the approach][6] given in
+the PyTorch documentation, including the [guidance][7] for saving and loading
+GPU state:
 
-```
-save_checkpoint["torch_rng_state"] = torch.get_rng_state()
-save_checkpoint["torch_cuda_rng_state"] = torch.cuda.get_rng_state()
-save_checkpoint["numpy_rng_state"] = np.random.get_state()
-save_checkpoint["python_rng_state"] = random.getstate()
-```
-
-Please also refer to the [Saving and Loading Models][3] documentation.
+  * data loader state,
+  * `model.state_dict()`,
+  * `optimizer.state_dict()`, which includes the current learning rate and any
+    other learning rate scheduler state,
+  * epoch / iteration counter,
+  * `torch.cuda.GradScaler` statistics,
+  * `torch.get_rng_state()`,
+  * `torch.cuda.get_rng_state()`,
+  * `np.random.get_state()`, and
+  * `random.getstate()`
 
 ## Multi-GPU
 
@@ -143,3 +152,6 @@ the content on this page.
 [2]: https://github.com/SeanNaren/warp-ctc
 [3]: https://pytorch.org/tutorials/beginner/saving_loading_models.html
 [4]: https://pytorch.org/docs/stable/generated/torch.nn.CTCLoss.html
+[5]: https://pytorch.org/docs/stable/generated/torch.set_deterministic.html
+[6]: https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-a-general-checkpoint-for-inference-and-or-resuming-training
+[7]: https://pytorch.org/tutorials/beginner/saving_loading_models.html#save-on-gpu-load-on-gpu

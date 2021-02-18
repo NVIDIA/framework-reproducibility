@@ -57,6 +57,7 @@ from tensorflow.python.platform import test
 
 sys.path.insert(0, '..')
 import fwd9m.tensorflow as fwd9m_tensorflow
+import utils
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # Simplifies logging
 

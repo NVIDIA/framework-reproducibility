@@ -34,9 +34,14 @@ from __future__ import print_function
 
 import os
 import sys
+sys.path.insert(0, '..')
 
 import numpy as np
 import tensorflow as tf
+
+from . import utils as test_utils
+from fwd9m import utils as package_utils
+from fwd9m import tensorflow as fwd9m_tensorflow
 from tensorflow.python.eager import backprop
 from tensorflow.python.eager import context
 from tensorflow.python.framework import constant_op
@@ -48,12 +53,7 @@ from tensorflow.python.ops import gradient_checker_v2
 from tensorflow.python.ops import gradients_impl
 from tensorflow.python.ops import nn
 from tensorflow.python.ops import nn_ops
-import tensorflow.python.ops.nn_grad  # pylint: disable=unused-import
 from tensorflow.python.platform import test
-
-sys.path.insert(0, '..')
-import fwd9m.tensorflow as fwd9m_tensorflow
-import utils
 
 # The tests in the following class were originally copied from
 # https://github.com/tensorflow/tensorflow/blob/v1.14.0/tensorflow/python/kernel_tests/bias_op_test.py
@@ -401,7 +401,7 @@ class BiasAddTestDeterministic(test.TestCase):
 
   @test_util.run_in_graph_and_eager_modes
   def testDeterministicGradients(self):
-    with utils.force_gpu_session(self):
+    with test_utils.force_gpu_session(self):
       # There are problems with using force_gpu=True and cached_session with
       # both eager mode and graph mode in the same test. Using a non-cached
       # session and putting everything inside the same session context is
@@ -413,7 +413,13 @@ class BiasAddTestDeterministic(test.TestCase):
           # deterministically by default. I don't know if this is true for
           # all layer configurations. These cases are still being tested here,
           # for completeness.
-          for data_rank in (1, 2, 3):
+          # TF1.13 only includes 2 add a note here for users
+          if package_utils._Version(tf.version.VERSION).equals("1.13"):
+            data_ranks = (2,)
+          else:
+            data_ranks = (1, 2, 3)
+
+          for data_rank in data_ranks:
             for data_type in (dtypes.float16, dtypes.float32, dtypes.float64):
               self._testDeterministicGradientsCase(op_binding, data_layout,
                                                    data_rank, data_type)

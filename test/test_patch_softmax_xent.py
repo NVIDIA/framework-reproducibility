@@ -488,6 +488,7 @@ class SoftmaxXentDeterministicTest(tf.test.TestCase):
         self.assertAllEqual(result_a, result_b)
 
 class SoftmaxXentTestMisc(test.TestCase):
+
   def testSDocstring(self):
     op = tf.nn.softmax_cross_entropy_with_logits
     docstring = op.__doc__
