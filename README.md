@@ -529,21 +529,20 @@ Note | Source                                                                   
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
 
-Going beyond the above-mentioned sources, in version 1.12 of TensorFlow (and
-also in the master branch on 2019-03-03, afer release 1.31.1), the following
-files call CUDA `atomicAdd` either directly or indirectly. This makes them
-candidates for the injection of non-determinism.
+Going beyond the above-mentioned sources, in the TensorFlow master branch on
+2021-02-26, afer release 2.4, the following files call CUDA `atomicAdd` either
+directly or indirectly. This makes them candidates for the injection of
+nondeterminism.
 
-* `scatter_functor_gpu.cu.h`
-* `scatter_nd_op_gpu.cu.cc`
+* `bincount_op_gpu.cu.cc`
+* `depthwise_conv_op_gpu.h`
 * `dilation_ops_gpu.cu.cc`
 * `maxpooling_op_gpu.cu.cc`
-* `svd_op_gpu.cu.cc`
-* `cuda_kernel_helper_test.cu.cc`
-* `depthwise_conv_op_gpu.h`
-* `resampler_ops_gpu.cu.cc`
-* `histogram_op_gpu.cu.cc`
+* `multinomial_op_gpu.cu.cc`
+* `scatter_functor_gpu.cu.h`
+* `scatter_nd_op_gpu.cu.cc`
 * `stateful_random_ops_gpu.cu.cc`
+* `svd_op_gpu.cu.cc`
 
 Unless you are using TensorFlow ops that depend on these files (i.e. ops with
 similar names), then your model will not be affected by these potential sources
