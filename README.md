@@ -376,15 +376,15 @@ Where it is indicated that solutions are available in NGC TensorFlow container
 images, it can be assumed that the solutions are available in both TensorFlow
 API version 1 and TensorFlow API version 2 variants of those container images.
 
-Note | Source                                                                        | TF 1.14, 1.15,<br>2.0  | NGC 19.06+ /<br>TF 2.1 | TF 2.2     | TF 2.3     |
-----:|:------------------------------------------------------------------------------|:-----------------------|:-----------------------|:-----------|:-----------|
-   1 | TF auto-tuning of cuDNN convolution<br>algorithms                             | TCD or TDP             | TDO                    | TDO        | TDO        |
-   2 | `tf.nn.conv*d` and<br>`tf.keras.layers.Conv*D`<br>backprop                    | TCD or TDP             | TDO                    | TDO        | TDO        |
-   3 | `tf.nn.max_pool*d` and<br>`tf.keras.layers.MaxPool*D` backprop                | TCD or TDP             | TDO                    | TDO        | TDO        |
-   4 | `tf.nn.bias_add` backprop                                                     | TDP                    | TDO                    | TDO        | TDO        |
-   5 | XLA reductions on GPU                                                         | NS                     | NS                     | TDO        | TDO        |
-   6 | `tf.nn.ctc_loss` backprop                                                     | NS                     | NS                     | NS         | TDO        |
-   7 | Fused sofmax/crossentropy:<br>`tf.nn.*_cross_entropy_with_logits`<br>backprop | NS                     | NS                     | NS         | NS         |
+Note | Source                                                            | TF 1.14, 1.15,<br>2.0  | NGC 19.06+ /<br>TF 2.1 | TF 2.2     | TF 2.3     |
+----:|:------------------------------------------------------------------|:-----------------------|:-----------------------|:-----------|:-----------|
+   1 | TF auto-tuning of cuDNN convolution<br>algorithms                 | TCD or TDP             | TDO                    | TDO        | TDO        |
+   2 | `tf.nn.conv*d` and<br>`tf.keras.layers.Conv*D`<br>backprop        | TCD or TDP             | TDO                    | TDO        | TDO        |
+   3 | `tf.nn.max_pool*d` and<br>`tf.keras.layers.MaxPool*D` backprop    | TCD or TDP             | TDO                    | TDO        | TDO        |
+   4 | `tf.nn.bias_add` backprop                                         | TDP                    | TDO                    | TDO        | TDO        |
+   5 | XLA reductions on GPU                                             | NS                     | NS                     | TDO        | TDO        |
+   6 | `tf.nn.ctc_loss` backprop                                         | NS                     | NS                     | NS         | TDO        |
+   7 | Fused sofmax/crossentropy:<br>`tf.nn.*_cross_entropy_with_logits` | NS                     | NS                     | NS         | NS         |
 
 Note | Source                                                                                                                                                        | TF < 2.4  | NGC 20.03+ | TF 2.4 |
 ----:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------|:-----------|:-------|
@@ -451,7 +451,7 @@ Note | Source                                                                   
      `tf.keras.losses.CategoricalCrossentropy`,
      `tf.keras.losses.sparse_categorical_crossentropy`, and
      `tf.keras.losses.SparseCategoricalCrossentropy`), are known to inject
-     nondetermininsm into backprop. See TensorFlow
+     nondetermininsm into both the backward and forward paths. See TensorFlow
      [issue 38185](https://github.com/tensorflow/tensorflow/issues/38185).
      A confirmed work-around is to use separate non-fused softmax and
      cross-entropy ops. For example, assuming you're using `tf.keras`, select
