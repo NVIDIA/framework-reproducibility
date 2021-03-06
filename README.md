@@ -394,7 +394,7 @@ Note | Source                                                                   
   11 | `tf.image.crop_and_resize` backprop to `image` (on CPU<br>or GPU) and backprop to `boxes`                                                                     | NS        | NS         | NS     |
   12 | `tf.sparse.sparse_dense_matmul` forward                                                                                                                       | NS        | NS         | NS     |
   13 | `tf.math.unsorted_segment_mean`,<br>`tf.math.unsorted_segment_prod`, and <br>`tf.math.unsorted_segment_sqrt_n` forward                                        | NS        | NS         | NS     |
-     | `tf.image.adjust_contrast` forward                                                                                                                            | NS        | NS         | NS     |
+   . | `tf.image.adjust_contrast` forward                                                                                                                            | NS        | NS         | NS     |
 
 ##### Key to the Solutions Referenced Above
 
