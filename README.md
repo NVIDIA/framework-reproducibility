@@ -394,6 +394,7 @@ Note | Source                                                                   
   11 | `tf.image.crop_and_resize` backprop to `image` (on CPU<br>or GPU) and backprop to `boxes`                                                                     | NS        | NS         | NS     |
   12 | `tf.sparse.sparse_dense_matmul` forward                                                                                                                       | NS        | NS         | NS     |
   13 | `tf.math.unsorted_segment_mean`,<br>`tf.math.unsorted_segment_prod`, and <br>`tf.math.unsorted_segment_sqrt_n` forward                                        | NS        | NS         | NS     |
+     | `tf.image.adjust_contrast` forward                                                                                                                            | NS        | NS         | NS     |
 
 ##### Key to the Solutions Referenced Above
 
@@ -523,8 +524,8 @@ Note | Source                                                                   
       have have ruled-out nondeterminism in other `tf.math.segment_*` ops beyond
       `tf.math.segment_sum` and in other `tf.math_unsorted_segment_*` ops beyond
       `tf.math.unsorted_segment_sum`, `tf.math.unsorted_segment_mean`,
-      `tf.math.unsorted_segment_prod`, and `tf.math_unsorted_segment_sqrt`; see
-      [issue 31](https://github.com/NVIDIA/framework-determinism/issues/31).
+      `tf.math.unsorted_segment_prod`, and `tf.math_unsorted_segment_sqrt_n`;
+      see [issue 31](https://github.com/NVIDIA/framework-determinism/issues/31).
       Also see note 10, above.
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
@@ -721,6 +722,7 @@ Marc Edgar,
 Adam Ellsworth,
 Mostafa Hagog,
 Kaixi Hou,
+Pankaj Kanwar,
 George Karpenkov,
 Tero Karras,
 Bob Keating,
@@ -751,6 +753,7 @@ Phil Teare,
 Amirhossein Tebbifakhr,
 Matthijs Van keirsbilck,
 Kevin Vincent,
+Reed Wanderman-Milne,
 Stephen Warren,
 Shu Wang,
 Hao Wu,
