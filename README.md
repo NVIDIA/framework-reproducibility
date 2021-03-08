@@ -376,7 +376,7 @@ Where it is indicated that solutions are available in NGC TensorFlow container
 images, it can be assumed that the solutions are available in both TensorFlow
 API version 1 and TensorFlow API version 2 variants of those container images.
 
-Note | Source                                                            | TF 1.14, 1.15,<br>2.0  | NGC 19.06+ /<br>TF 2.1 | TF 2.2     | TF 2.3     |
+Note | Source                                                            | TF 1.14, 1.15,<br>2.0  | NGC 19.06+ /<br>TF 2.1 | TF 2.2     | TF 2.3+    |
 ----:|:------------------------------------------------------------------|:-----------------------|:-----------------------|:-----------|:-----------|
    1 | TF auto-tuning of cuDNN convolution<br>algorithms                 | TCD or TDP             | TDO                    | TDO        | TDO        |
    2 | `tf.nn.conv*d` and<br>`tf.keras.layers.Conv*D`<br>backprop        | TCD or TDP             | TDO                    | TDO        | TDO        |
@@ -386,25 +386,28 @@ Note | Source                                                            | TF 1.
    6 | `tf.nn.ctc_loss` backprop                                         | NS                     | NS                     | NS         | TDO        |
    7 | Fused sofmax/crossentropy:<br>`tf.nn.*_cross_entropy_with_logits` | NS                     | NS                     | NS         | NS         |
 
-Note | Source                                                                                                                                                        | TF < 2.4  | NGC 20.03+ | TF 2.4 |
-----:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------|:-----------|:-------|
-   8 | `tf.image.resize` with `method=ResizeMethod.BILINEAR`<br>and `tf.keras.layers.UpSampling2D` with<br>`interpolation='bilinear'` backprop                       | NS        | TDO        | TDO    |
-   9 | `tf.image.resize` with `method=ResizeMethod.NEAREST`<br>and `tf.keras.layers.UpSampling2D` with<br>`interpolation='nearest'` backprop                         | NS        | NS         | NS     |
-  10 | `tf.math.segment_sum`, `tf.math.unsorted_segment_sum`,<br>and `tf.convert_to_tensor` forward.<br>And `tf.gather` and `tfa.image.dense_image_warp`<br>backprop | NS        | NS         | NS     |
-  11 | `tf.image.crop_and_resize` backprop to `image` (on CPU<br>or GPU) and backprop to `boxes`                                                                     | NS        | NS         | NS     |
-  12 | `tf.sparse.sparse_dense_matmul` forward                                                                                                                       | NS        | NS         | NS     |
-  13 | `tf.math.unsorted_segment_mean`,<br>`tf.math.unsorted_segment_prod`, and <br>`tf.math.unsorted_segment_sqrt_n` forward                                        | NS        | NS         | NS     |
-   . | `tf.image.adjust_contrast` forward                                                                                                                            | NS        | NS         | NS     |
-  14 | `tf.compat.v1.nn.fused_batch_norm` backrop to `offset`<br>when `is_training=False`                                                                            | NS        | NS         | NS     |
+Note | Source                                                                                                                                                        | TF < 2.4  | NGC 20.03+ | TF 2.4+ |
+----:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------|:-----------|:--------|
+   8 | `tf.image.resize` with `method=ResizeMethod.BILINEAR`<br>and `tf.keras.layers.UpSampling2D` with<br>`interpolation='bilinear'` backprop                       | NS        | TDO        | TDO     |
+   9 | `tf.image.resize` with `method=ResizeMethod.NEAREST`<br>and `tf.keras.layers.UpSampling2D` with<br>`interpolation='nearest'` backprop                         | NS        | NS         | NS      |
+  10 | `tf.math.segment_sum`, `tf.math.unsorted_segment_sum`,<br>and `tf.convert_to_tensor` forward.<br>And `tf.gather` and `tfa.image.dense_image_warp`<br>backprop | NS        | NS         | NS      |
+  11 | `tf.image.crop_and_resize` backprop to `image` (on CPU<br>or GPU) and backprop to `boxes`                                                                     | NS        | NS         | NS      |
+  13 | `tf.math.unsorted_segment_mean`,<br>`tf.math.unsorted_segment_prod`, and <br>`tf.math.unsorted_segment_sqrt_n` forward                                        | NS        | NS         | NS      |
+   . | `tf.image.adjust_contrast` forward                                                                                                                            | NS        | NS         | NS      |
+  14 | `tf.compat.v1.nn.fused_batch_norm` backrop to `offset`<br>when `is_training=False`                                                                            | NS        | NS         | NS      |
+
+Note | Source                                   | NGC 21.04+ | TF 2.6 |
+----:|:-----------------------------------------|:-----------|:-------|
+  12 | `tf.sparse.sparse_dense_matmul` forward  | TDO        | NS     |
 
 ##### Key to the Solutions Referenced Above
 
- Solution | Description                                                                                                                                                                                     |
-:---------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
- TCD      | Set environment variable `TF_CUDNN_DETERMINISTIC` to '1' or 'true'. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to '0' or 'false'). |
- TDO      | Set environment variable `TF_DETERMINISTIC_OPS` to '1' or 'true'. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to '0' or 'false').   |
- TDP      | Apply `tfdeterminism.patch`. Note that solution TDO is in stock TensorFlow v2.1 (see [PR 31465](https://github.com/tensorflow/tensorflow/pull/31465)), which makes patching unnecessary.        |
- NS       | There is no solution in the specified version, but there may be a solution in other versions (as shown)                                                                                         |
+ Solution | Description                                                                                                                                                                                             |
+:---------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+ TCD      | Set environment variable `TF_CUDNN_DETERMINISTIC` to `'1'` or `'true'`. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to `'0'` or `'false'`). |
+ TDO      | Set environment variable `TF_DETERMINISTIC_OPS` to `'1'` or `'true'`. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to `'0'` or `'false'`).   |
+ TDP      | Apply `tfdeterminism.patch`. Note that solution TDO is in stock TensorFlow v2.1 (see [PR 31465](https://github.com/tensorflow/tensorflow/pull/31465)), which makes patching unnecessary.                |
+ NS       | There is no solution in the specified version, but there may be a solution in other versions (as shown)                                                                                                 |
 
 ##### Notes
 
@@ -519,8 +522,10 @@ Note | Source                                                                   
       [Issue 42033](https://github.com/tensorflow/tensorflow/issues/42033) for
       more information.
   12. The forward path of `tf.sparse.sparse_dense_matmul` introduces
-      nondeterminism for `tf.float32` and (allegedly) for `tf.float64`. See
-      TF [Issue 18037](https://github.com/tensorflow/tensorflow/issues/18037).
+      nondeterminism for `tf.float32`, but not for `tf.float64`. See TF
+      [Issue 18037](https://github.com/tensorflow/tensorflow/issues/18037).
+      A solution for both TF1 and TF2 variants of the NGC TF container will
+      be available in version `21.04` onwards.
   13. Based on initial work from [Lin Lan](https://github.com/llan-ml), we may
       have have ruled-out nondeterminism in other `tf.math.segment_*` ops beyond
       `tf.math.segment_sum` and in other `tf.math_unsorted_segment_*` ops beyond
@@ -529,8 +534,8 @@ Note | Source                                                                   
       see [issue 31](https://github.com/NVIDIA/framework-determinism/issues/31).
       Also see note 10, above.
   14. Backprop through `tf.compat.v1.nn.fused_batch_norm` when `training=False`
-      is used for fine-tuning. See TensorFlow issue
-      [10857](https://github.com/tensorflow/tensorflow/issues/10857) for
+      is used for fine-tuning. See TensorFlow
+      [Issue 10857](https://github.com/tensorflow/tensorflow/issues/10857) for
       more information.
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
