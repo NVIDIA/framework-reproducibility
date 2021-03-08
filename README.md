@@ -395,6 +395,7 @@ Note | Source                                                                   
   12 | `tf.sparse.sparse_dense_matmul` forward                                                                                                                       | NS        | NS         | NS     |
   13 | `tf.math.unsorted_segment_mean`,<br>`tf.math.unsorted_segment_prod`, and <br>`tf.math.unsorted_segment_sqrt_n` forward                                        | NS        | NS         | NS     |
    . | `tf.image.adjust_contrast` forward                                                                                                                            | NS        | NS         | NS     |
+  14 | `tf.compat.v1.nn.fused_batch_norm` backrop to `offset`<br>when `is_training=False`                                                                            | NS        | NS         | NS     |
 
 ##### Key to the Solutions Referenced Above
 
@@ -527,6 +528,10 @@ Note | Source                                                                   
       `tf.math.unsorted_segment_prod`, and `tf.math_unsorted_segment_sqrt_n`;
       see [issue 31](https://github.com/NVIDIA/framework-determinism/issues/31).
       Also see note 10, above.
+  14. Backprop through `tf.compat.v1.nn.fused_batch_norm` when `training=False`
+      is used for fine-tuning. See TensorFlow issue
+      [10857](https://github.com/tensorflow/tensorflow/issues/10857) for
+      more information.
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
 
