@@ -496,3 +496,4 @@ if __name__ == "__main__":
   else:
     fwd9m_tensorflow.enable_determinism()
     test.main()
+

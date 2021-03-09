@@ -498,6 +498,8 @@ class SoftmaxXentTestMisc(test.TestCase):
         self.fail("The docstring for the patched op %s has not been assigned"
                 % op.__name__)
 
+
 if __name__ == "__main__":
   fwd9m_tensorflow.enable_determinism()
   test.main()
+

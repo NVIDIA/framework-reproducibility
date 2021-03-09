@@ -25,6 +25,7 @@ import os
 
 import numpy as np
 
+from tensorflow.python.eager import context
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import errors_impl
@@ -34,15 +35,18 @@ from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import check_ops
 from tensorflow.python.ops import clip_ops
 from tensorflow.python.ops import math_ops
+from tensorflow.python.ops import gen_nn_ops
 from tensorflow.python.ops import nn
 from tensorflow.python.ops import nn_ops
 from tensorflow.python.util import dispatch
 from tensorflow.python.util.tf_export import tf_export
 
+
 # NOTE: This patch provides GPU-determinism for
 # `tf.nn.sparse_softmax_cross_entropy_with_logits` via overriding the fused op
-# `gen_nn_ops.sparse_softmax_cross_entropy_with_logit` with sequential calling
-# of softmax, logarithm and reduce_sum which are known deterministic.
+# `gen_nn_ops.sparse_softmax_cross_entropy_with_logit` with turning labels into
+# one_hot encoding and calling patched
+# gen__nn_ops.softmax_cross_entropy_with_logits.
 
 def _patch_sparse_softmax_xent():
   _new_sparse_softmax_xent_with_logits.__doc__ = \
@@ -53,6 +57,9 @@ def _patch_sparse_softmax_xent():
       _new_sparse_softmax_xent_with_logits
   nn_ops.sparse_softmax_cross_entropy_with_logits = \
       _new_sparse_softmax_xent_with_logits
+  # NOTE: Since enable_determinism
+  # patches gen_nn_ops.softmax_cross_entropy_with_logits and other ops
+  # universally, there is no need to patch here.
 
 # The original, pre-patched python wrapper
 # `nn.sparse_softmax_cross_entropy_with_logits` can be found at
@@ -60,15 +67,6 @@ def _patch_sparse_softmax_xent():
 # The fused op `gen_nn_ops.sparse_softmax_cross_entropy_with_logit` is
 # automatically-generated. Therefore, we cannot provide a URL to its location in
 # the source repository.
-
-def _core_op(labels, logits):
-  """Internal only. The shape should be checked equal eariler."""
-  dim = -1
-  softmax = tf.nn.softmax(logits=logits, axis=dim)
-  epsilon_ = constant_op.constant(K.epsilon(), dtype=softmax.dtype.base_dtype)
-  softmax = clip_ops.clip_by_value(softmax, epsilon_, 1. - epsilon_)
-
-  return -tf.reduce_sum(tf.math.log(softmax) * labels, axis=dim)
 
 @tf_export("nn.sparse_softmax_cross_entropy_with_logits", v1=[])
 @dispatch.add_dispatch_support
@@ -137,7 +135,10 @@ def _new_sparse_softmax_xent_with_logits(
         # raise errors_impl.OpError(None, None, "labels must be 1-D", errors_impl.OpError)
       onehot_encoding = tf.one_hot(labels, precise_logits.shape[-1],
                                    dtype=dtypes.as_dtype(precise_logits.dtype))
-      cost = _core_op(labels=onehot_encoding, logits=precise_logits)
+#      cost = _core_op(labels=onehot_encoding, logits=precise_logits)
+
+      cost, _ = gen_nn_ops.softmax_cross_entropy_with_logits(
+          precise_logits, onehot_encoding, name=name)
 
       if precise_logits.dtype == dtypes.float16:
         return math_ops.cast(cost, dtypes.float16)
@@ -163,11 +164,11 @@ def _new_sparse_softmax_xent_with_logits(
       # The second output tensor of `gen_nn_ops.sparse_xent_with_logits`
       # contains the gradients. But it's used in _CrossEntropyGrad() in nn_grad
       # but not here.
-      # cost, _ = gen_nn_ops.sparse_softmax_cross_entropy_with_logits(
-      #     precise_logits, labels, name=name)
+  #    cost, _ = gen_nn_ops.sparse_softmax_cross_entropy_with_logits(
+   #       precise_logits, labels, name=name)
 
       onehot_encoding = tf.one_hot(labels, num_classes)
-      cost = _core_op(logits=precise_logits, labels=onehot_encoding)
+      cost, _ = gen_nn_ops.softmax_cross_entropy_with_logits(precise_logits, onehot_encoding,name=name)
 
       cost = array_ops.reshape(cost, labels_shape)
       cost.set_shape(labels_static_shape)
@@ -176,3 +177,4 @@ def _new_sparse_softmax_xent_with_logits(
         return math_ops.cast(cost, dtypes.float16)
       else:
         return cost
+
