@@ -529,11 +529,15 @@ Note | Source                                   | NGC 21.04+ | TF 2.6 |
       [Issue 18037](https://github.com/tensorflow/tensorflow/issues/18037).
       A `tf.float32` deterministic GPU solution for both TF1 and TF2 variants of
       the NGC TF container will be available in version `21.04` onwards.
-      GPU support for other floating-point types will be added in TF 2.5
-      (see [PR 47419](https://github.com/tensorflow/tensorflow/pull/47419)).
-      Deterministic GPU implementations for floating point types apart from
-      `tf.float64` and `tf.complex128` will be added to a later version of
-      stock TF (probably 2.6).
+      GPU support for other floating-point types, including `tf.float64`, will
+      be added in TF 2.5 (see
+      [PR 47419](https://github.com/tensorflow/tensorflow/pull/47419)).
+      In TF 2.5 onwards, if you were relying on the determinism of the
+      `tf.float64` CPU implementation being automatically selected because of an
+      absense of the `tf.float64` GPU implementation, you will need to force the
+      op to run on the CPU. Deterministic GPU implementations for floating point
+      types apart from `tf.float64` and `tf.complex128` will be added to a later
+      version of stock TF (probably version 2.6).
   13. Based on initial work from [Lin Lan](https://github.com/llan-ml), we may
       have have ruled-out nondeterminism in other `tf.math.segment_*` ops beyond
       `tf.math.segment_sum` and in other `tf.math_unsorted_segment_*` ops beyond
