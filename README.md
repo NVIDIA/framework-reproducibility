@@ -135,7 +135,9 @@ version is based on:
  19.07 - 19.10        | 1.14               |
  19.11 - 20.01        | 1.15 / 2.0         |
  20.02 - 20.03        | 1.15 / 2.1         |
- 20.06 - 20.07        | 1.15 / 2.2         |
+ 20.06 - 20.08        | 1.15 / 2.2         |
+ 20.09 - 20.12        | 1.15 / 2.3         |
+ 21.02                | 1.15 / 2.4         |
 
 Note that, for now, the NGC TensorFlow container images continue to support
 a GPU-performance-optimized TensorFlow API version 1 variant (using a `-tf1`
@@ -521,11 +523,17 @@ Note | Source                                   | NGC 21.04+ | TF 2.6 |
       TensorFlow
       [Issue 42033](https://github.com/tensorflow/tensorflow/issues/42033) for
       more information.
-  12. The forward path of `tf.sparse.sparse_dense_matmul` introduces
-      nondeterminism for `tf.float32`, but not for `tf.float64`. See TF
+  12. In TF 2.4 and earlier, the forward path of `tf.sparse.sparse_dense_matmul`
+      introduces nondeterminism for `tf.float32`, but not for `tf.float64`
+      (which is not implemented on the GPU). See TF
       [Issue 18037](https://github.com/tensorflow/tensorflow/issues/18037).
-      A solution for both TF1 and TF2 variants of the NGC TF container will
-      be available in version `21.04` onwards.
+      A `tf.float32` deterministic GPU solution for both TF1 and TF2 variants of
+      the NGC TF container will be available in version `21.04` onwards.
+      GPU support for other floating-point types will be added in TF 2.5
+      (see [PR 47419](https://github.com/tensorflow/tensorflow/pull/47419)).
+      Deterministic GPU implementations for floating point types apart from
+      `tf.float64` and `tf.complex128` will be added to a later version of
+      stock TF (probably 2.6).
   13. Based on initial work from [Lin Lan](https://github.com/llan-ml), we may
       have have ruled-out nondeterminism in other `tf.math.segment_*` ops beyond
       `tf.math.segment_sum` and in other `tf.math_unsorted_segment_*` ops beyond
@@ -663,6 +671,7 @@ ID                                                           | Title            
 [38509](https://github.com/tensorflow/tensorflow/pull/38509) | List deterministic op func bug fixes in v2.2<br>release notes    | merged | 2020-04-15  | 2.2     |
 [39243](https://github.com/tensorflow/tensorflow/pull/39243) | GPU-deterministic tf.image.resize (bilinear)                     | merged | 2020-09-22  | 2.4     |
 [44717](https://github.com/tensorflow/tensorflow/pull/44717) | Add to rel notes: deterministic tf.image.resize (bilinear)       | merged | 2020-11-13  | 2.4     |
+[47419](https://github.com/tensorflow/tensorflow/pull/47419) | Support all fp types in GPU SparseTensorDenseMatMul              | merged | 2021-03-08  | 2.5     |
 
 Notes:
   1. These are individual commits.
