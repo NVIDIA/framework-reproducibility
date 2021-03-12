@@ -677,6 +677,7 @@ ID                                                           | Title            
 [44717](https://github.com/tensorflow/tensorflow/pull/44717) | Add to rel notes: deterministic tf.image.resize (bilinear)       | merged | 2020-11-13  | 2.4     |
 [47419](https://github.com/tensorflow/tensorflow/pull/47419) | Support all fp types in GPU SparseTensorDenseMatMul              | merged | 2021-03-08  | 2.5     |
 [47749](https://github.com/tensorflow/tensorflow/pull/47749) | Add GPU determinisim for fp types in GPU SparseTensorDenseMatMul | open   |             |         |
+[47772](https://github.com/tensorflow/tensorflow/pull/47772) | Add segment reduction op exceptions for GPU determinism          | open   |             |         |
 
 Notes:
   1. These are individual commits.
