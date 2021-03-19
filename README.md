@@ -696,7 +696,8 @@ These are relevant pull requests against repositories in
 
  Repository | Number                                                   | Title                                                                 | Date Opened | Status |
 :-----------|---------------------------------------------------------:|:----------------------------------------------------------------------|:------------|:-------|
- community  | [346](https://github.com/tensorflow/community/pull/346)  | RFC: Enhancing determinism in TF                                      | 2021-01-19  | Open   |
+ community  | [346](https://github.com/tensorflow/community/pull/346)  | RFC: Enhancing determinism in TF                                      | 2021-01-19  | merged |
+ community  | [370](https://github.com/tensorflow/community/pull/370)  | Improve list of ops in RFC                                            | 2021-03-19  | merged |
 
 ### PyTorch Pull Requests
 
