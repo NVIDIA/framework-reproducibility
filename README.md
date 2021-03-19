@@ -651,33 +651,34 @@ related to this project. As we have
 seem to reference, or have some relationship with, "determinism" or
 "deterministic". As of 2020-01-30, that was 1,391 commits.
 
-ID                                                           | Title                                                            | Status | Date Merged | Version |
-------------------------------------------------------------:|:-----------------------------------------------------------------|:-------|:------------|:--------|
-[24747](https://github.com/tensorflow/tensorflow/pull/24747) | Add cuDNN deterministic env variable (only<br>for convolution).  | merged | 2019-01-15  | 1.14    |
-[25269](https://github.com/tensorflow/tensorflow/pull/25269) | Add deterministic cuDNN max-pooling                              | merged | 2019-01-30  | 1.14    |
-[25796](https://github.com/tensorflow/tensorflow/pull/25796) | Added tests for `TF_CUDNN_DETERMINISTIC`                         | merged | 2019-02-22  | 1.14    |
-[c2790][1001]<sup>1</sup>                                    | Add a decorator to disable autotuning during<br>test executions. | merged | 2019-03-13  | 1.14    |
-[29667](https://github.com/tensorflow/tensorflow/pull/29667) | Add release note about `TF_CUDNN_DETERMINISTIC`                  | merged | 2019-08-06  | 1.14    |
-[31389](https://github.com/tensorflow/tensorflow/pull/31389) | Enhance release notes related to<br>`TF_CUDNN_DETERMINISTIC`     | merged | 2019-08-07  | 1.14    |
-[31465](https://github.com/tensorflow/tensorflow/pull/31465) | Add GPU-deterministic `tf.nn.bias_add`                           | merged | 2019-10-17  | 2.1     |
-[32979](https://github.com/tensorflow/tensorflow/pull/32979) | Fix typo in release note                                         | closed |             |         |
-[33483](https://github.com/tensorflow/tensorflow/pull/33483) | Fix small typo in v2.0.0 release note                            | merged | 2019-10-25  | 2.1     |
-[33803](https://github.com/tensorflow/tensorflow/pull/33803) | Enable tf.nn.bias_add python op tests<br>to work in eager mode   | merged | 2020-02-12  | 2.2     |
-[33900](https://github.com/tensorflow/tensorflow/pull/33900) | Address problems with use_deterministic_cudnn<br>test decorator  | merged | 2020-01-09  | 2.2     |
-[34887](https://github.com/tensorflow/tensorflow/pull/34887) | Add info about `TF_DETERMINISTIC_OPS` to v2.1<br>release notes   | merged | 2019-12-09  | 2.1     |
-[34951][1003]                                                | Add multi-algorithm deterministic cuDNN<br>convolutions          | merged | 2020-01-27  | 2.2     |
-[35006](https://github.com/tensorflow/tensorflow/pull/35006) | Fix version 2.1 release note regarding<br>TF_DETERMINISTIC_OPS   | merged | 2019-12-20  | 2.1     |
-[e3195][1002]<sup>1</sup>                                    | [XLA/GPU] Convert reduction into tree reduction<br>using padding | merged | 2020-01-07  | 2.2     |
-[8b7a3][1004]<sup>1</sup>                                    | [XLA] Respect TF_DETERMINISTIC_OPS env variable<br>for reductions| merged | 2020-02-19  | 2.2     |
-[37377](https://github.com/tensorflow/tensorflow/pull/37377) | [XLA] follow-up on GPU-deterministic reductions                  | merged | 2020-03-09  | 2.3     |
-[9e096][1005]<sup>1</sup>                                    | Use the CUDNN_CTC_LOSS_ALGO_DETERMINISTIC<br>algorithm ...       | merged | 2020-03-10  | 2.3     |
-[38089](https://github.com/tensorflow/tensorflow/pull/38089) | Add reminder to test deterministic cuDNN CTC loss                | closed |             |         |
-[38509](https://github.com/tensorflow/tensorflow/pull/38509) | List deterministic op func bug fixes in v2.2<br>release notes    | merged | 2020-04-15  | 2.2     |
-[39243](https://github.com/tensorflow/tensorflow/pull/39243) | GPU-deterministic tf.image.resize (bilinear)                     | merged | 2020-09-22  | 2.4     |
-[44717](https://github.com/tensorflow/tensorflow/pull/44717) | Add to rel notes: deterministic tf.image.resize (bilinear)       | merged | 2020-11-13  | 2.4     |
-[47419](https://github.com/tensorflow/tensorflow/pull/47419) | Support all fp types in GPU SparseTensorDenseMatMul              | merged | 2021-03-08  | 2.5     |
-[47749](https://github.com/tensorflow/tensorflow/pull/47749) | Add GPU determinisim for fp types in GPU SparseTensorDenseMatMul | open   |             |         |
-[47772](https://github.com/tensorflow/tensorflow/pull/47772) | Add segment reduction op exceptions for GPU determinism          | open   |             |         |
+ID                                                           | Title                                                               | Status | Date Merged | Version |
+------------------------------------------------------------:|:--------------------------------------------------------------------|:-------|:------------|:--------|
+[24747](https://github.com/tensorflow/tensorflow/pull/24747) | Add cuDNN deterministic env variable (only<br>for convolution).     | merged | 2019-01-15  | 1.14    |
+[25269](https://github.com/tensorflow/tensorflow/pull/25269) | Add deterministic cuDNN max-pooling                                 | merged | 2019-01-30  | 1.14    |
+[25796](https://github.com/tensorflow/tensorflow/pull/25796) | Added tests for `TF_CUDNN_DETERMINISTIC`                            | merged | 2019-02-22  | 1.14    |
+[c2790][1001]<sup>1</sup>                                    | Add a decorator to disable autotuning during<br>test executions.    | merged | 2019-03-13  | 1.14    |
+[29667](https://github.com/tensorflow/tensorflow/pull/29667) | Add release note about `TF_CUDNN_DETERMINISTIC`                     | merged | 2019-08-06  | 1.14    |
+[31389](https://github.com/tensorflow/tensorflow/pull/31389) | Enhance release notes related to<br>`TF_CUDNN_DETERMINISTIC`        | merged | 2019-08-07  | 1.14    |
+[31465](https://github.com/tensorflow/tensorflow/pull/31465) | Add GPU-deterministic `tf.nn.bias_add`                              | merged | 2019-10-17  | 2.1     |
+[32979](https://github.com/tensorflow/tensorflow/pull/32979) | Fix typo in release note                                            | closed |             |         |
+[33483](https://github.com/tensorflow/tensorflow/pull/33483) | Fix small typo in v2.0.0 release note                               | merged | 2019-10-25  | 2.1     |
+[33803](https://github.com/tensorflow/tensorflow/pull/33803) | Enable tf.nn.bias_add python op tests<br>to work in eager mode      | merged | 2020-02-12  | 2.2     |
+[33900](https://github.com/tensorflow/tensorflow/pull/33900) | Address problems with use_deterministic_cudnn<br>test decorator     | merged | 2020-01-09  | 2.2     |
+[34887](https://github.com/tensorflow/tensorflow/pull/34887) | Add info about `TF_DETERMINISTIC_OPS` to v2.1<br>release notes      | merged | 2019-12-09  | 2.1     |
+[34951][1003]                                                | Add multi-algorithm deterministic cuDNN<br>convolutions             | merged | 2020-01-27  | 2.2     |
+[35006](https://github.com/tensorflow/tensorflow/pull/35006) | Fix version 2.1 release note regarding<br>TF_DETERMINISTIC_OPS      | merged | 2019-12-20  | 2.1     |
+[e3195][1002]<sup>1</sup>                                    | [XLA/GPU] Convert reduction into tree reduction<br>using padding    | merged | 2020-01-07  | 2.2     |
+[8b7a3][1004]<sup>1</sup>                                    | [XLA] Respect TF_DETERMINISTIC_OPS env variable<br>for reductions   | merged | 2020-02-19  | 2.2     |
+[37377](https://github.com/tensorflow/tensorflow/pull/37377) | [XLA] follow-up on GPU-deterministic reductions                     | merged | 2020-03-09  | 2.3     |
+[9e096][1005]<sup>1</sup>                                    | Use the CUDNN_CTC_LOSS_ALGO_DETERMINISTIC<br>algorithm ...          | merged | 2020-03-10  | 2.3     |
+[38089](https://github.com/tensorflow/tensorflow/pull/38089) | Add reminder to test deterministic cuDNN CTC loss                   | closed |             |         |
+[38509](https://github.com/tensorflow/tensorflow/pull/38509) | List deterministic op func bug fixes in v2.2<br>release notes       | merged | 2020-04-15  | 2.2     |
+[39243](https://github.com/tensorflow/tensorflow/pull/39243) | GPU-deterministic tf.image.resize (bilinear)                        | merged | 2020-09-22  | 2.4     |
+[44717](https://github.com/tensorflow/tensorflow/pull/44717) | Add to rel notes: deterministic<br>tf.image.resize (bilinear)       | merged | 2020-11-13  | 2.4     |
+[47419](https://github.com/tensorflow/tensorflow/pull/47419) | Support all fp types in GPU SparseTensorDenseMatMul                 | merged | 2021-03-08  | 2.5     |
+[47749](https://github.com/tensorflow/tensorflow/pull/47749) | Add GPU determinisim for fp types in GPU<br>SparseTensorDenseMatMul | open   |             |         |
+[47772](https://github.com/tensorflow/tensorflow/pull/47772) | Add segment reduction op exceptions for<br>GPU determinism          | merged | 2021-03-18  | 2.5     |
+[47925](https://github.com/tensorflow/tensorflow/pull/47925) | Add softmax/cross-entropy op exceptions for<br>GPU determinism      | open   |             |         |
 
 Notes:
   1. These are individual commits.
