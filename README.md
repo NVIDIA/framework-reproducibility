@@ -3,10 +3,12 @@
 This main README is currently focused on GPU-determinism with TensorFlow.
 For GPU-determinism with PyTorch, see the [pytorch page](./pytorch.md).
 
-## Announcement
+## Announcements
 
-In the next release of this package (version 0.4.0), the distribution name will
-be changed from `tensorflow-determinism` to `framework-determinism` and the
+### Upcoming Patch Changes
+
+In the next release of this package (version `0.4.0`), the distribution name
+will be changed from `tensorflow-determinism` to `framework-determinism` and the
 package name will be changed from `tfdeterminism` to `fwd9m`. These changes
 reflect an intention going forward for this repo to increasingly support
 determinism in multiple deep learning frameworks.
@@ -15,6 +17,29 @@ Users of `tfdeterminism.patch` will need to use the to-be-deprecated
 `fwd9m.tensorflow.patch` and will be encouraged to migrate to using
 `fwd9m.tensorflow.enable_determinism` instead, which is intended to provide
 compatibility, indefinitely, with future versions of TensorFlow.
+
+There is no ETA for this release. Resources are currently focused on making
+various determinism-related changes to stock TensorFlow. In the meantime, you
+may want to clone this repo and see if `fwd9m.tensorflow.enable_determinism` in
+it's current, unreleased, state (with patching for the segment reduction ops)
+does what you need. Please let me know how that goes.
+
+### In-Progress Stock TensorFlow Changes
+
+[RFC: Enabling Determinism in TensorFlow][506] has been accepted. This
+formalizes a plan to replace the `TF_DETERMINISTIC_OPS` environment variable
+with a `tf.config.enable_deterministic_ops` function and, when determinsitic
+ops are enabled, to throw a `tf.errors.UnimplementedError` exception when an op
+is used in a way that will introduce nondeterminism into the functionality of
+your model.
+
+Determinism-unimplemented exception-throwing (enabled, for now, by
+`TF_DETERMINISTIC_OPS`) is being added to some ops, and other ops are receiving
+deterministic GPU implementations (enabled, for now, by `TF_DETERMINISTIC_OPS`).
+To keep track of what is happening, you may wish to refer to the list of
+[pull reqests](#tensorflow-pull-requests) and/or the list of
+[confirmed sources and solutions](#confirmed-current-gpu-specific-sources-of-non-determinism-with-solutions)
+and associated notes.
 
 ## Introduction
 
@@ -713,6 +738,7 @@ ID                                                     | Title                  
 
 ### Miscellaneous
 
+* TensorFlow [RFC: Enabling Determinism in TensorFlow][506]
 * [Gradient injection][505] in the testing of op backprop determinism in
   TensorFlow tests.
 * Two Sigma: [A Workaround for Non-Determinism in
@@ -728,6 +754,7 @@ ID                                                     | Title                  
 [503]: https://github.com/horovod/horovod/pull/1130
 [504]: https://datascience.stackexchange.com/questions/14812/making-keras-tensorflow-code-execution-deterministic-on-a-gpu/
 [505]: ./test/gradient_injection.md
+[506]: https://github.com/tensorflow/community/blob/master/rfcs/20210119-determinism.md
 
 ## Credits
 
