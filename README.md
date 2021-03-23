@@ -47,12 +47,13 @@ This repository serves three purposes:
 
   1. Provide up-to-date information (in this file) about non-determinism
      sources and solutions in TensorFlow and beyond, with a focus on determinism
-     when running on GPUs.
-  2. Provide a patch to attain various levels of GPU-specific determinism in
-     stock TensorFlow, via the installation of the `tensorflow-determinism` pip
+     when running on GPUs. Info for PyTorch can be found [here](./pytorch.md).
+  2. Provide a set of patches to temporarily attain various levels of
+     GPU-specific determinism in stock TensorFlow (and, later, other
+     frameworks), via the installation of the `tensorflow-determinism` pip
      package.
-  3. Be the location where a TensorFlow determinism debug tool will be released
-     as part of the `tensorflow-determinism` pip package.
+  3. Be the location where a TensorFlow determinism debug tool will (hopefully,
+     one day) be released as part of the `tensorflow-determinism` pip package.
 
 For more information, please watch the video of the GTC 2019 talk
 [_Determinism in Deep Learning_][1]. The desciption under that video also
@@ -63,9 +64,9 @@ topic.
 
 Note that, currently, you only need to install and use this package if you're
 using a version of TensorFlow for which there is a determinism patch available.
-There is currently no patch available for TensorFlow versions 2.1 or greater
-because the effect of the patch that was developed for earlier versions has been
-upstreamed into these newer versions.
+There is currently no (officially released) patch available for TensorFlow
+versions 2.1 or greater because the effect of the patch that was developed for
+earlier versions has been upstreamed into these newer versions.
 
 The next release of this package (version 0.4.0) will include an
 `enable_determinism` function that can be applied to any version of TensorFlow
@@ -86,14 +87,18 @@ TensorFlow before you can import and use `tfdeterminism`.
 
 ## Deterministic TensorFlow Solutions
 
-There are currently three ways to access GPU-deterministic op functionality in
+There are currently several ways to access GPU-deterministic op functionality in
 TensorFlow for most deep learning applications:
 
-1. Use the lastest version of stock TensorFlow (currently version 2.3), which
-   implements all of the currently-available deterministic op solutions. It does
-   not require patching.
-2. Use an NVIDIA NGC TensorFlow Docker image (version >= 19.06).
-3. Use version 1.14, 1.15, or 2.0 of stock TensorFlow with GPU support, plus the
+1. Use the lastest version of stock TensorFlow (currently version 2.4), which
+   implements most of the currently-available deterministic op solutions. It
+   does not require any officially released determinism patches.
+2. Clone this repo and call `fwd9m.tensorflow.enable_determinism` to apply the,
+   as-yet unreleased, patch for the segment reduction ops to your chosen
+   version of TensorFlow. This code may not be fully regression tested; your
+   results may vary.
+3. Use an NVIDIA NGC TensorFlow Docker image (version >= 19.06).
+4. Use version 1.14, 1.15, or 2.0 of stock TensorFlow with GPU support, plus the
    application of `tfdeterminism.patch`. Version 2.1 of stock TensorFlow
    does not have a patch avaliable (and does not require earlier patching) and
    includes many of the deterministic op solutions.
@@ -105,16 +110,16 @@ stock TensorFlow or via the NGC TensorFlow container images, the long-term
 intention and plan is to continue upstreaming all solutions into stock
 TensorFlow.
 
-### Stock TensorFlow Version 2.3
+### Stock TensorFlow Version 2.4
 
-Stock TensorFlow version 2.3 implements most of the currently-available
-GPU-deterministic op solutions. It is missing deterministic backprop for
-bilinear resizing, which is provided by
+Stock TensorFlow version 2.4 implements most of the currently-available
+GPU-deterministic op solutions. It is missing deterministic
+`tf.sparse.sparse_dense_matmul`, which is provided by
 [NGC TF Docker image](#nvidia-gpu-cloud-ngc-tensorflow-docker-images) version
-20.03+.
+`21.04`+.
 
 The following Python code is running on a machine in which `pip` package
-`tensorflow=2.3.0` has been installed correctly.
+`tensorflow=2.4.1` has been installed correctly.
 
 ```
 import tensorflow as tf
@@ -123,10 +128,10 @@ os.environ['TF_DETERMINISTIC_OPS'] = '1'
 # Now build your graph and train it
 ```
 
-Stock TensorFlow version 2.3 with GPU support can be installed as follows:
+Stock TensorFlow version 2.4 with GPU support can be installed as follows:
 
 ```
-pip install tensorflow=2.3.0
+pip install tensorflow=2.4.1
 ```
 
 The TensorFlow project includes [detailed instructions][3] for installing
@@ -134,12 +139,13 @@ TensorFlow with GPU support.
 
 ### NVIDIA GPU Cloud (NGC) TensorFlow Docker Images
 
-NGC TensorFlow Docker images, starting with version 19.06, implement
-GPU-deterministic op functionality. Version 19.12 (and beyond) also implements
+NGC TensorFlow Docker images, starting with version `19.06`, implement
+GPU-deterministic op functionality. Version `19.12` (and beyond) also implements
 [multi-algorithm deterministic cuDNN convolutions][1003], which solves the
 problem of some layer configurations causing an exception to be thrown with the
-message "No algorithm worked!". Version 20.03 (and beyond) also implements
-deterministic backprop for bilinear resizing.
+message "No algorithm worked!". Version `20.03` (and beyond) also implements
+deterministic backprop for bilinear resizing. Version `21.04` (and beyond)
+implements deterministic `tf.sparse.sparse_dense_matmul`.
 
 In Python code running inside the container, deterministic ops can be enabled
 as follows:
@@ -192,7 +198,7 @@ patch()
 Stock TensorFlow with GPU support can be installed as follows:
 
 ```
-pip install tensorflow-gpu=2.0.1
+pip install tensorflow-gpu=2.0.4
 ```
 
 The TensorFlow project includes [detailed instructions][3] for installing
