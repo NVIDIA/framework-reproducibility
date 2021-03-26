@@ -547,7 +547,10 @@ Note | Source                                   | NGC 21.04+ | TF 2.6 |
       segment sum functionality. See
       [Issue 39751](https://github.com/tensorflow/tensorflow/issues/39751). A
       patch that will make the segment sum ops function deterministically is in
-      development.
+      development. TF [PR 47974][1006] adds GPU-deterministic sparse segment
+      reduction ops (probably in TF 2.6). This approach will be used to provide
+      GPU-deterministic functionality for all the segment reduction ops in
+      version 2.6 or possibly later.
   11. Backprop to `image` on `tf.image.crop_and_resize` introduces
       nondeterministic noise when running on either CPU or GPU. Backprop to
       `boxes` introduces nondeterministic noise when running on GPU. See
@@ -575,7 +578,10 @@ Note | Source                                   | NGC 21.04+ | TF 2.6 |
       `tf.math.unsorted_segment_sum`, `tf.math.unsorted_segment_mean`,
       `tf.math.unsorted_segment_prod`, and `tf.math_unsorted_segment_sqrt_n`;
       see [issue 31](https://github.com/NVIDIA/framework-determinism/issues/31).
-      Also see note 10, above.
+      Also see note 10, above. TF [PR 47974][1006] adds GPU-deterministic sparse
+      segment reduction ops (probably in TF 2.6). This approach will be used to
+      provide GPU-deterministic functionality for all the segment reduction ops
+      in version 2.6 or possibly later.
   14. Backprop through `tf.compat.v1.nn.fused_batch_norm` when `training=False`
       is used for fine-tuning. See TensorFlow
       [Issue 10857](https://github.com/tensorflow/tensorflow/issues/10857) for
@@ -710,6 +716,7 @@ ID                                                           | Title            
 [47749](https://github.com/tensorflow/tensorflow/pull/47749) | Add GPU determinisim for fp types in GPU<br>SparseTensorDenseMatMul | open   |             |         |
 [47772](https://github.com/tensorflow/tensorflow/pull/47772) | Add segment reduction op exceptions for<br>GPU determinism          | merged | 2021-03-18  | 2.5     |
 [47925](https://github.com/tensorflow/tensorflow/pull/47925) | Add softmax/cross-entropy op exceptions for<br>GPU determinism      | open   |             |         |
+[47974][1006]                                                | Add GPU implem of sparse segment reduction ops                      | open   |             |         |
 
 Notes:
   1. These are individual commits.
@@ -719,6 +726,7 @@ Notes:
 [1003]: https://github.com/tensorflow/tensorflow/pull/34951
 [1004]: https://github.com/tensorflow/tensorflow/commit/8b7a3db0b6e09415b5640be4986fb4d7c6e5209a
 [1005]: https://github.com/tensorflow/tensorflow/commit/9e096debc4a0909deb69970f38bee7b77e5e5f7d
+[1006]: https://github.com/tensorflow/tensorflow/pull/47974
 
 ### Other TensorFlow Organization Pull Requests
 
