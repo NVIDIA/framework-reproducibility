@@ -405,187 +405,9 @@ by default when running on a GPU.
 
 #### Confirmed Current GPU-Specific Sources of Non-Determinism (With Solutions)
 
-Where it is indicated that solutions are available in NGC TensorFlow container
-images, it can be assumed that the solutions are available in both TensorFlow
-API version 1 and TensorFlow API version 2 variants of those container images.
-
-Note | Source                                                            | TF 1.14, 1.15,<br>2.0  | NGC 19.06+ /<br>TF 2.1 | TF 2.2     | TF 2.3+    |
-----:|:------------------------------------------------------------------|:-----------------------|:-----------------------|:-----------|:-----------|
-   1 | TF auto-tuning of cuDNN convolution<br>algorithms                 | TCD or TDP             | TDO                    | TDO        | TDO        |
-   2 | `tf.nn.conv*d` and<br>`tf.keras.layers.Conv*D`<br>backprop        | TCD or TDP             | TDO                    | TDO        | TDO        |
-   3 | `tf.nn.max_pool*d` and<br>`tf.keras.layers.MaxPool*D` backprop    | TCD or TDP             | TDO                    | TDO        | TDO        |
-   4 | `tf.nn.bias_add` backprop                                         | TDP                    | TDO                    | TDO        | TDO        |
-   5 | XLA reductions on GPU                                             | NS                     | NS                     | TDO        | TDO        |
-   6 | `tf.nn.ctc_loss` backprop                                         | NS                     | NS                     | NS         | TDO        |
-   7 | Fused sofmax/crossentropy:<br>`tf.nn.*_cross_entropy_with_logits` | NS                     | NS                     | NS         | NS         |
-
-Note | Source                                                                                                                                                        | TF < 2.4  | NGC 20.03+ | TF 2.4+ |
-----:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------|:-----------|:--------|
-   8 | `tf.image.resize` with `method=ResizeMethod.BILINEAR`<br>and `tf.keras.layers.UpSampling2D` with<br>`interpolation='bilinear'` backprop                       | NS        | TDO        | TDO     |
-   9 | `tf.image.resize` with `method=ResizeMethod.NEAREST`<br>and `tf.keras.layers.UpSampling2D` with<br>`interpolation='nearest'` backprop                         | NS        | NS         | NS      |
-  10 | `tf.math.segment_sum`, `tf.math.unsorted_segment_sum`,<br>and `tf.convert_to_tensor` forward.<br>And `tf.gather` and `tfa.image.dense_image_warp`<br>backprop | NS        | NS         | NS      |
-  11 | `tf.image.crop_and_resize` backprop to `image` (on CPU<br>or GPU) and backprop to `boxes`                                                                     | NS        | NS         | NS      |
-  13 | `tf.math.unsorted_segment_mean`,<br>`tf.math.unsorted_segment_prod`, and <br>`tf.math.unsorted_segment_sqrt_n` forward                                        | NS        | NS         | NS      |
-   . | `tf.image.adjust_contrast` forward                                                                                                                            | NS        | NS         | NS      |
-  14 | `tf.compat.v1.nn.fused_batch_norm` backrop to `offset`<br>when `is_training=False`                                                                            | NS        | NS         | NS      |
-
-Note | Source                                   | NGC 21.04+ | TF 2.6 |
-----:|:-----------------------------------------|:-----------|:-------|
-  12 | `tf.sparse.sparse_dense_matmul` forward  | TDO        | NS     |
-
-##### Key to the Solutions Referenced Above
-
- Solution | Description                                                                                                                                                                                             |
-:---------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
- TCD      | Set environment variable `TF_CUDNN_DETERMINISTIC` to `'1'` or `'true'`. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to `'0'` or `'false'`). |
- TDO      | Set environment variable `TF_DETERMINISTIC_OPS` to `'1'` or `'true'`. Also *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly *do not* set it to `'0'` or `'false'`).   |
- TDP      | Apply `tfdeterminism.patch`. Note that solution TDO is in stock TensorFlow v2.1 (see [PR 31465](https://github.com/tensorflow/tensorflow/pull/31465)), which makes patching unnecessary.                |
- NS       | There is no solution in the specified version, but there may be a solution in other versions (as shown)                                                                                                 |
-
-##### Notes
-
-  1. From NGC TF 19.12 onwards and stock TensorFlow 2.2 onwards, the
-     cuDNN forward and backward convolution algorithms are selected
-     deterministically from several deterministic algorithms. Prior to this (i.e.
-     NGC 19.11 and earlier, and stock TensorFlow 2.1 and earlier), there is only
-     one deterministic algorithm selected for each of the forward and two
-     backward paths. In those versions of TensorFlow, some layer configurations
-     are not supported (resulting in an exception being thrown with the message
-     "No algorithm worked!").
-  2. cuDNN convolution backprop algorithms (backprop to both input feature
-     maps and to trainable variables) are exposed through `tf.nn.conv1d`,
-     `tf.nn.conv2d`, and `tf.nn.conv3d`. Functionality that is built on top is
-     also affected, such as `tf.keras.layers.Conv1D`, `tf.keras.layers.Conv2D`,
-     and `tf.keras.layers.Conv3D`
-  3. cuDNN max pooling is exposed through `tf.nn.max_pool1d`,
-     `tf.nn.max_pool2d`, and `tf.nn.max_pool3d`. Functionality that is built on
-     top is also affected, such as `tf.keras.layers.MaxPool1D`,
-     `tf.keras.layers.MaxPool2D`, and `tf.keras.layers.MaxPool3D`. This solution
-     does not currently have unit tests in the TensorFlow repo but has been
-     confirmed to work in production models.
-  4. Note that various Keras layers, including the Keras convolution layers
-     (`tf.keras.layers.Conv*D`), are built on top of `tf.nn.bias_add`.
-     Therefore, when `use_bias=True` the deterministic functionality of the
-     layer is dependent on the deterministic functionality of `tf.nn.bias_add`.
-     Prior to TensorFlow version 2.2, this deterministic `tf.nn.bias_add`
-     backprop solution will not work when XLA JIT compilation is enabled due to
-     XLA reductions on GPU not being deterministic (see
-     [this comment](https://github.com/tensorflow/tensorflow/pull/34887#discussion_r355610837)
-     on PR 34887). This is resolved in TensorFlow version 2.2 and NGC TF Docker
-     images based on that version of TensorFlow.
-  5. Without this solution, when XLA JIT compilation is enabled, any op that
-     relies on XLA reductions, whether in the forward or backward direction,
-     will introduce nondeterministic noise.
-  6. I had previously assumed that deterministic cuDNN CTC loss was exposed, via
-     `tf.nn.ctc_loss`, by changes that ended up appearing in stock TensorFlow
-     version 2.3 (see TF issue
-     [38151](https://github.com/tensorflow/tensorflow/issues/38151)), but more
-     recent experiments, the results of which I am in the process of publishing,
-     suggest that this is not true and that `tf.nn.ctc_loss` has
-     nondeterministic backprop when operating on either CPU or GPU.
-  7. Fused softmax/cross-entropy ops `tf.nn.softmax_cross_entropy_with_logits`
-     and `tf.nn.sparse_softmax_cross_entropy_with_logits`, accessed via
-     `tf.keras.losses.categorical_crossentropy`,
-     `tf.keras.losses.CategoricalCrossentropy`,
-     `tf.keras.losses.sparse_categorical_crossentropy`, and
-     `tf.keras.losses.SparseCategoricalCrossentropy`), are known to inject
-     nondetermininsm into both the backward and forward paths. See TensorFlow
-     [issue 38185](https://github.com/tensorflow/tensorflow/issues/38185).
-     A confirmed work-around is to use separate non-fused softmax and
-     cross-entropy ops. For example, assuming you're using `tf.keras`, select
-     the activation on the final layer (e.g. a `Dense` layer) to be 'softmax'
-     (which chooses `tf.nn.softmax`) and then, for the loss function, continue
-     to use `tf.keras.losses.categorical_crossentropy` (possibly by using its
-     wrapper class `tf.keras.losses.CategoricalCrossentropy`) or
-     `tf.keras.losses.sparse_categorical_crossentropy` (possibly by using its
-     wrapper class `tf.keras.losses.SparseCategoricalCrossentropy`). Since it
-     uses non-fused kernels, the work-around will be lower performance.
-     Theoretically, you should ensure that the loss function parameter
-     `from_logits` is set to `False` (the default), perhaps only for performance
-     reasons since setting it to `True` is a no-op arithmetically and does not
-     appear to contribute to nondeterminism. A patch is
-     [in development](https://github.com/NVIDIA/framework-determinism/pull/21).
-  8. `tf.image.resize` with `method=ResizeMethod.BILINEAR` (TF2 API):
-     `BILINEAR` is the default `method` setting. In the TF1 API, this
-     functionality is accessed via `tf.image.resize_bilinear`. It is also exposed
-     through `tf.keras.layers.UpSampling2D` with `interpolation='bilinear'`
-     (which is not the default `interpolation` setting).
-  9. `tf.image.resize` with `method=ResizeMethod.NEAREST` (TF2 API): In the TF1
-     API, this functionality is accessed via `tf.image.resize_nearest_neighbor`.
-     It is also exposed through `tf.keras.layers.UpSampling2D` with
-     `interpolation='nearest'` (which is the default `interpolation` setting). A
-     potential work-around is to use `tf.keras.layers.Conv2DTranspose` (see
-     issues [#12](https://github.com/NVIDIA/framework-determinism/issues/12) and
-     [#24](https://github.com/NVIDIA/framework-determinism/issues/24))
-  10. Segment reduction ops `tf.math.segment_sum` and
-      `tf.math.unsorted_segment_sum` can exhibit nondeterministic forward
-      operation when running on a GPU. `tf.convert_to_tensor`, when fed with
-      (sparse) `tf.IndexedSlices`, uses this potentially nondeterminitic
-      segment sum functionality in its forward direction and therefore may
-      introduce truly random noise into its output when a slice index is
-      represented more than twice in its input (such as when reducing the word
-      embedding gradients from multiple instances of the same word in a sentence
-      or across a batch of sentences). `tf.gather` is often used to select word
-      embeddings from an embedding matrix in a model's forward direction and
-      `tf.gather`'s backprop generates sparse gradients conveyed as
-      `tf.IndexedSlices`. The reduction of the back-propagated sparse gradients
-      from `tf.gather` by `tf.convert_to_tensor` can therefore introduce truly
-      random noise into an embedding trainable variable. A lower-performance
-      work-around for this nondeterminism related to the use of `tf.gather` is
-      to use `tf.linalg.matmul` instead:
-
-      ```
-      # inputs_embeds = tf.gather(embeddings, input_ids)
-      input_embeds = tf.dtypes.cast(
-          tf.one_hot(input_ids, embeddings.shape[0]),
-          embeddings.dtype) @ embeddings
-      ```
-
-      Note that the backward (and forward) functionality of `tf.gather` itself
-      _is_ deterministic. The backprop for `tfa.image.dense_image_warp` may
-      introduce truly random noise because it also uses the nondeterministic
-      segment sum functionality. See
-      [Issue 39751](https://github.com/tensorflow/tensorflow/issues/39751). A
-      patch that will make the segment sum ops function deterministically is in
-      development. TF [PR 47974][1006] adds GPU-deterministic sparse segment
-      reduction ops (probably in TF 2.6). This approach will be used to provide
-      GPU-deterministic functionality for all the segment reduction ops in
-      version 2.6 or possibly later.
-  11. Backprop to `image` on `tf.image.crop_and_resize` introduces
-      nondeterministic noise when running on either CPU or GPU. Backprop to
-      `boxes` introduces nondeterministic noise when running on GPU. See
-      TensorFlow
-      [Issue 42033](https://github.com/tensorflow/tensorflow/issues/42033) for
-      more information.
-  12. In TF 2.4 and earlier, the forward path of `tf.sparse.sparse_dense_matmul`
-      introduces nondeterminism for `tf.float32`, but not for `tf.float64`
-      (which is not implemented on the GPU). See TF
-      [Issue 18037](https://github.com/tensorflow/tensorflow/issues/18037).
-      A `tf.float32` deterministic GPU solution for both TF1 and TF2 variants of
-      the NGC TF container will be available in version `21.04` onwards.
-      GPU support for other floating-point types, including `tf.float64`, will
-      be added in TF 2.5 (see
-      [PR 47419](https://github.com/tensorflow/tensorflow/pull/47419)).
-      In TF 2.5 onwards, if you were relying on the determinism of the
-      `tf.float64` CPU implementation being automatically selected because of an
-      absense of the `tf.float64` GPU implementation, you will need to force the
-      op to run on the CPU. Deterministic GPU implementations for floating point
-      types apart from `tf.float64` and `tf.complex128` will be added to a later
-      version of stock TF (probably version 2.6).
-  13. Based on initial work from [Lin Lan](https://github.com/llan-ml), we may
-      have have ruled-out nondeterminism in other `tf.math.segment_*` ops beyond
-      `tf.math.segment_sum` and in other `tf.math_unsorted_segment_*` ops beyond
-      `tf.math.unsorted_segment_sum`, `tf.math.unsorted_segment_mean`,
-      `tf.math.unsorted_segment_prod`, and `tf.math_unsorted_segment_sqrt_n`;
-      see [issue 31](https://github.com/NVIDIA/framework-determinism/issues/31).
-      Also see note 10, above. TF [PR 47974][1006] adds GPU-deterministic sparse
-      segment reduction ops (probably in TF 2.6). This approach will be used to
-      provide GPU-deterministic functionality for all the segment reduction ops
-      in version 2.6 or possibly later.
-  14. Backprop through `tf.compat.v1.nn.fused_batch_norm` when `training=False`
-      is used for fine-tuning. See TensorFlow
-      [Issue 10857](https://github.com/tensorflow/tensorflow/issues/10857) for
-      more information.
+The information in this section has been moved to a separate
+[**Status of GPU-Determinism in TensorFlow**](./tensorflow_status.md) page, and
+expanded.
 
 #### Other Possible GPU-Specific Sources of Non-Determinism
 
@@ -716,7 +538,7 @@ ID                                                           | Title            
 [47749](https://github.com/tensorflow/tensorflow/pull/47749) | Add GPU determinisim for fp types in GPU<br>SparseTensorDenseMatMul | open   |             |         |
 [47772](https://github.com/tensorflow/tensorflow/pull/47772) | Add segment reduction op exceptions for<br>GPU determinism          | merged | 2021-03-18  | 2.5     |
 [47925](https://github.com/tensorflow/tensorflow/pull/47925) | Add softmax/cross-entropy op exceptions for<br>GPU determinism      | open   |             |         |
-[47974][1006]                                                | Add GPU implem of sparse segment reduction ops                      | open   |             |         |
+[47974](https://github.com/tensorflow/tensorflow/pull/47974) | Add GPU implem of sparse segment reduction ops                      | open   |             |         |
 
 Notes:
   1. These are individual commits.
@@ -726,7 +548,6 @@ Notes:
 [1003]: https://github.com/tensorflow/tensorflow/pull/34951
 [1004]: https://github.com/tensorflow/tensorflow/commit/8b7a3db0b6e09415b5640be4986fb4d7c6e5209a
 [1005]: https://github.com/tensorflow/tensorflow/commit/9e096debc4a0909deb69970f38bee7b77e5e5f7d
-[1006]: https://github.com/tensorflow/tensorflow/pull/47974
 
 ### Other TensorFlow Organization Pull Requests
 
