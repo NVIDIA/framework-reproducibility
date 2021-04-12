@@ -537,7 +537,7 @@ ID                                                           | Title            
 [47419](https://github.com/tensorflow/tensorflow/pull/47419) | Support all fp types in GPU SparseTensorDenseMatMul                 | merged | 2021-03-08  | 2.5     |
 [47749](https://github.com/tensorflow/tensorflow/pull/47749) | Add GPU determinisim for fp types in GPU<br>SparseTensorDenseMatMul | open   |             |         |
 [47772](https://github.com/tensorflow/tensorflow/pull/47772) | Add segment reduction op exceptions for<br>GPU determinism          | merged | 2021-03-18  | 2.5     |
-[47925](https://github.com/tensorflow/tensorflow/pull/47925) | Add softmax/cross-entropy op exceptions for<br>GPU determinism      | open   |             |         |
+[47925](https://github.com/tensorflow/tensorflow/pull/47925) | Add softmax/cross-entropy op exceptions for<br>GPU determinism      | merged | 2021-04-05  | 2.6     |
 [47974](https://github.com/tensorflow/tensorflow/pull/47974) | Add GPU implem of sparse segment reduction ops                      | open   |             |         |
 
 Notes:
@@ -557,7 +557,7 @@ These are relevant pull requests against repositories in
  Repository | Number                                                   | Title                                                                 | Date Opened | Status |
 :-----------|---------------------------------------------------------:|:----------------------------------------------------------------------|:------------|:-------|
  community  | [346](https://github.com/tensorflow/community/pull/346)  | RFC: Enhancing determinism in TF                                      | 2021-01-19  | merged |
- community  | [370](https://github.com/tensorflow/community/pull/370)  | Improve list of ops in RFC                                            | 2021-03-19  | merged |
+ community  | [370](https://github.com/tensorflow/community/pull/370)  | RFC: [determinism] Improve list of ops in                             | 2021-03-19  | merged |
 
 ### PyTorch Pull Requests
 

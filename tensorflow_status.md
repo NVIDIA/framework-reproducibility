@@ -322,6 +322,13 @@ ensure that the loss function parameter `from_logits` is set to `False` (the
 default), perhaps only for performance reasons since setting it to `True` is a
 no-op arithmetically and does not appear to contribute to nondeterminism.
 
+### Additional Information
+
+Stock TensorFlow version 2.6+ will throw a `tf.errors.UnimplementedError` if the
+nondeterministic paths of these ops are used with the expectation of determinism
+(i.e. with `TF_DETERMINISTIC_OPS` set to `"true"` or `"1"`). See
+github/tensorflow/tensorflow pull request [47925][47925].
+
 ---
 
 <a name="adjust-contrast"></a>
@@ -395,7 +402,7 @@ version 2.6 or possibly later.
 
 Stock TensorFlow version 2.5+ will throw a `tf.errors.UnimplementedError` if the
 nondeterministic paths of these ops are used with the expectation of determinism
-(with `TF_DETERMINISTIC_OPS` set to `"true"` or `"1"`). See
+(i.e. with `TF_DETERMINISTIC_OPS` set to `"true"` or `"1"`). See
 github/tensorflow/tensorflow pull request [47772][47772].
 
 At the time of writing (TensorFlow 2.5), `tf.math.segment_mean` is not
@@ -521,4 +528,5 @@ nondeterministic noise.
 [47419]: https://github.com/tensorflow/tensorflow/pull/47419
 [47749]: https://github.com/tensorflow/tensorflow/pull/47749
 [47772]: https://github.com/tensorflow/tensorflow/pull/47772
+[47925]: https://github.com/tensorflow/tensorflow/pull/47925
 [47974]: https://github.com/tensorflow/tensorflow/pull/47974
