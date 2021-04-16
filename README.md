@@ -235,6 +235,32 @@ with a particular seed value, the pseudorandom number generator that TensorFlow
 uses to initialize the trainable variables is reset ("seeded") deterministically
 according to that seed.
 
+If your model is not training deterministically, a good starting point is to
+confirm that the trainable variables prior to training are set the same way on
+every run, this can be done by calling the following function after calling
+`model.compile` and before calling `model.fit`:
+
+```
+def summarize_keras_trainable_variables(model, message):
+  s = sum(map(lambda x: x.sum(), model.get_weights()))
+  print("summary of trainable variables %s: %.13f" % (message, s))
+  return s
+```
+
+Assuming the the trainable variable are being reproducibly reset, the function
+can also be used after training has completed to confirm that the training was
+deterministic:
+
+```
+model.compile(..)
+summarize_keras_trainable_variables(model, "before training")
+model.fit(...)
+summarize_keras_trainable_variables(model, "after training")
+```
+
+An equivalent function can be used for non-keras models. It might also be
+preferable to use a hash function rather than sum.
+
 If you're using dropout, which introduces a pseudorandom dropout sequence during
 training, then to achieve deterministic results you will need to reset
 the pseudorandom number generator that is used to produce those dropout
