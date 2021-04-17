@@ -478,11 +478,11 @@ there is no GPU implementation). See github/tensorflow/tensorflow issue
 
 GPU support for other floating-point types (`tf.float16`, `tf.float64`,
 `tf.complex64`, and `tf.complex128`) will be added in TF 2.5
-(see github/tensorflow/tensorlow pull request[47419][47419]). In TF 2.5 onwards,
-if you were relying on the determinism of the `tf.float64` CPU implementation
-being automatically selected because of an absense of the `tf.float64` GPU
-implementation, you will need to force the op to run on the CPU or use a
-different data type.
+(see github/tensorflow/tensorlow pull request [47419][47419]). In TF 2.5
+onwards, if you were relying on the determinism of the `tf.float64` CPU
+implementation being automatically selected because of an absense of the
+`tf.float64` GPU implementation, you will need to force the op to run on the CPU
+or use a different data type.
 
 ### Solutions
 
