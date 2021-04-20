@@ -566,7 +566,7 @@ ID                                                           | Title            
 [47772](https://github.com/tensorflow/tensorflow/pull/47772) | Add segment reduction op exceptions for<br>GPU determinism          | merged | 2021-03-18  | 2.5     |
 [47925](https://github.com/tensorflow/tensorflow/pull/47925) | Add softmax/cross-entropy op exceptions for<br>GPU determinism      | merged | 2021-04-05  | 2.6     |
 [47974](https://github.com/tensorflow/tensorflow/pull/47974) | Add GPU implem of sparse segment reduction ops                      | open   |             |         |
-[48581](https://github.com/tensorflow/tensorflow/pull/48581) | Update release notes in branch r2.5                                 | open   |             |         |
+[48581](https://github.com/tensorflow/tensorflow/pull/48581) | Update release notes in branch r2.5                                 | closed |             |         |
 
 Notes:
   1. These are individual commits.
