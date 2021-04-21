@@ -478,11 +478,12 @@ there is no GPU implementation). See github/tensorflow/tensorflow issue
 
 GPU support for other floating-point types (`tf.float16`, `tf.float64`,
 `tf.complex64`, and `tf.complex128`) will be added in TF 2.5
-(see github/tensorflow/tensorlow pull request [47419][47419]). In TF 2.5
-onwards, if you were relying on the determinism of the `tf.float64` CPU
-implementation being automatically selected because of an absense of the
-`tf.float64` GPU implementation, you will need to force the op to run on the CPU
-or use a different data type.
+(see github/tensorflow/tensorlow pull request [47419][47419]) and NGC TF 21.05
+(even though it's based on stock TF 2.4). In TF 2.5 (and NGC TF 21.05) onwards,
+if you were relying on the determinism of the `tf.float64` CPU implementation
+being automatically selected because of an absence of the `tf.float64` GPU
+implementation, you will need to force the op to run on the CPU or use a
+different data type.
 
 ### Solutions
 
@@ -490,17 +491,18 @@ or use a different data type.
 
 A deterministic GPU implementation of `tf.sparse.sparse_dense_matmul` when the
 data type of the input tensors is `tf.float32`, for both TF1 and TF2 variants of
-the NGC TF container image will be available in version `21.04` onwards (based
-on stock TF 2.4, which only supported `tf.float64` on GPU).
+the NGC TF container image will be available in version 21.04 onwards (based
+on stock TF 2.4), and will still only support `tf.float32` on GPU.
 
 A deterministic GPU implementation of `tf.sparse.sparse_dense_matmul` when the
-data type is `tf.float16`, `tf.float32`, or `tf.complex64` will probably be
-available in version 2.6 of stock TensorFlow (see github/tensorflow/tensorflow
-pull request [47749][47749]). In this solution, an attempt to use the
-`tf.sparse.sparse_dense_matmul` GPU implementation, with data of type tf.float64
-or tf.complex128, when deterministic op functionality is enabled (currently via
-`TF_DETERMINISTIC_OPS` being set to `"true"` or `"1"`) will cause a
-`tf.errors.UnimplementedError` to be thrown.
+data type is `tf.float16`, `tf.float32`, or `tf.complex64` will be available in
+NGC TF 21.05 and will probably be available in version 2.6 of stock TensorFlow
+(see github/tensorflow/tensorflow pull request [47749][47749]). In this
+solution, an attempt to use the `tf.sparse.sparse_dense_matmul` GPU
+implementation with data of type `tf.float64` or `tf.complex128`, when
+deterministic op functionality is enabled (currently via `TF_DETERMINISTIC_OPS`
+being set to `"true"` or `"1"`), will cause a `tf.errors.UnimplementedError` to
+be thrown.
 
 ---
 
