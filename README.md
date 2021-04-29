@@ -586,6 +586,7 @@ These are relevant pull requests against repositories in
 :-----------|---------------------------------------------------------:|:----------------------------------------------------------------------|:------------|:-------|
  community  | [346](https://github.com/tensorflow/community/pull/346)  | RFC: Enhancing determinism in TF                                      | 2021-01-19  | merged |
  community  | [370](https://github.com/tensorflow/community/pull/370)  | RFC: [determinism] Improve list of ops in                             | 2021-03-19  | merged |
+ community  | [386](https://github.com/tensorflow/community/pull/386)  | RFC: [determinism] Add tf.nn.depthwise_conv2d to op list in           | 2021-04-28  | open   |
 
 ### PyTorch Pull Requests
 
