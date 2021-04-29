@@ -24,6 +24,7 @@ from the "Solution Available" column.
  `tf.keras.layers.Conv1D` backprop                                       | [YES](#cudnn-conv)                     |
  `tf.keras.layers.Conv2D` backprop                                       | [YES](#cudnn-conv)                     |
  `tf.keras.layers.Conv3D` backprop                                       | [YES](#cudnn-conv)                     |
+ `tf.keras.layers.DepthwiseConv2D` backprop to `filter`                  | [NO](#depthwise-conv)                  |
  `tf.keras.layers.MaxPool1D` backprop                                    | [YES](#max-pool)                       |
  `tf.keras.layers.MaxPool2D` backprop                                    | [YES](#max-pool)                       |
  `tf.keras.layers.MaxPool3D` backprop                                    | [YES](#max-pool)                       |
@@ -48,6 +49,7 @@ from the "Solution Available" column.
  `tf.nn.conv2d` backprop                                                 | [YES](#cudnn-conv)                     |
  `tf.nn.conv3d` backprop                                                 | [YES](#cudnn-conv)                     |
  `tf.nn.ctc_loss` backprop                                               | [NO](#ctc-loss)                        |
+ `tf.nn.depthwise_conv2d` backprop to `filter`                           | [NO](#depthwise-conv)                  |
  `tf.nn.max_pool1d` backprop                                             | [YES](#max-pool)                       |
  `tf.nn.max_pool2d` backprop                                             | [YES](#max-pool)                       |
  `tf.nn.max_pool3d` backprop                                             | [YES](#max-pool)                       |
@@ -217,6 +219,31 @@ Functionality that is built on top of these ops is also affected, such as
   * TF 1.14, 1.15, 2.0: [TF_CUDNN_DETERMINISTIC](#TF_CUDNN_DETERMINISTIC) or
     [PATCH](#PATCH)
   * NGC 19.06+, TF 2.1+: [TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS)
+
+---
+
+<a name="depthwise-conv"></a>
+## Depthwise Convolution
+
+### Problem
+
+`tf.nn.depthwise_conv2d` and `tf.keras.layers.DepthwiseConv2D` do not operate
+fully deterministically when running on GPU, even when the solutions for
+[cuDNN convolution](#cudnn-conv) are applied. The relatively complex story is
+explicated in the docstring of
+[this gist](https://gist.github.com/duncanriach/4c18cb07a73510c5fcb2deb52adbffaa).
+
+### Solution
+
+As described in the aforementioned
+[gist](https://gist.github.com/duncanriach/4c18cb07a73510c5fcb2deb52adbffaa),
+for a single input channel the functionality may be determinstic using the
+solutions for [cuDNN convolution](#cudnn-conv). For other configurations, there
+is currently no solutiuon.
+
+However, it may be possible to implement the required functionality, with
+reasonable performance, using multiple instances of regular convolution
+followed by an appropiate splicing of their outputs.
 
 ---
 

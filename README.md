@@ -443,7 +443,6 @@ directly or indirectly. This makes them candidates for the injection of
 nondeterminism.
 
 * `bincount_op_gpu.cu.cc`
-* `depthwise_conv_op_gpu.h`
 * `dilation_ops_gpu.cu.cc`
 * `maxpooling_op_gpu.cu.cc`
 * `multinomial_op_gpu.cu.cc`
