@@ -245,6 +245,14 @@ However, it may be possible to implement the required functionality, with
 reasonable performance, using multiple instances of regular convolution
 followed by an appropiate splicing of their outputs.
 
+### Additional Information
+
+See these issues:
+
+  * github/tensorflow/tensorflow issue [47174][47174]
+  * github/NVIDIA/framework-determinism issue
+    [26](https://github.com/NVIDIA/framework-determinism/issues/26)
+
 ---
 
 <a name="max-pool"></a>
@@ -554,6 +562,7 @@ nondeterministic noise.
 [38185]: https://github.com/tensorflow/tensorflow/issues/38185
 [39751]: https://github.com/tensorflow/tensorflow/issues/39751
 [42033]: https://github.com/tensorflow/tensorflow/issues/42033
+[47174]: https://github.com/tensorflow/tensorflow/issues/47174
 [47419]: https://github.com/tensorflow/tensorflow/pull/47419
 [47749]: https://github.com/tensorflow/tensorflow/pull/47749
 [47772]: https://github.com/tensorflow/tensorflow/pull/47772
