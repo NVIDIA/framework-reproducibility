@@ -394,6 +394,11 @@ issue [42033][42033] for more information.
 
 There is currently no available solution.
 
+### Additional Information
+
+github/tensorflow/tensorflow pull request [48905][48905] adds CPU determinism
+for backprop to `image` and unimplemented exceptions for GPU determinism.
+
 ---
 
 <a name="segment-reduction"></a>
@@ -568,3 +573,4 @@ nondeterministic noise.
 [47772]: https://github.com/tensorflow/tensorflow/pull/47772
 [47925]: https://github.com/tensorflow/tensorflow/pull/47925
 [47974]: https://github.com/tensorflow/tensorflow/pull/47974
+[48905]: https://github.com/tensorflow/tensorflow/pull/48905
