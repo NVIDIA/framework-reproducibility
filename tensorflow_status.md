@@ -434,9 +434,9 @@ repository, installing the `fwd9m` package, and calling
 `fwd9m.tensorflow.enable_determinism`.
 
 github/tensorflow/tensorflow pull request [47974][47974] adds GPU-deterministic
-sparse segment reduction ops (probably in TF 2.6). This approach will be used to
-provide GPU-deterministic functionality for all the segment reduction ops in
-version 2.6 or possibly later.
+sparse segment reduction ops (in TF 2.6). This approach will be used to provide
+GPU-deterministic functionality for all the segment reduction ops in version
+2.6 or possibly later.
 
 ### Additional Information
 

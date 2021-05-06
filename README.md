@@ -564,7 +564,7 @@ ID                                                           | Title            
 [47749](https://github.com/tensorflow/tensorflow/pull/47749) | Add GPU determinisim for fp types in GPU<br>SparseTensorDenseMatMul | open   |             |         |
 [47772](https://github.com/tensorflow/tensorflow/pull/47772) | Add segment reduction op exceptions for<br>GPU determinism          | merged | 2021-03-18  | 2.5     |
 [47925](https://github.com/tensorflow/tensorflow/pull/47925) | Add softmax/cross-entropy op exceptions for<br>GPU determinism      | merged | 2021-04-05  | 2.6     |
-[47974](https://github.com/tensorflow/tensorflow/pull/47974) | Add GPU implem of sparse segment reduction ops                      | open   |             |         |
+[47974](https://github.com/tensorflow/tensorflow/pull/47974) | Add GPU implem of sparse segment reduction ops                      | merged | 2021-05-05  | 2.6     |
 [48581](https://github.com/tensorflow/tensorflow/pull/48581) | Update release notes in branch r2.5                                 | closed |             |         |
 [48688](https://github.com/tensorflow/tensorflow/pull/48688) | Add CPU-focused tests for fused softmax/cross-entropy ops           | merged | 2021-04-26  | 2.6     |
 [48905](https://github.com/tensorflow/tensorflow/pull/48905) | Add GPU excepts, CPU d9m, and tests to crop_and_resize              | open   |             |         |
