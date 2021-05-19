@@ -392,12 +392,17 @@ issue [42033][42033] for more information.
 
 ### Solution
 
-There is currently no available solution.
+There is currently no available solution for GPU nondeterminism. For stock
+TensorFlow version 2.6+, [TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS) makes
+CPU backprop to `image` deterministic (see github/tensorflow/tensorflow pull
+request [48905][48905]).
 
 ### Additional Information
 
-github/tensorflow/tensorflow pull request [48905][48905] adds CPU determinism
-for backprop to `image` and unimplemented exceptions for GPU determinism.
+Stock TensorFlow version 2.6+ will throw a `tf.errors.UnimplementedError` if the
+nondeterministic paths through this op are used with the expectation of
+determinism (i.e. with `TF_DETERMINISTIC_OPS` set to `"true"` or `"1"`). See
+github/tensorflow/tensorflow pull request [48905][48905].
 
 ---
 

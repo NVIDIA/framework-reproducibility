@@ -567,7 +567,7 @@ ID                                                           | Title            
 [47974](https://github.com/tensorflow/tensorflow/pull/47974) | Add GPU implem of sparse segment reduction ops                      | merged | 2021-05-05  | 2.6     |
 [48581](https://github.com/tensorflow/tensorflow/pull/48581) | Update release notes in branch r2.5                                 | closed |             |         |
 [48688](https://github.com/tensorflow/tensorflow/pull/48688) | Add CPU-focused tests for fused softmax/cross-entropy ops           | merged | 2021-04-26  | 2.6     |
-[48905](https://github.com/tensorflow/tensorflow/pull/48905) | Add GPU excepts, CPU d9m, and tests to crop_and_resize              | open   |             |         |
+[48905](https://github.com/tensorflow/tensorflow/pull/48905) | Add GPU excepts, CPU d9m, and tests to crop_and_resize              | merged | 2021-05-13  | 2.6     |
 
 Notes:
   1. These are individual commits.
