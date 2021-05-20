@@ -341,8 +341,9 @@ github/tensorflow/tensorflow issue [38185][38185].
 
 ### Solution
 
-There is currently no solution, although a patch is
-[in development](https://github.com/NVIDIA/framework-determinism/pull/21).
+There is currently no released solution, although there is a solution for the
+non-sparse version in review (see github/tensorflow/tensorflow pull request
+[49178][49178]), which will probably appear in stock TensorFlow version 2.6.
 
 A confirmed work-around is to use separate non-fused softmax and cross-entropy
 ops. For example, assuming you're using `tf.keras`, select the activation on the
@@ -579,3 +580,4 @@ nondeterministic noise.
 [47925]: https://github.com/tensorflow/tensorflow/pull/47925
 [47974]: https://github.com/tensorflow/tensorflow/pull/47974
 [48905]: https://github.com/tensorflow/tensorflow/pull/48905
+[49178]: https://github.com/tensorflow/tensorflow/pull/49178
