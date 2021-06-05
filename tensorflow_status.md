@@ -341,9 +341,10 @@ github/tensorflow/tensorflow issue [38185][38185].
 
 ### Solution
 
-There is currently no released solution, although there is a solution for the
-non-sparse version in review (see github/tensorflow/tensorflow pull request
-[49178][49178]), which will probably appear in stock TensorFlow version 2.6.
+There are currently no released solutions, although there are a solutions
+in review (see github/tensorflow/tensorflow pull requests
+[49178][49178] and [50070][50070]), which will probably appear in stock
+TensorFlow version 2.6.
 
 A confirmed work-around is to use separate non-fused softmax and cross-entropy
 ops. For example, assuming you're using `tf.keras`, select the activation on the
@@ -581,3 +582,4 @@ nondeterministic noise.
 [47974]: https://github.com/tensorflow/tensorflow/pull/47974
 [48905]: https://github.com/tensorflow/tensorflow/pull/48905
 [49178]: https://github.com/tensorflow/tensorflow/pull/49178
+[50070]: https://github.com/tensorflow/tensorflow/pull/50070
