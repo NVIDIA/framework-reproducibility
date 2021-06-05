@@ -30,8 +30,8 @@ from the "Solution Available" column.
  `tf.keras.layers.MaxPool3D` backprop                                    | [YES](#max-pool)                       |
  `tf.keras.layers.UpSampling2D` backprop when `interpolation='bilinear'` | [YES](#resize-bilinear)                |
  `tf.keras.layers.UpSampling2D` backprop with `interpolation='nearest'`  | [NO](#resize-nearest)                  |
- `tf.keras.losses.categorical_crossentropy` forward and backprop         | [work-around](#softmax-xent)           |
- `tf.keras.losses.CategoricalCrossentropy` forward and backprop          | [work-around](#softmax-xent)           |
+ `tf.keras.losses.categorical_crossentropy` forward and backprop         | [YES](#softmax-xent)                   |
+ `tf.keras.losses.CategoricalCrossentropy` forward and backprop          | [YES](#softmax-xent)                   |
  `tf.keras.losses.sparse_categorical_crossentropy` forward and backprop  | [work-around](#softmax-xent)           |
  `tf.keras.losses.SparseCategoricalCrossentropy` forward and backprop    | [work-around](#softmax-xent)           |
  `tf.image.adjust_contrast` forward                                      | [NO](#adjust-contrast)                 |
@@ -53,7 +53,7 @@ from the "Solution Available" column.
  `tf.nn.max_pool1d` backprop                                             | [YES](#max-pool)                       |
  `tf.nn.max_pool2d` backprop                                             | [YES](#max-pool)                       |
  `tf.nn.max_pool3d` backprop                                             | [YES](#max-pool)                       |
- `tf.nn.softmax_cross_entropy_with_logits`                               | [work-around](#softmax-xent)           |
+ `tf.nn.softmax_cross_entropy_with_logits`                               | [YES](#softmax-xent)                   |
  `tf.nn.sparse_softmax_cross_entropy_with_logits`                        | [work-around](#softmax-xent)           |
  `tf.sparse.sparse_dense_matmul` forward                                 | [YES](#sparse-dense-matmul)            |
  XLA reductions on GPU                                                   | [YES](#xla-reductions)                 |
@@ -339,12 +339,18 @@ and `tf.nn.sparse_softmax_cross_entropy_with_logits` (accessed via
 nondeterminism into both the backward and forward paths. See
 github/tensorflow/tensorflow issue [38185][38185].
 
-### Solution
+### Solutions
 
-There are currently no released solutions, although there are a solutions
-in review (see github/tensorflow/tensorflow pull requests
-[49178][49178] and [50070][50070]), which will probably appear in stock
-TensorFlow version 2.6.
+In TF2.6+, `tf.nn.softmax_cross_entropy_with_logits` (and the Keras layers based
+on it) can be made to operate deterministically on GPU using
+[TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS)
+(see github/tensorflow/tensorflow pull requests [49178][49178])
+
+There is currently no released solution for
+`tf.nn.sparse_softmax_cross_entropy_with_logits` (and the Keras layers based
+on it), although there is a solution
+in review (see github/tensorflow/tensorflow pull request [50070][50070]), which
+will probably appear in stock TensorFlow version 2.6 or 2.7.
 
 A confirmed work-around is to use separate non-fused softmax and cross-entropy
 ops. For example, assuming you're using `tf.keras`, select the activation on the
@@ -362,9 +368,10 @@ no-op arithmetically and does not appear to contribute to nondeterminism.
 ### Additional Information
 
 Stock TensorFlow version 2.6+ will throw a `tf.errors.UnimplementedError` if the
-nondeterministic paths of these ops are used with the expectation of determinism
-(i.e. with `TF_DETERMINISTIC_OPS` set to `"true"` or `"1"`). See
-github/tensorflow/tensorflow pull request [47925][47925].
+nondeterministic paths of `tf.nn.sparse_softmax_cross_entropy_with_logits` are
+used with the expectation of determinism (i.e. with `TF_DETERMINISTIC_OPS` set
+to `"true"` or `"1"`). See github/tensorflow/tensorflow pull request
+[47925][47925].
 
 ---
 

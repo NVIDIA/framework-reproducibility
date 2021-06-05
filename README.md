@@ -568,7 +568,7 @@ ID                                                           | Title            
 [48581](https://github.com/tensorflow/tensorflow/pull/48581) | Update release notes in branch r2.5                                 | closed |             |         |
 [48688](https://github.com/tensorflow/tensorflow/pull/48688) | Add CPU-focused tests for fused softmax/cross-entropy ops           | merged | 2021-04-26  | 2.6     |
 [48905](https://github.com/tensorflow/tensorflow/pull/48905) | Add GPU excepts, CPU d9m, and tests to crop_and_resize              | merged | 2021-05-13  | 2.6     |
-[49178](https://github.com/tensorflow/tensorflow/pull/49178) | Add non-sparse softmax/xent GPU-determinism                         | open   |             |         |
+[49178](https://github.com/tensorflow/tensorflow/pull/49178) | Add non-sparse softmax/xent GPU-determinism                         | merged | 2021-06-04  | 2.6     |
 [50070](https://github.com/tensorflow/tensorflow/pull/50070) | Add sparse softmax/xent GPU-determinism                             | open   |             |         |
 
 Notes:
