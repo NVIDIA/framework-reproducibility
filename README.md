@@ -370,6 +370,12 @@ The reduced availablilty of control of gradient gating in TF2, with eager
 execution and an increased reliance on the (often high-level) Keras interface,
 doesn't seem to be a real problem with respect to GPU-determinism.
 
+#### Protobufs ####
+
+When serializing a graph into a protobuf, you should pass `True` to the
+[`SetSerializationDeterministic`](https://github.com/protocolbuffers/protobuf/blob/a1bb147e96b6f74db6cdf3c3fcb00492472dbbfa/src/google/protobuf/io/coded_stream.h#L834-L860)
+method of the `CodedOutputStream` class.
+
 #### Multi-GPU using Horovod ####
 
 If you're using Horovod for multi-GPU training, you may need to disable Tensor
