@@ -586,7 +586,7 @@ ID                                                           | Title            
 [48905](https://github.com/tensorflow/tensorflow/pull/48905) | Add GPU excepts, CPU d9m, and tests to crop_and_resize              | merged | 2021-05-13  | 2.6     |
 [49178](https://github.com/tensorflow/tensorflow/pull/49178) | Add non-sparse softmax/xent GPU-determinism                         | merged | 2021-06-04  | 2.6     |
 [50070](https://github.com/tensorflow/tensorflow/pull/50070) | Add sparse softmax/xent GPU-determinism                             | open   |             |         |
-[50135](https://github.com/tensorflow/tensorflow/pull/50135) | Factor core/kernels RequireDeterminism() into library               | open   |             |         |
+[50135](https://github.com/tensorflow/tensorflow/pull/50135) | Factor core/kernels RequireDeterminism() into library               | merged | 2021-06-09  | 2.6     |
 
 Notes:
   1. These are individual commits.
