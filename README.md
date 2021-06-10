@@ -304,14 +304,17 @@ the data-loader pipeline, such as for data augmentation. When the same
 underlying pseudorandom number generator state is used in all the threads, it
 will result in non-deterministic functionality. This happens when the default
 pseudorandom number generator (e.g. from numpy) is used in the data-loader.
-There are two solution to this:
+There are three solutions to this:
 
   1. Make sure that the instances of the objects operating in the parallel
      threads have their own pseudorandom number generator state. For example,
      see [numpy.random.Generator][5].
-  2. Run the data-loader code in only one thread.
+  2. Generate the pseudorandom augmentation parameters, each set associated with
+     each example, in a single thread and then pass them into a stateless,
+     parallelized augmentation process.
+  3. Run all the data-loader code in only one thread.
 
-How you run the data-loader code in only one thread depends on how you're
+How you run all the data-loader code in only one thread depends on how you're
 running the data-loader. If you're using `tf.keras.Model::fit()` or
 `tf.keras.Model::fit_generator()` then `workers` should be set to not more than
 `1`.
@@ -321,6 +324,15 @@ process uses the same stateful data pipeline as the training data-loader then
 these two processes will also run in separate threads and you'll wind up with
 the same problem. In this case, you need to set `workers` to `0` (zero), which
 will cause the data-loader to be run in the main thread.
+
+If you're using `tf.data.Dataset`, it may not be possible to instantiate
+different pseudorandom number generator state for each of the parallel calls in
+methods such as `map` (controlled by `num_parallel_calls`). A deterministic
+solution is to serialize the pseudorandom generation of the data augmentation
+parameters (i.e. `num_parallel_calls=1`) and then feed these into a subsequent,
+parallelized augmentation stage (or stages). For more information, and example
+code, see github/NVIDIA/framework-determinism
+[issue 36](https://github.com/NVIDIA/framework-determinism/issues/36).
 
 #### While Loop Parallelism ####
 
@@ -475,8 +487,6 @@ the op injects non-determinism into the computation.
 * [Issue 29101](https://github.com/tensorflow/tensorflow/issues/29101): Random
   seed not set in graph context of `Dataset#map`. This may have been resolved
   in version 1.14 of TensorFlow.
-* `tf.data.Dataset` with more than one shard (aka worker). The work-around is to
-  use only one shard.
 * `tf.while_loop` with `parallel_iterations` > 1 (default is 10). See
   [While Loop Parallelism](#while-loop-parallelism)
 
