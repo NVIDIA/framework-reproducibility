@@ -58,7 +58,7 @@ def _enable_determinism(seed=None):
     in_ngc_cont = False
   if not in_ngc_cont and tf_vers.between('1.14', '2.0'):
     os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
-    patch_bias_add(_silent=True)
+    patch_bias_add._patch(_silent=True)
   if in_ngc_cont and ngc_vers.at_least('19.06') or tf_vers.at_least('2.1'):
     os.environ['TF_DETERMINISTIC_OPS'] = '1'
   if in_ngc_cont and ngc_vers.at_least('19.06') or tf_vers.at_least('1.14'):
