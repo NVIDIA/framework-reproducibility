@@ -558,6 +558,13 @@ deterministic op functionality is enabled (currently via `TF_DETERMINISTIC_OPS`
 being set to `"true"` or `"1"`), will cause a `tf.errors.UnimplementedError` to
 be thrown.
 
+### Additional Information
+
+Stock TensorFlow version 2.6+ will throw a `tf.errors.UnimplementedError` if the
+nondeterministic path through this op is used with the expectation of
+determinism (i.e. with `TF_DETERMINISTIC_OPS` set to `"true"` or `"1"`). See
+github/tensorflow/tensorflow pull request [50355][50355].
+
 ---
 
 <a name="xla-reductions"></a>
@@ -590,3 +597,4 @@ nondeterministic noise.
 [48905]: https://github.com/tensorflow/tensorflow/pull/48905
 [49178]: https://github.com/tensorflow/tensorflow/pull/49178
 [50070]: https://github.com/tensorflow/tensorflow/pull/50070
+[50355]: https://github.com/tensorflow/tensorflow/pull/50355
