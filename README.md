@@ -577,7 +577,7 @@ ID                                                           | Title            
 [39243](https://github.com/tensorflow/tensorflow/pull/39243) | GPU-deterministic tf.image.resize (bilinear)                        | merged | 2020-09-22  | 2.4     |
 [44717](https://github.com/tensorflow/tensorflow/pull/44717) | Add to rel notes: deterministic<br>tf.image.resize (bilinear)       | merged | 2020-11-13  | 2.4     |
 [47419](https://github.com/tensorflow/tensorflow/pull/47419) | Support all fp types in GPU SparseTensorDenseMatMul                 | merged | 2021-03-08  | 2.5     |
-[47749](https://github.com/tensorflow/tensorflow/pull/47749) | Add GPU determinisim for fp types in GPU<br>SparseTensorDenseMatMul | open   |             |         |
+[47749](https://github.com/tensorflow/tensorflow/pull/47749) | Add GPU determinisim for fp types in GPU<br>SparseTensorDenseMatMul | closed |             |         |
 [47772](https://github.com/tensorflow/tensorflow/pull/47772) | Add segment reduction op exceptions for<br>GPU determinism          | merged | 2021-03-18  | 2.5     |
 [47925](https://github.com/tensorflow/tensorflow/pull/47925) | Add softmax/cross-entropy op exceptions for<br>GPU determinism      | merged | 2021-04-05  | 2.6     |
 [47974](https://github.com/tensorflow/tensorflow/pull/47974) | Add GPU implem of sparse segment reduction<br>ops                   | merged | 2021-05-05  | 2.6     |

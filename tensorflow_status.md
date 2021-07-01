@@ -55,7 +55,7 @@ from the "Solution Available" column.
  `tf.nn.max_pool3d` backprop                                             | [YES](#max-pool)                       |
  `tf.nn.softmax_cross_entropy_with_logits`                               | [YES](#softmax-xent)                   |
  `tf.nn.sparse_softmax_cross_entropy_with_logits`                        | [work-around](#softmax-xent)           |
- `tf.sparse.sparse_dense_matmul` forward                                 | [YES](#sparse-dense-matmul)            |
+ `tf.sparse.sparse_dense_matmul` forward                                 | [NO](#sparse-dense-matmul)             |
  XLA reductions on GPU                                                   | [YES](#xla-reductions)                 |
 
 Information for each source is listed below. To reduce repetition, the following
@@ -531,7 +531,7 @@ there is no GPU implementation). See github/tensorflow/tensorflow issue
 [18037][18037].
 
 GPU support for other floating-point types (`tf.float16`, `tf.float64`,
-`tf.complex64`, and `tf.complex128`) will be added in TF 2.5
+`tf.complex64`, and `tf.complex128`) was added in TF 2.5
 (see github/tensorflow/tensorlow pull request [47419][47419]) and NGC TF 21.05
 (even though it's based on stock TF 2.4). In TF 2.5 (and NGC TF 21.05) onwards,
 if you were relying on the determinism of the `tf.float64` CPU implementation
@@ -541,24 +541,29 @@ different data type.
 
 ### Solutions
 
-  * NGC 21.04+: [TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS)
-
-A deterministic GPU implementation of `tf.sparse.sparse_dense_matmul` when the
-data type of the input tensors is `tf.float32`, for both TF1 and TF2 variants of
-the NGC TF container image will be available in version 21.04 onwards (based
-on stock TF 2.4), and will still only support `tf.float32` on GPU.
-
-A deterministic GPU implementation of `tf.sparse.sparse_dense_matmul` when the
-data type is `tf.float16`, `tf.float32`, or `tf.complex64` will be available in
-NGC TF 21.05 and will probably be available in version 2.6 of stock TensorFlow
-(see github/tensorflow/tensorflow pull request [47749][47749]). In this
-solution, an attempt to use the `tf.sparse.sparse_dense_matmul` GPU
-implementation with data of type `tf.float64` or `tf.complex128`, when
-deterministic op functionality is enabled (currently via `TF_DETERMINISTIC_OPS`
-being set to `"true"` or `"1"`), will cause a `tf.errors.UnimplementedError` to
-be thrown.
+No solution has yet been released.
 
 ### Additional Information
+
+A more deterministic GPU implementation of `tf.sparse.sparse_dense_matmul` when
+the data type of the input tensors is `tf.float32`, for both TF1 and TF2
+variants of the NGC TF container image is available in version 21.04 onwards
+(based on stock TF 2.4; enabled by
+[TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS)), and will still only support
+`tf.float32` on GPU.
+
+A more deterministic GPU implementation of `tf.sparse.sparse_dense_matmul` when
+the data type is `tf.float16`, `tf.float32`, or `tf.complex64` is available in
+NGC TF 21.05 onwards (enabled by
+[TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS)). In this solution, an attempt to
+use the `tf.sparse.sparse_dense_matmul` GPU implementation with data of type
+`tf.float64` or `tf.complex128`, when deterministic op functionality is enabled
+(currently via `TF_DETERMINISTIC_OPS` being set to `"true"` or `"1"`), will
+cause a `tf.errors.UnimplementedError` to be thrown.
+
+The above-mentioned GPU implementations are flawed (and can introduce
+nondeterminism) and will not appear in stock TensorFlow (see
+github/tensorflow/tensorflow pull request [47749][47749])
 
 Stock TensorFlow version 2.6+ will throw a `tf.errors.UnimplementedError` if the
 nondeterministic path through this op is used with the expectation of
