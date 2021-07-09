@@ -588,8 +588,8 @@ ID                                                           | Title            
 [50070](https://github.com/tensorflow/tensorflow/pull/50070) | Add sparse softmax/xent GPU-determinism                             | open   |             |         |
 [50135](https://github.com/tensorflow/tensorflow/pull/50135) | Factor core/kernels RequireDeterminism() into<br>library            | merged | 2021-06-09  | 2.6     |
 [50355](https://github.com/tensorflow/tensorflow/pull/50355) | Add d9m-unimplemented exceptions to sparse/sparse<br>matmul         | merged | 2021-06-23  | 2.6     |
-[50505](https://github.com/tensorflow/tensorflow/pull/50505) | Add d9m-unimplemented exception-throwing to fused<br>batch-norm     | open   |             |         |
-[50640](https://github.com/tensorflow/tensorflow/pull/50640) | Enhance r2.6 release notes                                          | open   |             |         |
+[50505](https://github.com/tensorflow/tensorflow/pull/50505) | Add d9m-unimplemented exception-throwing to fused<br>batch-norm     | merged | 2021-07-08  | 2.7     |
+[50640](https://github.com/tensorflow/tensorflow/pull/50640) | Enhance r2.6 release notes                                          | merged | 2021-07-08  | 2.6     |
 
 Notes:
   1. These are individual commits.

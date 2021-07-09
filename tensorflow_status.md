@@ -136,7 +136,7 @@ See the solution status for [`tf.gather`](#gather).
 ### Problem
 
 `tf.compat.v1.nn.fused_batch_norm` introduces truly random noise in the backrop
-to `offset` when `is_training=False`.
+to `offset` when `is_training=False`, when running on a GPU.
 
 Backprop through `tf.compat.v1.nn.fused_batch_norm` when `training=False` is
 used for fine-tuning. See github/tensorflow/tensorflow issue [10857][10857] for
@@ -145,6 +145,14 @@ more information.
 ### Solution
 
 There is currently no available solution
+
+### Additional Information
+
+Stock TensorFlow version 2.7+ will throw a `tf.errors.UnimplementedError` if the
+nondeterministic path through `tf.compat.v1.nn.fused_batch_norm` is
+traversed with the expectation of determinism (i.e. with `TF_DETERMINISTIC_OPS`
+set to `"true"` or `"1"`). See github/tensorflow/tensorflow pull request
+[50505][50505].
 
 ---
 
@@ -603,3 +611,4 @@ nondeterministic noise.
 [49178]: https://github.com/tensorflow/tensorflow/pull/49178
 [50070]: https://github.com/tensorflow/tensorflow/pull/50070
 [50355]: https://github.com/tensorflow/tensorflow/pull/50355
+[50505]: https://github.com/tensorflow/tensorflow/pull/50505
