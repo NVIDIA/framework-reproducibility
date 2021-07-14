@@ -21,6 +21,7 @@ from the "Solution Available" column.
  `tf.compat.v1.nn.fused_batch_norm` backrop                              | [NO](#fused-batch-norm)      |
  `tf.convert_to_tensor` forward, for `tf.IndexedSlices`                  | [NO](#convert-to-tensor)     |
  `tf.gather` backprop                                                    | [NO](#gather)                |
+ `tf.keras.layers.BatchNormalization` backprop                           | [NO](#fused-batch-norm)      |
  `tf.keras.layers.Conv1D` backprop                                       | [YES](#cudnn-conv)           |
  `tf.keras.layers.Conv2D` backprop                                       | [YES](#cudnn-conv)           |
  `tf.keras.layers.Conv3D` backprop                                       | [YES](#cudnn-conv)           |
@@ -141,6 +142,15 @@ to `offset` when `is_training=False`, when running on a GPU.
 Backprop through `tf.compat.v1.nn.fused_batch_norm` when `training=False` is
 used for fine-tuning. See github/tensorflow/tensorflow issue [10857][10857] for
 more information.
+
+This nondeterminism is also exposed through `tf.keras.layers.BatchNormalization`
+when the model/layer attribute `trainable` is set to `True` but the layer is
+called with `training=False`. In fine-tuning the
+`tf.compat.v1.nn.fused_batch_norm` `offset` input
+(`tf.keras.layers.BatchNormalization` `beta` parameter) will be updated via
+back-propagation, even while the running mean and variance are held static (and
+used), in "inference mode". For more information, see the TensorFlow guide on
+[transfer learning and fine-tuning](https://www.tensorflow.org/guide/keras/transfer_learning).
 
 ### Solution
 
