@@ -14,49 +14,49 @@ The following table indicates whether a solution is available for each source.
 For further information, see the later detailed notes, which are linked to
 from the "Solution Available" column.
 
- Source                                                                  | Solution Available                     |
--------------------------------------------------------------------------|:---------------------------------------|
- Auto-tuning of cuDNN convolution algorithms                             | [YES](#auto-tuning)                    |
- `tfa.image.dense_image_warp` backprop                                   | [unreleased patch](#dense-image-warp)  |
- `tf.compat.v1.nn.fused_batch_norm` backrop                              | [NO](#fused-batch-norm)                |
- `tf.convert_to_tensor` forward, for `tf.IndexedSlices`                  | [unreleased patch](#convert-to-tensor) |
- `tf.gather` backprop                                                    | [unreleased patch](#gather)            |
- `tf.keras.layers.Conv1D` backprop                                       | [YES](#cudnn-conv)                     |
- `tf.keras.layers.Conv2D` backprop                                       | [YES](#cudnn-conv)                     |
- `tf.keras.layers.Conv3D` backprop                                       | [YES](#cudnn-conv)                     |
- `tf.keras.layers.DepthwiseConv2D` backprop to `filter`                  | [NO](#depthwise-conv)                  |
- `tf.keras.layers.MaxPool1D` backprop                                    | [YES](#max-pool)                       |
- `tf.keras.layers.MaxPool2D` backprop                                    | [YES](#max-pool)                       |
- `tf.keras.layers.MaxPool3D` backprop                                    | [YES](#max-pool)                       |
- `tf.keras.layers.UpSampling2D` backprop when `interpolation='bilinear'` | [YES](#resize-bilinear)                |
- `tf.keras.layers.UpSampling2D` backprop with `interpolation='nearest'`  | [NO](#resize-nearest)                  |
- `tf.keras.losses.categorical_crossentropy` forward and backprop         | [YES](#softmax-xent)                   |
- `tf.keras.losses.CategoricalCrossentropy` forward and backprop          | [YES](#softmax-xent)                   |
- `tf.keras.losses.sparse_categorical_crossentropy` forward and backprop  | [work-around](#softmax-xent)           |
- `tf.keras.losses.SparseCategoricalCrossentropy` forward and backprop    | [work-around](#softmax-xent)           |
- `tf.image.adjust_contrast` forward                                      | [NO](#adjust-contrast)                 |
- `tf.image.crop_and_resize` backprop                                     | [NO](#crop-and-resize)                 |
- `tf.image.resize` backprop when `method=ResizeMethod.BILINEAR`          | [YES](#resize-bilinear)                |
- `tf.image.resize` backprop when `method=ResizeMethod.NEAREST`           | [NO](#resize-nearest)                  |
- `tf.math.segment_prod` forward                                          | [NO](#segment-reduction)               |
- `tf.math.segment_sum` forward                                           | [unreleased patch](#segment-reduction) |
- `tf.math.unsorted_segment_mean`                                         | [NO](#segment-reduction)               |
- `tf.math.unsorted_segment_prod`                                         | [NO](#segment-reduction)               |
- `tf.math.unsorted_segment_sqrt_n`                                       | [NO](#segment-reduction)               |
- `tf.math.unsorted_segment_sum`                                          | [unreleased patch](#segment-reduction) |
- `tf.nn.bias_add` backprop                                               | [YES](#bias-addition)                  |
- `tf.nn.conv1d` backprop                                                 | [YES](#cudnn-conv)                     |
- `tf.nn.conv2d` backprop                                                 | [YES](#cudnn-conv)                     |
- `tf.nn.conv3d` backprop                                                 | [YES](#cudnn-conv)                     |
- `tf.nn.ctc_loss` backprop                                               | [NO](#ctc-loss)                        |
- `tf.nn.depthwise_conv2d` backprop to `filter`                           | [NO](#depthwise-conv)                  |
- `tf.nn.max_pool1d` backprop                                             | [YES](#max-pool)                       |
- `tf.nn.max_pool2d` backprop                                             | [YES](#max-pool)                       |
- `tf.nn.max_pool3d` backprop                                             | [YES](#max-pool)                       |
- `tf.nn.softmax_cross_entropy_with_logits`                               | [YES](#softmax-xent)                   |
- `tf.nn.sparse_softmax_cross_entropy_with_logits`                        | [work-around](#softmax-xent)           |
- `tf.sparse.sparse_dense_matmul` forward                                 | [NO](#sparse-dense-matmul)             |
- XLA reductions on GPU                                                   | [YES](#xla-reductions)                 |
+ Source                                                                  | Solution Available           |
+-------------------------------------------------------------------------|:-----------------------------|
+ Auto-tuning of cuDNN convolution algorithms                             | [YES](#auto-tuning)          |
+ `tfa.image.dense_image_warp` backprop                                   | [NO](#dense-image-warp)      |
+ `tf.compat.v1.nn.fused_batch_norm` backrop                              | [NO](#fused-batch-norm)      |
+ `tf.convert_to_tensor` forward, for `tf.IndexedSlices`                  | [NO](#convert-to-tensor)     |
+ `tf.gather` backprop                                                    | [NO](#gather)                |
+ `tf.keras.layers.Conv1D` backprop                                       | [YES](#cudnn-conv)           |
+ `tf.keras.layers.Conv2D` backprop                                       | [YES](#cudnn-conv)           |
+ `tf.keras.layers.Conv3D` backprop                                       | [YES](#cudnn-conv)           |
+ `tf.keras.layers.DepthwiseConv2D` backprop to `filter`                  | [NO](#depthwise-conv)        |
+ `tf.keras.layers.MaxPool1D` backprop                                    | [YES](#max-pool)             |
+ `tf.keras.layers.MaxPool2D` backprop                                    | [YES](#max-pool)             |
+ `tf.keras.layers.MaxPool3D` backprop                                    | [YES](#max-pool)             |
+ `tf.keras.layers.UpSampling2D` backprop when `interpolation='bilinear'` | [YES](#resize-bilinear)      |
+ `tf.keras.layers.UpSampling2D` backprop with `interpolation='nearest'`  | [NO](#resize-nearest)        |
+ `tf.keras.losses.categorical_crossentropy` forward and backprop         | [YES](#softmax-xent)         |
+ `tf.keras.losses.CategoricalCrossentropy` forward and backprop          | [YES](#softmax-xent)         |
+ `tf.keras.losses.sparse_categorical_crossentropy` forward and backprop  | [work-around](#softmax-xent) |
+ `tf.keras.losses.SparseCategoricalCrossentropy` forward and backprop    | [work-around](#softmax-xent) |
+ `tf.image.adjust_contrast` forward                                      | [NO](#adjust-contrast)       |
+ `tf.image.crop_and_resize` backprop                                     | [NO](#crop-and-resize)       |
+ `tf.image.resize` backprop when `method=ResizeMethod.BILINEAR`          | [YES](#resize-bilinear)      |
+ `tf.image.resize` backprop when `method=ResizeMethod.NEAREST`           | [NO](#resize-nearest)        |
+ `tf.math.segment_prod` forward                                          | [NO](#segment-reduction)     |
+ `tf.math.segment_sum` forward                                           | [NO](#segment-reduction)     |
+ `tf.math.unsorted_segment_mean`                                         | [NO](#segment-reduction)     |
+ `tf.math.unsorted_segment_prod`                                         | [NO](#segment-reduction)     |
+ `tf.math.unsorted_segment_sqrt_n`                                       | [NO](#segment-reduction)     |
+ `tf.math.unsorted_segment_sum`                                          | [NO](#segment-reduction)     |
+ `tf.nn.bias_add` backprop                                               | [YES](#bias-addition)        |
+ `tf.nn.conv1d` backprop                                                 | [YES](#cudnn-conv)           |
+ `tf.nn.conv2d` backprop                                                 | [YES](#cudnn-conv)           |
+ `tf.nn.conv3d` backprop                                                 | [YES](#cudnn-conv)           |
+ `tf.nn.ctc_loss` backprop                                               | [NO](#ctc-loss)              |
+ `tf.nn.depthwise_conv2d` backprop to `filter`                           | [NO](#depthwise-conv)        |
+ `tf.nn.max_pool1d` backprop                                             | [YES](#max-pool)             |
+ `tf.nn.max_pool2d` backprop                                             | [YES](#max-pool)             |
+ `tf.nn.max_pool3d` backprop                                             | [YES](#max-pool)             |
+ `tf.nn.softmax_cross_entropy_with_logits`                               | [YES](#softmax-xent)         |
+ `tf.nn.sparse_softmax_cross_entropy_with_logits`                        | [work-around](#softmax-xent) |
+ `tf.sparse.sparse_dense_matmul` forward                                 | [NO](#sparse-dense-matmul)   |
+ XLA reductions on GPU                                                   | [YES](#xla-reductions)       |
 
 Information for each source is listed below. To reduce repetition, the following
 abbreviations have been used throughout:
@@ -450,17 +450,20 @@ therefore also introduce truly random noise in the forward path:
 
 There is currently no released solution.
 
-We **do** have an unreleased patch for `tf.math.segment_sum` and
-`tf.math.unsorted_segment_sum` that can be used by cloning this current
-repository, installing the `fwd9m` package, and calling
-`fwd9m.tensorflow.enable_determinism`.
-
 github/tensorflow/tensorflow pull request [47974][47974] adds GPU-deterministic
 sparse segment reduction ops (in TF 2.6). This approach will be used to provide
 GPU-deterministic functionality for all the segment reduction ops in version
-2.6 or possibly later.
+2.7 or possibly later.
 
 ### Additional Information
+
+We **do** have an unreleased patch for `tf.math.segment_sum` and
+`tf.math.unsorted_segment_sum` that can be used by cloning this current
+repository, installing the `fwd9m` package, and calling
+`fwd9m.tensorflow.enable_determinism`. However, this patch will not provide
+robust deterministic functionality and should not be relied upon. For more
+information, see github/tensorflow/tensorflow pull request [47749][47749], in
+which the approach used in this patch was discovered to be flawed.
 
 Stock TensorFlow version 2.5+ will throw a `tf.errors.UnimplementedError` if the
 nondeterministic paths of these ops are used with the expectation of determinism
