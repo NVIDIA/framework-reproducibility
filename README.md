@@ -299,7 +299,7 @@ appears to operate deterministically.
 When the data-loader pipeline is stateful and is replicated into multiple
 asynchronous threads, the threads can interact with each other, resulting in
 non-deterministic operation of the overall data-loader functionality. The
-most common example of this is when pseudorandom number genration is used in
+most common example of this is when pseudorandom number generation is used in
 the data-loader pipeline, such as for data augmentation. When the same
 underlying pseudorandom number generator state is used in all the threads, it
 will result in non-deterministic functionality. This happens when the default
