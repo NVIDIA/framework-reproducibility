@@ -280,10 +280,15 @@ Note that the `shuffle` argument of the Keras model `fit` method defaults to
 number generator that is also reset reproducibly by `tf.random.set_seed`,
 probably the same pseudorandom number generator that TensorFlow uses throughout.
 
-You may also need to provide a seed for any other ops you use that rely on
-pseudorandom number generators, such as
-`tf.image.sample_distorted_bounding_box`, otherwise they may use a random seed
-and their operation will not be repducible.
+For more information, including about the relationship between the global seed
+(set via `tf.random.set_seed`) and the `seed` parameter that some ops have, see
+the documentation for
+[`tf.random.set_seed`](https://www.tensorflow.org/api_docs/python/tf/random/set_seed).
+This documentation suggests that, for determinism, if `tf.random.set_seed` has
+been called then the `seed` parameter of other ops does not need to be set.
+This did not used to be true and there may still be instances where the seed
+parameter of a given op must be set, to obtain determinism, even after
+`tf.random.set_seed` has been called.
 
 #### Dataset Sharding ####
 
@@ -333,6 +338,33 @@ parameters (i.e. `num_parallel_calls=1`) and then feed these into a subsequent,
 parallelized augmentation stage (or stages). For more information, and example
 code, see github/NVIDIA/framework-determinism
 [issue 36](https://github.com/NVIDIA/framework-determinism/issues/36).
+
+The methods of `tf.data.Dataset` (such as map) that have a `num_parallel_calls`
+parameter also have a `deterministic` parameter. When set to `True`,
+`deterministic` forces the elements to be produced in a repeatable order when
+`num_parallel_calls` is greater than 1; when set to `False`, the constraint is
+relaxed; if not set, then `tf.data.Options.experimental_deterministic` (which
+defaults to `True`) controls the behavior. Therefore, for determinism, don't set
+the `deterministic` parameter in any of the methods and also don't change
+`tf.data.Options.experimental_deterministic` from the default.
+
+`tf.image` ops that use pseudorandom number generators (and therefore produce a
+different result every time they are executed), such as
+`tf.image.sample_distorted_bounding_box`, have stateless versions
+(e.g. `tf.image.stateless_sample_distorted_bounding_box`) which will
+always produce the same result every time they are executed with the same `seed`
+parameter. These ops may be useful in the creation of a deterministic
+data-loader. A random number per example could be created and added in a
+`tf.data.Dataset` stage with no parallelism (`num_parallel_calls=1`) and then
+this random number could be passed as the `seed` parameter of multiple,
+different stateless random image ops in later, parallelized
+(`num_parallel_calls` > 1) stages.
+
+[`tf.data.experimental.enable_debug_mode`](https://www.tensorflow.org/api_docs/python/tf/data/experimental/enable_debug_mode)
+can be called to quickly disable
+all potential sources of nondeterminism in subsequently defined `tf.data` input
+pipelines when running in eager mode, which makes ruling-out nondeterminism
+from a `tf.data` input pipeline easy and fast.
 
 #### While Loop Parallelism ####
 
@@ -398,7 +430,7 @@ yet been resolved, see Horovod [PR 1130][503]):
 os.environ['HOROVOD_FUSION_THRESHOLD']='0'
 ```
 
-#### Multi-GPU using MirroredStrategy ####
+#### Multi-GPU using tf.distribute Strategies ####
 
 Prior to TensorFlow version 2.3, when using `tf.data.Dataset::shuffle` with
 `tf.distribute.MirroredStrategy` (or perhaps any `tf.distribute` strategy),
@@ -407,8 +439,14 @@ appears to have been fixed in TensorFlow version 2.3. See TF issue
 [38197](https://github.com/tensorflow/tensorflow/issues/38197) for more
 information.
 
-Also, note that the `seed` parameter of the `shuffle` method should always be
-set in order to obtain determinism.
+The last time I checked, the `seed` parameter of the `shuffle` method needed to
+be set in order to obtain determinism, although the latest
+[documentation](https://www.tensorflow.org/api_docs/python/tf/random/set_seed)
+for `tf.random.set_seed` suggests that this should not be necessary as long as
+`tf.random.set_seed` has been called.
+
+Creating a `tf.random.Generator` under a `tf.distribute.Strategy::scope()` will
+result in different replicas getting different random number streams.
 
 #### CPU ####
 
