@@ -628,6 +628,7 @@ ID                                                           | Title            
 [50355](https://github.com/tensorflow/tensorflow/pull/50355) | Add d9m-unimplemented exceptions to sparse/sparse<br>matmul         | merged | 2021-06-23  | 2.6     |
 [50505](https://github.com/tensorflow/tensorflow/pull/50505) | Add d9m-unimplemented exception-throwing to fused<br>batch-norm     | merged | 2021-07-08  | 2.7     |
 [50640](https://github.com/tensorflow/tensorflow/pull/50640) | Enhance r2.6 release notes                                          | merged | 2021-07-08  | 2.6     |
+[0f7b1][1006]<sup>1</sup>                                    | Add internal function to enable/disable op determinism              | merged | 2021-07-26  | 2.7     |
 
 Notes:
   1. These are individual commits.
@@ -637,6 +638,7 @@ Notes:
 [1003]: https://github.com/tensorflow/tensorflow/pull/34951
 [1004]: https://github.com/tensorflow/tensorflow/commit/8b7a3db0b6e09415b5640be4986fb4d7c6e5209a
 [1005]: https://github.com/tensorflow/tensorflow/commit/9e096debc4a0909deb69970f38bee7b77e5e5f7d
+[1006]: https://github.com/tensorflow/tensorflow/commit/0f7b1c29cd24727992f355b196f827e6d4235684
 
 ### Other TensorFlow Organization Pull Requests
 
