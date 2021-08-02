@@ -341,6 +341,14 @@ issues [#12](https://github.com/NVIDIA/framework-determinism/issues/12) and
 [#24](https://github.com/NVIDIA/framework-determinism/issues/24) for this
 current repository).
 
+### Additional Information
+
+Stock TensorFlow version 2.7+ will throw a `tf.errors.UnimplementedError` if the
+nondeterministic paths described above are used with the expectation of
+determinism (i.e. with `TF_DETERMINISTIC_OPS` set to `"true"` or `"1"`). See
+github/tensorflow/tensorflow pull request
+[51023][51023].
+
 ---
 
 <a name="softmax-xent"></a>
@@ -625,3 +633,4 @@ nondeterministic noise.
 [50070]: https://github.com/tensorflow/tensorflow/pull/50070
 [50355]: https://github.com/tensorflow/tensorflow/pull/50355
 [50505]: https://github.com/tensorflow/tensorflow/pull/50505
+[51023]: https://github.com/tensorflow/tensorflow/pull/51023
