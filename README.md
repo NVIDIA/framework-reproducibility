@@ -630,6 +630,7 @@ ID                                                           | Title            
 [50640](https://github.com/tensorflow/tensorflow/pull/50640) | Enhance r2.6 release notes                                          | merged | 2021-07-08  | 2.6     |
 [0f7b1][1006]<sup>1</sup>                                    | Add internal function to enable/disable op determinism              | merged | 2021-07-26  | 2.7     |
 [51023](https://github.com/tensorflow/tensorflow/pull/51023) | Add unimplemented exception to nearest-neighbor resizing            | merged | 2021-08-02  | 2.7     |
+[51140](https://github.com/tensorflow/tensorflow/pull/51140) | Add unimplemented exception to tf.image.adjust_contrast             | open   |             |         |
 
 Notes:
   1. These are individual commits.
