@@ -58,7 +58,8 @@ This repository serves three purposes:
 For more information, please watch the video of the GTC 2019 talk
 [_Determinism in Deep Learning_][1]. The desciption under that video also
 includes links to the slides from the talk and to a poster presentation on this
-topic.
+topic. Guidance on obtaining reproducible operation from TensorFlow, as well
+as the status as of 2021-08-06, can be found in [these slides][8].
 
 ## Installation
 
@@ -752,3 +753,4 @@ William Zhang.
 [5]: https://numpy.org/doc/stable/reference/random/generator.html
 [6]: https://www.tensorflow.org/guide/function#autograph_transformations
 [7]: https://www.tensorflow.org/guide/function#loops
+[8]: https://bit.ly/dl-determinism-slides-v3
