@@ -490,6 +490,9 @@ github/tensorflow/tensorflow pull request [47772][47772].
 
 At the time of writing (TensorFlow 2.5), `tf.math.segment_mean` is not
 implemented on the GPU and the CPU imlementation operates deterministically.
+Note that, along with the upcoming GPU-deterministic segment reduction ops,
+`tf.math.segment_mean` will also be implemented on the GPU (deterministically).
+See see github/tensorflow/tensorflow pull request [51392][51392].
 
 See also:
   * Issue [31](https://github.com/NVIDIA/framework-determinism/issues/31) in
@@ -634,3 +637,4 @@ nondeterministic noise.
 [50355]: https://github.com/tensorflow/tensorflow/pull/50355
 [50505]: https://github.com/tensorflow/tensorflow/pull/50505
 [51023]: https://github.com/tensorflow/tensorflow/pull/51023
+[51392]: https://github.com/tensorflow/tensorflow/pull/51392
