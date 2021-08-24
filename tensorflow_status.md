@@ -406,12 +406,20 @@ to `"true"` or `"1"`). See github/tensorflow/tensorflow pull request
 
 ### Problem
 
-`tf.image.adjust_contrast` inject truly random noise in the forward direction
+`tf.image.adjust_contrast` injects truly random noise in the forward direction
 when running on a GPU.
 
 ### Solution
 
 There is currently no available solution.
+
+### Additional Information
+
+Stock TensorFlow version 2.7+ will throw a `tf.errors.UnimplementedError` if the
+nondeterministic paths through `tf.image.adjust_contrast` are
+used with the expectation of determinism (i.e. with `TF_DETERMINISTIC_OPS` set
+to `"true"` or `"1"`). See github/tensorflow/tensorflow pull request
+[51140][51140].
 
 ---
 
@@ -637,4 +645,5 @@ nondeterministic noise.
 [50355]: https://github.com/tensorflow/tensorflow/pull/50355
 [50505]: https://github.com/tensorflow/tensorflow/pull/50505
 [51023]: https://github.com/tensorflow/tensorflow/pull/51023
+[51140]: https://github.com/tensorflow/tensorflow/pull/51140
 [51392]: https://github.com/tensorflow/tensorflow/pull/51392
