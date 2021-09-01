@@ -369,19 +369,23 @@ from a `tf.data` input pipeline easy and fast.
 
 #### While Loop Parallelism ####
 
-The use of `tf.while_loop` when `parallel_iterations` is greater than 1 (note
-that 10 is the default) may introduce non-determinism into model functionality.
-Additionally, the [AutoGraph Transformations][6], that operate while compiling
-code into a graph when (TF2 API) `tf.function` (or the use of the @tf.function
-decorator) is used, may lead to [loops][7] being implemented using
-`tf.while_loop` and, therefore, parallelized.
+In TF1, the use of `tf.while_loop` when `parallel_iterations` is greater than 1
+(note that 10 is the default) may introduce nondeterminism into model
+functionality. Additionally, the [AutoGraph Transformations][6], that operate
+while compiling code into a graph when (TF2 API) `tf.function` (or the use of
+the @tf.function decorator) is used, may lead to [loops][7] being implemented
+using `tf.while_loop` and, therefore, parallelized.
 
-The current work-around, to prevent this non-determinism, is to use
+The current work-around, to prevent this nondeterminism, is to use
 `tf.autograph.experimental.set_loop_options` inside the `for` loop, with
 `parallel_iterations=1`.
 
-It has not yet been determined if this non-determinism is specific to operation
-on a GPU or if it is a general issue in TensorFlow.
+It has not yet been determined if this non-determinism is specific to
+operation on a GPU or if it is a general issue in TensorFlow.
+
+In TF2, the configuration of `parallel_iterations` in a `tf.while_loop` does
+*not* affect the order of stateful operations, and therefore `tf.while_loop` can
+be used without setting `parallel_iterations` to 1.
 
 #### Gradient Gating ####
 
