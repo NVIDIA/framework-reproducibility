@@ -635,6 +635,7 @@ ID                                                           | Title            
 [50640](https://github.com/tensorflow/tensorflow/pull/50640) | Enhance r2.6 release notes                                          | merged | 2021-07-08  | 2.6     |
 [0f7b1][1006]<sup>1</sup>                                    | Add internal function to enable/disable op determinism              | merged | 2021-07-26  | 2.7     |
 [51023](https://github.com/tensorflow/tensorflow/pull/51023) | Add unimplemented exception to nearest-neighbor resizing            | merged | 2021-08-02  | 2.7     |
+[a4b53][1008]<sup>1</sup>                                    | Raise error if random ops used with determinism without seed        | merged | 2021-08-10  | 2.7     |
 [51140](https://github.com/tensorflow/tensorflow/pull/51140) | Add unimplemented exception to tf.image.adjust_contrast             | merged | 2021-08-19  | 2.7     |
 [51392](https://github.com/tensorflow/tensorflow/pull/51392) | Add GPU-deterministic segment reductions                            | open   |             |         |
 [fc91e][1007]<sup>1</sup>                                    | Add make_deterministic grappler pass                                | merged | 2021-09-03  | 2.7     |
@@ -649,6 +650,7 @@ Notes:
 [1005]: https://github.com/tensorflow/tensorflow/commit/9e096debc4a0909deb69970f38bee7b77e5e5f7d
 [1006]: https://github.com/tensorflow/tensorflow/commit/0f7b1c29cd24727992f355b196f827e6d4235684
 [1007]: https://github.com/tensorflow/tensorflow/commit/fc91e5caf3e9c807de4b0312ef456d7b57e1a876
+[1008]: https://github.com/tensorflow/tensorflow/commit/a4b53af710f1e1dc41279e2de7cf6ec8b092f28b
 
 ### Other TensorFlow Organization Pull Requests
 
