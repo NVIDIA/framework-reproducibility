@@ -628,7 +628,7 @@ ID                                                           | Title            
 [48688](https://github.com/tensorflow/tensorflow/pull/48688) | Add CPU-focused tests for fused<br>softmax/cross-entropy ops           | merged | 2021-04-26  | 2.6     |
 [48905](https://github.com/tensorflow/tensorflow/pull/48905) | Add GPU excepts, CPU d9m, and tests to<br>crop_and_resize              | merged | 2021-05-13  | 2.6     |
 [49178](https://github.com/tensorflow/tensorflow/pull/49178) | Add non-sparse softmax/xent GPU-determinism                            | merged | 2021-06-04  | 2.6     |
-[50070](https://github.com/tensorflow/tensorflow/pull/50070) | Add sparse softmax/xent GPU-determinism                                | open   |             |         |
+[50070](https://github.com/tensorflow/tensorflow/pull/50070) | Add sparse softmax/xent GPU-determinism                                | merged | 2021-09-10  | 2.7     |
 [50135](https://github.com/tensorflow/tensorflow/pull/50135) | Factor core/kernels RequireDeterminism() into<br>library               | merged | 2021-06-09  | 2.6     |
 [50355](https://github.com/tensorflow/tensorflow/pull/50355) | Add d9m-unimplemented exceptions to sparse/sparse<br>matmul            | merged | 2021-06-23  | 2.6     |
 [50505](https://github.com/tensorflow/tensorflow/pull/50505) | Add d9m-unimplemented exception-throwing to fused<br>batch-norm        | merged | 2021-07-08  | 2.7     |

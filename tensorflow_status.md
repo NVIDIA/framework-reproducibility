@@ -33,8 +33,8 @@ from the "Solution Available" column.
  `tf.keras.layers.UpSampling2D` backprop with `interpolation='nearest'`  | [NO](#resize-nearest)        |
  `tf.keras.losses.categorical_crossentropy` forward and backprop         | [YES](#softmax-xent)         |
  `tf.keras.losses.CategoricalCrossentropy` forward and backprop          | [YES](#softmax-xent)         |
- `tf.keras.losses.sparse_categorical_crossentropy` forward and backprop  | [work-around](#softmax-xent) |
- `tf.keras.losses.SparseCategoricalCrossentropy` forward and backprop    | [work-around](#softmax-xent) |
+ `tf.keras.losses.sparse_categorical_crossentropy` forward and backprop  | [YES](#softmax-xent)         |
+ `tf.keras.losses.SparseCategoricalCrossentropy` forward and backprop    | [YES](#softmax-xent)         |
  `tf.image.adjust_contrast` forward                                      | [NO](#adjust-contrast)       |
  `tf.image.crop_and_resize` backprop                                     | [NO](#crop-and-resize)       |
  `tf.image.resize` backprop when `method=ResizeMethod.BILINEAR`          | [YES](#resize-bilinear)      |
@@ -55,7 +55,7 @@ from the "Solution Available" column.
  `tf.nn.max_pool2d` backprop                                             | [YES](#max-pool)             |
  `tf.nn.max_pool3d` backprop                                             | [YES](#max-pool)             |
  `tf.nn.softmax_cross_entropy_with_logits`                               | [YES](#softmax-xent)         |
- `tf.nn.sparse_softmax_cross_entropy_with_logits`                        | [work-around](#softmax-xent) |
+ `tf.nn.sparse_softmax_cross_entropy_with_logits`                        | [YES](#softmax-xent)         |
  `tf.sparse.sparse_dense_matmul` forward                                 | [NO](#sparse-dense-matmul)   |
  XLA reductions on GPU                                                   | [YES](#xla-reductions)       |
 
@@ -367,23 +367,23 @@ github/tensorflow/tensorflow issue [38185][38185].
 
 ### Solutions
 
-In TF2.6+, `tf.nn.softmax_cross_entropy_with_logits` (and the Keras layers based
+In TF2.7+, both `tf.nn.softmax_cross_entropy_with_logits` and
+`tf.nn.sparse_softmax_cross_entropy_with_logits` (and the Keras
+layers based on them) can be made to operate deterministically on GPU
+using `tf.config.experimental.enable_deterministic_ops(True)`. See
+github/tensorflow/tensorflow pull request [50070][50070].
+
+In TF2.6, `tf.nn.softmax_cross_entropy_with_logits` (and the Keras layers based
 on it) can be made to operate deterministically on GPU using
-[TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS)
-(see github/tensorflow/tensorflow pull requests [49178][49178])
+[TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS). See github/tensorflow/tensorflow
+pull requests [49178][49178].
 
-There is currently no released solution for
-`tf.nn.sparse_softmax_cross_entropy_with_logits` (and the Keras layers based
-on it), although there is a solution
-in review (see github/tensorflow/tensorflow pull request [50070][50070]), which
-will probably appear in stock TensorFlow version 2.6 or 2.7.
-
-A confirmed work-around is to use separate non-fused softmax and cross-entropy
-ops. For example, assuming you're using `tf.keras`, select the activation on the
-final layer (e.g. a `Dense` layer) to be 'softmax' (which chooses
-`tf.nn.softmax`) and then, for the loss function, continue to use
-`tf.keras.losses.categorical_crossentropy` (possibly by using its wrapper class
-`tf.keras.losses.CategoricalCrossentropy`) or
+A confirmed work-around for older versions of TensorFlow is to use separate
+non-fused softmax and cross-entropy ops. For example, assuming you're using
+`tf.keras`, select the activation on the final layer (e.g. a `Dense` layer) to
+be 'softmax' (which chooses `tf.nn.softmax`) and then, for the loss function,
+continue to use `tf.keras.losses.categorical_crossentropy` (possibly by using
+its wrapper class `tf.keras.losses.CategoricalCrossentropy`) or
 `tf.keras.losses.sparse_categorical_crossentropy` (possibly by using its wrapper
 class `tf.keras.losses.SparseCategoricalCrossentropy`). Since it uses non-fused
 kernels, the work-around will be lower performance. Theoretically, you should
@@ -393,7 +393,7 @@ no-op arithmetically and does not appear to contribute to nondeterminism.
 
 ### Additional Information
 
-Stock TensorFlow version 2.6+ will throw a `tf.errors.UnimplementedError` if the
+Stock TensorFlow version 2.6 will throw a `tf.errors.UnimplementedError` if the
 nondeterministic paths of `tf.nn.sparse_softmax_cross_entropy_with_logits` are
 used with the expectation of determinism (i.e. with `TF_DETERMINISTIC_OPS` set
 to `"true"` or `"1"`). See github/tensorflow/tensorflow pull request
