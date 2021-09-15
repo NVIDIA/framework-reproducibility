@@ -340,13 +340,21 @@ parallelized augmentation stage (or stages). For more information, and example
 code, see github/NVIDIA/framework-determinism
 [issue 36](https://github.com/NVIDIA/framework-determinism/issues/36).
 
-The methods of `tf.data.Dataset` (such as map) that have a `num_parallel_calls`
-parameter also have a `deterministic` parameter. When set to `True`,
-`deterministic` forces the elements to be produced in a repeatable order when
-`num_parallel_calls` is greater than 1; when set to `False`, the constraint is
-relaxed; if not set, then `tf.data.Options.experimental_deterministic` (which
-defaults to `True`) controls the behavior. Therefore, for determinism, don't set
-the `deterministic` parameter in any of the methods and also don't change
+When deterministic ops are expected, version 2.7 of TensorFlow will force
+`num_parallel_calls` to `1` for `map` and `interleave` stages where a `map_func`
+contains stateful ops. This may reduce the performance of data-loaders built
+using `tf.data.Dataset` that have not been restructured as described above. A
+future version of TensorFlow may perform the required restructuring
+automatically.
+
+The methods of `tf.data.Dataset` (such as both map and interleave) that have a
+`num_parallel_calls` parameter also have a `deterministic` parameter. When set
+to `True`, `deterministic` forces the elements to be produced in a repeatable
+order when `num_parallel_calls` is greater than 1; when set to `False`, the
+constraint is relaxed; if not set, then
+`tf.data.Options.experimental_deterministic` (which defaults to `True`) controls
+the behavior. Therefore, for determinism, don't set the `deterministic`
+parameter in any of the methods and also don't change
 `tf.data.Options.experimental_deterministic` from the default.
 
 `tf.image` ops that use pseudorandom number generators (and therefore produce a
@@ -640,6 +648,7 @@ ID                                                           | Title            
 [51392](https://github.com/tensorflow/tensorflow/pull/51392) | Add GPU-deterministic segment reductions                               | closed |             |         |
 [fc91e][1007]<sup>1</sup>                                    | Add make_deterministic grappler pass                                   | merged | 2021-09-03  | 2.7     |
 [51861](https://github.com/tensorflow/tensorflow/pull/51861) | Replacement for 51392 (w/ deterministic kernels<br>optionally enabled) | merged | 2021-09-07  | 2.7     |
+[c0e2e][1009]<sup>1</sup>                                    | Handle MapAndBatch in make_deterministic<br>grappler pass              | merged | 2021-09-10  | 2.7     |
 
 Notes:
   1. These are individual commits.
@@ -652,6 +661,7 @@ Notes:
 [1006]: https://github.com/tensorflow/tensorflow/commit/0f7b1c29cd24727992f355b196f827e6d4235684
 [1007]: https://github.com/tensorflow/tensorflow/commit/fc91e5caf3e9c807de4b0312ef456d7b57e1a876
 [1008]: https://github.com/tensorflow/tensorflow/commit/a4b53af710f1e1dc41279e2de7cf6ec8b092f28b
+[1009]: https://github.com/tensorflow/tensorflow/commit/c0e2e65e155fabd9bdfd5c41b4b816d9efac8e1f
 
 ### Other TensorFlow Organization Pull Requests
 
