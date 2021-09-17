@@ -62,14 +62,14 @@ from the "Solution Available" column.
 Information for each source is listed below. To reduce repetition, the following
 abbreviations have been used throughout:
 
-  * <a name="TF_CUDNN_DETERMINISTIC">**TF_CUDNN_DETERMINISTIC**</a>: Set
-    environment variable `TF_CUDNN_DETERMINISTIC` to `'1'` or `'true'`. Also
-    *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and
-    particularly *do not* set it to `'0'` or `'false'`).
   * <a name="TF_DETERMINISTIC_OPS">**TF_DETERMINISTIC_OPS**</a>: Set environment
     variable `TF_DETERMINISTIC_OPS` to `'1'` or `'true'`. Also *do not* set
     environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly
     *do not* set it to `'0'` or `'false'`).
+  * <a name="TF_CUDNN_DETERMINISTIC">**TF_CUDNN_DETERMINISTIC**</a>: Set
+    environment variable `TF_CUDNN_DETERMINISTIC` to `'1'` or `'true'`. Also
+    *do not* set environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and
+    particularly *do not* set it to `'0'` or `'false'`).
   * <a name="PATCH">**PATCH**</a>: Apply `tfdeterminism.patch`. Note that
     this solution, enabled by [`TF_DETERMINISTIC_OPS`](#TF_DETERMINISTIC_OPS),
     is in stock TensorFlow version 2.1 (see github/tensorflow/tensorflow pull
@@ -264,6 +264,12 @@ reasonable performance, using multiple instances of regular convolution
 followed by an appropiate splicing of their outputs.
 
 ### Additional Information
+
+Stock TensorFlow version 2.7+ will throw a `tf.errors.UnimplementedError` if the
+non-cuDNN nondeterministic path through `tf.nn.depthwise_conv2d` is
+traversed with the expectation of determinism (i.e. with `TF_DETERMINISTIC_OPS`
+set to `"true"` or `"1"`). See github/tensorflow/tensorflow pull request
+[51920][51920].
 
 See these issues:
 
@@ -647,3 +653,4 @@ nondeterministic noise.
 [51023]: https://github.com/tensorflow/tensorflow/pull/51023
 [51140]: https://github.com/tensorflow/tensorflow/pull/51140
 [51392]: https://github.com/tensorflow/tensorflow/pull/51392
+[51920]: https://github.com/tensorflow/tensorflow/pull/51920

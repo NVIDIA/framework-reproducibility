@@ -648,6 +648,7 @@ ID                                                           | Title            
 [51392](https://github.com/tensorflow/tensorflow/pull/51392) | Add GPU-deterministic segment reductions                               | closed |             |         |
 [fc91e][1007]<sup>1</sup>                                    | Add make_deterministic grappler pass                                   | merged | 2021-09-03  | 2.7     |
 [51861](https://github.com/tensorflow/tensorflow/pull/51861) | Replacement for 51392 (w/ deterministic kernels<br>optionally enabled) | merged | 2021-09-07  | 2.7     |
+[51920](https://github.com/tensorflow/tensorflow/pull/51920) | Add d9m-unimplemented exception for tf.nn.depthwise_conv2d             | merged | 2021-09-15  | 2.7     |
 [c0e2e][1009]<sup>1</sup>                                    | Handle MapAndBatch in make_deterministic<br>grappler pass              | merged | 2021-09-10  | 2.7     |
 
 Notes:
