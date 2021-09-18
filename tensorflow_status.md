@@ -17,10 +17,10 @@ from the "Solution Available" column.
  Source                                                                  | Solution Available           |
 -------------------------------------------------------------------------|:-----------------------------|
  Auto-tuning of cuDNN convolution algorithms                             | [YES](#auto-tuning)          |
- `tfa.image.dense_image_warp` backprop                                   | [NO](#dense-image-warp)      |
+ `tfa.image.dense_image_warp` backprop                                   | [YES](#dense-image-warp)     |
  `tf.compat.v1.nn.fused_batch_norm` backrop                              | [NO](#fused-batch-norm)      |
- `tf.convert_to_tensor` forward, for `tf.IndexedSlices`                  | [NO](#convert-to-tensor)     |
- `tf.gather` backprop                                                    | [NO](#gather)                |
+ `tf.convert_to_tensor` forward, for `tf.IndexedSlices`                  | [YES](#convert-to-tensor)    |
+ `tf.gather` backprop                                                    | [YES](#gather)               |
  `tf.keras.layers.BatchNormalization` backprop                           | [NO](#fused-batch-norm)      |
  `tf.keras.layers.Conv1D` backprop                                       | [YES](#cudnn-conv)           |
  `tf.keras.layers.Conv2D` backprop                                       | [YES](#cudnn-conv)           |
@@ -39,12 +39,12 @@ from the "Solution Available" column.
  `tf.image.crop_and_resize` backprop                                     | [NO](#crop-and-resize)       |
  `tf.image.resize` backprop when `method=ResizeMethod.BILINEAR`          | [YES](#resize-bilinear)      |
  `tf.image.resize` backprop when `method=ResizeMethod.NEAREST`           | [NO](#resize-nearest)        |
- `tf.math.segment_prod` forward                                          | [NO](#segment-reduction)     |
- `tf.math.segment_sum` forward                                           | [NO](#segment-reduction)     |
- `tf.math.unsorted_segment_mean`                                         | [NO](#segment-reduction)     |
- `tf.math.unsorted_segment_prod`                                         | [NO](#segment-reduction)     |
- `tf.math.unsorted_segment_sqrt_n`                                       | [NO](#segment-reduction)     |
- `tf.math.unsorted_segment_sum`                                          | [NO](#segment-reduction)     |
+ `tf.math.segment_prod` forward                                          | [YES](#segment-reduction)    |
+ `tf.math.segment_sum` forward                                           | [YES](#segment-reduction)    |
+ `tf.math.unsorted_segment_mean`                                         | [YES](#segment-reduction)    |
+ `tf.math.unsorted_segment_prod`                                         | [YES](#segment-reduction)    |
+ `tf.math.unsorted_segment_sqrt_n`                                       | [YES](#segment-reduction)    |
+ `tf.math.unsorted_segment_sum`                                          | [YES](#segment-reduction)    |
  `tf.nn.bias_add` backprop                                               | [YES](#bias-addition)        |
  `tf.nn.conv1d` backprop                                                 | [YES](#cudnn-conv)           |
  `tf.nn.conv2d` backprop                                                 | [YES](#cudnn-conv)           |
@@ -480,12 +480,13 @@ therefore also introduce truly random noise in the forward path:
 
 ### Solution
 
-There is currently no released solution.
+TF 2.7+ adds (non-sparse) GPU-deterministic segment reduction ops, enabled by
+[TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS). See github/tensorflow/tensorflow
+pull requests [51861][51861] and [51392][51392]. Included is also a
+GPU-deterministic implementation of `tf.math.segment_mean`.
 
-github/tensorflow/tensorflow pull request [47974][47974] adds GPU-deterministic
-sparse segment reduction ops (in TF 2.6). This approach will be used to provide
-GPU-deterministic functionality for all the segment reduction ops in version
-2.7 or possibly later.
+github/tensorflow/tensorflow pull request [47974][47974] adds GPU sparse segment
+reduction ops, in TF 2.6+, which are also deterministic by default.
 
 ### Additional Information
 
@@ -502,11 +503,8 @@ nondeterministic paths of these ops are used with the expectation of determinism
 (i.e. with `TF_DETERMINISTIC_OPS` set to `"true"` or `"1"`). See
 github/tensorflow/tensorflow pull request [47772][47772].
 
-At the time of writing (TensorFlow 2.5), `tf.math.segment_mean` is not
-implemented on the GPU and the CPU imlementation operates deterministically.
-Note that, along with the upcoming GPU-deterministic segment reduction ops,
-`tf.math.segment_mean` will also be implemented on the GPU (deterministically).
-See see github/tensorflow/tensorflow pull request [51392][51392].
+Prior to TF 2.7, `tf.math.segment_mean` is not implemented on the GPU and the
+CPU implementation operates deterministically.
 
 See also:
   * Issue [31](https://github.com/NVIDIA/framework-determinism/issues/31) in
@@ -653,4 +651,5 @@ nondeterministic noise.
 [51023]: https://github.com/tensorflow/tensorflow/pull/51023
 [51140]: https://github.com/tensorflow/tensorflow/pull/51140
 [51392]: https://github.com/tensorflow/tensorflow/pull/51392
+[51861]: https://github.com/tensorflow/tensorflow/pull/51861
 [51920]: https://github.com/tensorflow/tensorflow/pull/51920
