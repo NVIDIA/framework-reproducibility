@@ -375,6 +375,15 @@ all potential sources of nondeterminism in subsequently defined `tf.data` input
 pipelines when running in eager mode, which makes ruling-out nondeterminism
 from a `tf.data` input pipeline easy and fast.
 
+Update for stock TF versions 2.7 and 2.8: functionality has been, or is being,
+added to a new `make_deterministic` grappler pass that attempts to modify
+instances of `tf.data.Dataloaders` to guarantee deterministic operation when
+op-determinism is expected/enabled. Please refer to the
+[notes](https://github.com/tensorflow/tensorflow/blob/f888d93b2e1d59432cb22900cb93ea443e8a0c81/tensorflow/core/grappler/optimizers/data/make_deterministic.h#L24-L54)
+for the `MakDeterministic` class declaration for more information. The link
+provided is for a specific commit point, so reference the notes at the commit
+point that is relevant to you.
+
 #### While Loop Parallelism ####
 
 In TF1, the use of `tf.while_loop` when `parallel_iterations` is greater than 1
