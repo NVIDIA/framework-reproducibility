@@ -375,6 +375,15 @@ all potential sources of nondeterminism in subsequently defined `tf.data` input
 pipelines when running in eager mode, which makes ruling-out nondeterminism
 from a `tf.data` input pipeline easy and fast.
 
+Update for stock TF versions 2.7 and 2.8: functionality has been, or is being,
+added to a new `make_deterministic` grappler pass that attempts to modify
+instances of `tf.data.Dataloaders` to guarantee deterministic operation when
+op-determinism is expected/enabled. Please refer to the
+[notes](https://github.com/tensorflow/tensorflow/blob/f888d93b2e1d59432cb22900cb93ea443e8a0c81/tensorflow/core/grappler/optimizers/data/make_deterministic.h#L24-L54)
+for the `MakDeterministic` class declaration for more information. The link
+provided is for a specific commit point, so reference the notes at the commit
+point that is relevant to you.
+
 #### While Loop Parallelism ####
 
 In TF1, the use of `tf.while_loop` when `parallel_iterations` is greater than 1
@@ -650,6 +659,8 @@ ID                                                           | Title            
 [51861](https://github.com/tensorflow/tensorflow/pull/51861) | Replacement for 51392 (w/ deterministic kernels<br>optionally enabled) | merged | 2021-09-07  | 2.7     |
 [51920](https://github.com/tensorflow/tensorflow/pull/51920) | Add d9m-unimplemented exception for tf.nn.depthwise_conv2d             | merged | 2021-09-15  | 2.7     |
 [c0e2e][1009]<sup>1</sup>                                    | Handle MapAndBatch in make_deterministic<br>grappler pass              | merged | 2021-09-10  | 2.7     |
+[52971](https://github.com/tensorflow/tensorflow/pull/52971) | Add op-determinism info to version 2.7 release notes                   | merged | 2021-11-10  | 2.7     |
+[53465](https://github.com/tensorflow/tensorflow/pull/53465) | Add v2.8 release notes                                                 | merged | 2021-12-22  | 2.8     |
 
 Notes:
   1. These are individual commits.
