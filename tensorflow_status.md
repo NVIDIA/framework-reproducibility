@@ -49,7 +49,7 @@ from the "Solution Available" column.
  `tf.nn.conv1d` backprop                                                 | [YES](#cudnn-conv)           |
  `tf.nn.conv2d` backprop                                                 | [YES](#cudnn-conv)           |
  `tf.nn.conv3d` backprop                                                 | [YES](#cudnn-conv)           |
- `tf.nn.ctc_loss` backprop                                               | [NO](#ctc-loss)              |
+ `tf.nn.ctc_loss` backprop                                               | [YES](#ctc-loss)             |
  `tf.nn.depthwise_conv2d` backprop to `filter`                           | [NO](#depthwise-conv)        |
  `tf.nn.max_pool1d` backprop                                             | [YES](#max-pool)             |
  `tf.nn.max_pool2d` backprop                                             | [YES](#max-pool)             |
@@ -551,16 +551,17 @@ file.
 
 ### Problem
 
-I had previously assumed that deterministic cuDNN CTC loss was exposed, via
-`tf.nn.ctc_loss`, by changes that ended up appearing in stock TensorFlow version
-2.3 (see github/tensorflow/tensorflow issue [38151][38151]), but more recent
-experiments, the results of which I am in the process of publishing, suggest
-that this is not true and that `tf.nn.ctc_loss` has nondeterministic backprop
-when operating on either CPU or GPU.
+Deterministic cuDNN CTC loss was exposed, via `tf.nn.ctc_loss`, by changes that
+ended up appearing in stock TensorFlow version 2.3
+(see github/tensorflow/tensorflow issue [38151][38151]). However, there was a
+bug that was preventing deterministic operation. This bug was resolved in
+version 2.6, if not earlier, as confirmed by testing added in version 2.6 (see
+github/tensorflow/tensorflow pull request [52227][52227]).
 
 ### Solution
 
-There is currently no available solution.
+Resolved in TF 2.6 (and possibly earlier versions). Use
+[TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS).
 
 ---
 
@@ -653,3 +654,4 @@ nondeterministic noise.
 [51392]: https://github.com/tensorflow/tensorflow/pull/51392
 [51861]: https://github.com/tensorflow/tensorflow/pull/51861
 [51920]: https://github.com/tensorflow/tensorflow/pull/51920
+[52227]: https://github.com/tensorflow/tensorflow/pull/52227

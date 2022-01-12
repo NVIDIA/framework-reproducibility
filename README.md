@@ -659,6 +659,7 @@ ID                                                           | Title            
 [51861](https://github.com/tensorflow/tensorflow/pull/51861) | Replacement for 51392 (w/ deterministic kernels<br>optionally enabled) | merged | 2021-09-07  | 2.7     |
 [51920](https://github.com/tensorflow/tensorflow/pull/51920) | Add d9m-unimplemented exception for tf.nn.depthwise_conv2d             | merged | 2021-09-15  | 2.7     |
 [c0e2e][1009]<sup>1</sup>                                    | Handle MapAndBatch in make_deterministic<br>grappler pass              | merged | 2021-09-10  | 2.7     |
+[52227](https://github.com/tensorflow/tensorflow/pull/52227) | Add determinism tests for tf.nn.ctc_loss                               | merged | 2021-10-05  | 2.7     |
 [52971](https://github.com/tensorflow/tensorflow/pull/52971) | Add op-determinism info to version 2.7 release notes                   | merged | 2021-11-10  | 2.7     |
 [53465](https://github.com/tensorflow/tensorflow/pull/53465) | Add v2.8 release notes                                                 | merged | 2021-12-22  | 2.8     |
 
