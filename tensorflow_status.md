@@ -104,6 +104,10 @@ run.
     [PATCH](#PATCH)
   * NGC 19.06+, TF 2.1+: [TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS)
 
+From TensorFlow 2.5 onwards, the environment variable `TF_CUDNN_USE_FRONTEND`
+must also be set to `1` to work-around the issue described in
+github/tensorflow/tensorflow issue [53771][53771].
+
 ### Additional Information
 
 From NGC TF 19.12 onwards and stock TensorFlow 2.2 onwards, the
@@ -655,3 +659,4 @@ nondeterministic noise.
 [51861]: https://github.com/tensorflow/tensorflow/pull/51861
 [51920]: https://github.com/tensorflow/tensorflow/pull/51920
 [52227]: https://github.com/tensorflow/tensorflow/pull/52227
+[53771]: https://github.com/tensorflow/tensorflow/issues/53771

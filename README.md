@@ -591,7 +591,8 @@ Number                                                         | Title          
 [39751](https://github.com/tensorflow/tensorflow/issues/39751) | Non-deterministic behaviour: tf.math.unsorted_segment_sum<br>uses CUDA Atomic Operations | 2020-05-21  | Open   |
 [40514](https://github.com/tensorflow/tensorflow/issues/40514) | TFBertForSequenceClassification: Non-deterministic when<br>training on GPU ...           | 2020-06-16  | Closed |
 [42033](https://github.com/tensorflow/tensorflow/issues/42033) | Add deterministic tf.image.crop_and_resize backprop                                      | 2020-08-04  | Open   |
-[47174](https://github.com/tensorflow/tensorflow/issues/47174) | EfficientNet models from TensorFlow.Keras not being reproducible on GPU                  | 2021-02-15  | Open   |
+[47174](https://github.com/tensorflow/tensorflow/issues/47174) | EfficientNet models from TensorFlow.Keras not being<br>reproducible on GPU               | 2021-02-15  | Open   |
+[53771](https://github.com/tensorflow/tensorflow/issues/53771) | Deterministic selection of deterministic cuDNN<br>convolution algos removed in TF 2.5    | 2022-01-14  | Open   |
 
 ### Related Project Issues
 
