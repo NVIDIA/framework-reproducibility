@@ -581,7 +581,7 @@ Number                                                         | Title          
  [2732](https://github.com/tensorflow/tensorflow/issues/2732)  | Mention that GPU reductions are nondeterministic in docs                                 | 2016-06-08  | Closed |
 [13932](https://github.com/tensorflow/tensorflow/issues/13932) | Non-determinism from `tf.data.Dataset.map` with random ops                               | 2017-10-23  | Closed |
 [16889](https://github.com/tensorflow/tensorflow/issues/16889) | Problems Getting TensorFlow to behave Deterministically                                  | 2018-02-09  | Open   |
-[18037](https://github.com/tensorflow/tensorflow/issues/18037) | tf.sparse_tensor_dense_matmul makes small errors with<br>tf.float32 matrices on GPU      | 2018-03-27  | Open   |
+[18037](https://github.com/tensorflow/tensorflow/issues/18037) | tf.sparse_tensor_dense_matmul makes small errors with<br>tf.float32 matrices on GPU      | 2018-03-27  | Closed |
 [18096](https://github.com/tensorflow/tensorflow/issues/18096) | Feature Request: Support for configuring deterministic<br>options of cuDNN conv ...      | 2018-03-29  | Open   |
 [22398](https://github.com/tensorflow/tensorflow/issues/22398) | CUDA implementation of BiasAddGrad op is non-determinstic                                | 2018-09-19  | Closed |
 [29101](https://github.com/tensorflow/tensorflow/issues/29101) | Random seed not set in graph context of `Dataset#map`                                    | 2019-05-28  | Open   |
