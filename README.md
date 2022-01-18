@@ -593,6 +593,7 @@ Number                                                         | Title          
 [42033](https://github.com/tensorflow/tensorflow/issues/42033) | Add deterministic tf.image.crop_and_resize backprop                                      | 2020-08-04  | Open   |
 [47174](https://github.com/tensorflow/tensorflow/issues/47174) | EfficientNet models from TensorFlow.Keras not being<br>reproducible on GPU               | 2021-02-15  | Open   |
 [53771](https://github.com/tensorflow/tensorflow/issues/53771) | Deterministic selection of deterministic cuDNN<br>convolution algos removed in TF 2.5    | 2022-01-14  | Open   |
+[53792](https://github.com/tensorflow/tensorflow/issues/53792) | Use enable_op_determinism + Fixed seed + same<br>hardware still get diff results in 2.8. | 2022-01-17  | Open   |
 
 ### Related Project Issues
 
