@@ -105,8 +105,15 @@ run.
   * NGC 19.06+, TF 2.1+: [TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS)
 
 From TensorFlow 2.5 onwards, the environment variable `TF_CUDNN_USE_FRONTEND`
-must also be set to `1` to work-around the issue described in
+must also be set to `1`, to work-around the issue described in
 github/tensorflow/tensorflow issue [53771][53771].
+
+There is an additional issue related to nondeterministic out-of-memory events
+when selecting algorithms, which could result in nondeterministic functionality.
+However, it's relatively unlikely that this issue will be encountered. See
+[this comment](https://github.com/tensorflow/tensorflow/issues/53771#issuecomment-1016028174)
+on github/tensorflow/tensorflow issue [53771][53771]. Hopefully, this issue will
+be addressed in TensorFlow version 2.8.
 
 ### Additional Information
 
