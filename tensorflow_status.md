@@ -62,6 +62,10 @@ from the "Solution Available" column.
 Information for each source is listed below. To reduce repetition, the following
 abbreviations have been used throughout:
 
+  * <a name="enable_op_determinism">**enable_op_determinism**</a>: Call
+    `tf.config.experimental.enable_op_determinism`. See the
+    [documentation](https://www.tensorflow.org/api_docs/python/tf/config/experimental/enable_op_determinism)
+    for more info. This supercedes `TF_DETERMINISTIC_OPS`.
   * <a name="TF_DETERMINISTIC_OPS">**TF_DETERMINISTIC_OPS**</a>: Set environment
     variable `TF_DETERMINISTIC_OPS` to `'1'` or `'true'`. Also *do not* set
     environment variable `TF_USE_CUDNN_AUTOTUNE` at all (and particularly
@@ -102,20 +106,20 @@ run.
 
   * TF 1.14, 1.15, 2.0: [TF_CUDNN_DETERMINISTIC](#TF_CUDNN_DETERMINISTIC) or
     [PATCH](#PATCH)
-  * NGC 19.06+, TF 2.1+: [TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS)
+  * NGC 19.06+, TF 2.1-2.4: [TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS)
+  * TF 2.5-2.7: [TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS) and set the
+    environment variable `TF_CUDNN_USE_FRONTEND` to `1` (to work-around the
+    issue described in github/tensorflow/tensorflow issue [53771][53771])
+  * TF 2.8+: [enable_op_determinism](#enable_op_determinism)
 
-From TensorFlow 2.5 onwards, the environment variable `TF_CUDNN_USE_FRONTEND`
-must also be set to `1`, to work-around the issue described in
-github/tensorflow/tensorflow issue [53771][53771].
+### Additional Information
 
 There is an additional issue related to nondeterministic out-of-memory events
 when selecting algorithms, which could result in nondeterministic functionality.
 However, it's relatively unlikely that this issue will be encountered. See
 [this comment](https://github.com/tensorflow/tensorflow/issues/53771#issuecomment-1016028174)
 on github/tensorflow/tensorflow issue [53771][53771]. Hopefully, this issue will
-be addressed in TensorFlow version 2.8.
-
-### Additional Information
+be addressed in TensorFlow version 2.9.
 
 From NGC TF 19.12 onwards and stock TensorFlow 2.2 onwards, the
 cuDNN forward and backward convolution algorithms are selected

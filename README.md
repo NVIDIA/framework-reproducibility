@@ -662,8 +662,11 @@ ID                                                           | Title            
 [51920](https://github.com/tensorflow/tensorflow/pull/51920) | Add d9m-unimplemented exception for tf.nn.depthwise_conv2d             | merged | 2021-09-15  | 2.7     |
 [c0e2e][1009]<sup>1</sup>                                    | Handle MapAndBatch in make_deterministic<br>grappler pass              | merged | 2021-09-10  | 2.7     |
 [52227](https://github.com/tensorflow/tensorflow/pull/52227) | Add determinism tests for tf.nn.ctc_loss                               | merged | 2021-10-05  | 2.7     |
-[52971](https://github.com/tensorflow/tensorflow/pull/52971) | Add op-determinism info to version 2.7 release notes                   | merged | 2021-11-10  | 2.7     |
+[52971](https://github.com/tensorflow/tensorflow/pull/52971) | Add op-determinism info to version 2.7<br>release notes                | merged | 2021-11-10  | 2.7     |
 [53465](https://github.com/tensorflow/tensorflow/pull/53465) | Add v2.8 release notes                                                 | merged | 2021-12-22  | 2.8     |
+[ced76][1010]<sup>1</sup>                                    | Fix issue where convolutions were not<br>deterministic                 | merged | 2022-01-19  | 2.8     |
+[53826](https://github.com/tensorflow/tensorflow/pull/53826) | r2.8 cherry-pick req: Fix issue where<br>convs were not deterministic  | merged | 2022-01-20  | 2.8     |
+
 
 Notes:
   1. These are individual commits.
@@ -677,6 +680,7 @@ Notes:
 [1007]: https://github.com/tensorflow/tensorflow/commit/fc91e5caf3e9c807de4b0312ef456d7b57e1a876
 [1008]: https://github.com/tensorflow/tensorflow/commit/a4b53af710f1e1dc41279e2de7cf6ec8b092f28b
 [1009]: https://github.com/tensorflow/tensorflow/commit/c0e2e65e155fabd9bdfd5c41b4b816d9efac8e1f
+[1010]: https://github.com/tensorflow/tensorflow/commit/ced762bd4986dfad83ccf6d57e4e4fa3e47bd3fe
 
 ### Other TensorFlow Organization Pull Requests
 
