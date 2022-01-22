@@ -594,6 +594,7 @@ Number                                                         | Title          
 [47174](https://github.com/tensorflow/tensorflow/issues/47174) | EfficientNet models from TensorFlow.Keras not being<br>reproducible on GPU               | 2021-02-15  | Open   |
 [53771](https://github.com/tensorflow/tensorflow/issues/53771) | Deterministic selection of deterministic cuDNN<br>convolution algos removed in TF 2.5    | 2022-01-14  | Open   |
 [53792](https://github.com/tensorflow/tensorflow/issues/53792) | Use enable_op_determinism + Fixed seed + same<br>hardware still get diff results in 2.8. | 2022-01-17  | Open   |
+[53846](https://github.com/tensorflow/tensorflow/issues/53846) | tf.data.experimental.sample_from_datasets<br>non-deterministic in multi-gpu              | 2022-01-20  | Open   |
 
 ### Related Project Issues
 
@@ -666,7 +667,7 @@ ID                                                           | Title            
 [53465](https://github.com/tensorflow/tensorflow/pull/53465) | Add v2.8 release notes                                                 | merged | 2021-12-22  | 2.8     |
 [ced76][1010]<sup>1</sup>                                    | Fix issue where convolutions were not<br>deterministic                 | merged | 2022-01-19  | 2.8     |
 [53826](https://github.com/tensorflow/tensorflow/pull/53826) | r2.8 cherry-pick req: Fix issue where<br>convs were not deterministic  | merged | 2022-01-20  | 2.8     |
-
+[53847](https://github.com/tensorflow/tensorflow/pull/53847) | Add release note about deterministic<br>selection of conv algos        | merged | 2022-01-21  | 2.8     |
 
 Notes:
   1. These are individual commits.
