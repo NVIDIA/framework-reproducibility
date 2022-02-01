@@ -668,6 +668,7 @@ ID                                                           | Title            
 [ced76][1010]<sup>1</sup>                                    | Fix issue where convolutions were not<br>deterministic                 | merged | 2022-01-19  | 2.8     |
 [53826](https://github.com/tensorflow/tensorflow/pull/53826) | r2.8 cherry-pick req: Fix issue where<br>convs were not deterministic  | merged | 2022-01-20  | 2.8     |
 [53847](https://github.com/tensorflow/tensorflow/pull/53847) | Add release note about deterministic<br>selection of conv algos        | merged | 2022-01-21  | 2.8     |
+[54119](https://github.com/tensorflow/tensorflow/pull/54119) | Add disable for depthwise-conv d9m-unimplemented exception             | open   |             |         |
 
 Notes:
   1. These are individual commits.
