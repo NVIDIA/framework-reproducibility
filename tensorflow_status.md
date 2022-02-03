@@ -284,7 +284,10 @@ Stock TensorFlow version 2.7+ will throw a `tf.errors.UnimplementedError` if the
 non-cuDNN nondeterministic path through `tf.nn.depthwise_conv2d` is
 traversed with the expectation of determinism (i.e. with `TF_DETERMINISTIC_OPS`
 set to `"true"` or `"1"`). See github/tensorflow/tensorflow pull request
-[51920][51920].
+[51920][51920]. In TensorFlow version 2.9+, this exception can be disabled (for
+debug) by setting the environment variable
+`TF_DISABLE_DEPTHWISE_CONV_DETERMINISM_EXCEPTIONS` to `"true"` or `"1"`. See
+github/tensorflow/tensorflow pull request [54119][54119].
 
 See these issues:
 
@@ -671,3 +674,4 @@ nondeterministic noise.
 [51920]: https://github.com/tensorflow/tensorflow/pull/51920
 [52227]: https://github.com/tensorflow/tensorflow/pull/52227
 [53771]: https://github.com/tensorflow/tensorflow/issues/53771
+[54119]: https://github.com/tensorflow/tensorflow/pull/54119
