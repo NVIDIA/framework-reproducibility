@@ -3,7 +3,7 @@
 ## Introduction
 
 This repository provides documentation, status, patches, and tools related to
-determinism (bit-accurate run-to-run reproducibility) in the deep learning
+determinism (bit-accurate, run-to-run reproducibility) in the deep learning
 frameworks, with a focus on determinism when running on GPUs.
 
 ## Frameworks

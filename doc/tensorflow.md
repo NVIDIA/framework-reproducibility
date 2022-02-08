@@ -1,8 +1,5 @@
 # TensorFlow Determinism
 
-This main README is currently focused on GPU-determinism with TensorFlow.
-For GPU-determinism with PyTorch, see the [pytorch page](./pytorch.md).
-
 ## Announcements
 
 ### Upcoming Patch Changes
