@@ -4,10 +4,8 @@ plugins:
 exclude:
   - fwd9m/
   - fwd9m_reserve/
-  - test/
+  - test/README.md
   - RELEASE.md
   - release_procedure.md
   - tensorflow_status.md
   - pytorch.md
-include:
-  - test/gradient_injection.md
