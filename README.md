@@ -592,10 +592,12 @@ Number                                                         | Title          
 [40514](https://github.com/tensorflow/tensorflow/issues/40514) | TFBertForSequenceClassification: Non-deterministic when<br>training on GPU ...           | 2020-06-16  | Closed |
 [42033](https://github.com/tensorflow/tensorflow/issues/42033) | Add deterministic tf.image.crop_and_resize backprop                                      | 2020-08-04  | Open   |
 [47174](https://github.com/tensorflow/tensorflow/issues/47174) | EfficientNet models from TensorFlow.Keras not being<br>reproducible on GPU               | 2021-02-15  | Open   |
+[51978](https://github.com/tensorflow/tensorflow/issues/51978) | D9m unimplemented exception for AUC metric and<br>TF_DETERMINISTIC_OPS                   | 2021-09-13  | Closed |
 [53771](https://github.com/tensorflow/tensorflow/issues/53771) | Deterministic selection of deterministic cuDNN<br>convolution algos removed in TF 2.5    | 2022-01-14  | Open   |
 [53792](https://github.com/tensorflow/tensorflow/issues/53792) | Use enable_op_determinism + Fixed seed + same<br>hardware still get diff results in 2.8. | 2022-01-17  | Open   |
 [53846](https://github.com/tensorflow/tensorflow/issues/53846) | tf.data.experimental.sample_from_datasets<br>non-deterministic in multi-GPU              | 2022-01-20  | Open   |
-[54259](https://github.com/tensorflow/tensorflow/issues/54259) | tf.data.Dataset in 2.7                                                                   | 2022-02-03  | Open   |
+[54259](https://github.com/tensorflow/tensorflow/issues/54259) | Possible issue with tf.data.Dataset in 2.7                                               | 2022-02-03  | Open   |
+[54276](https://github.com/tensorflow/tensorflow/issues/54276) | Deterministic GPU impl of unsorted segment<br>reduction op not available on Windows      | 2022-02-04  | Open   |
 
 ### Related Project Issues
 
