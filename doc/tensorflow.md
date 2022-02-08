@@ -611,7 +611,7 @@ GitHub issues in dependent or related projects:
 The following pull requests (and some inidividual commits) are those in the
 TensorFlow GitHub repo (`github.com/tensorflow/tensorflow`) that are directly
 related to this project. As we have
-[discovered](scripts/README.md#find-tensorflow-commits), 1.8% of all commits
+[discovered](../scripts/README.md#find-tensorflow-commits), 1.8% of all commits
 seem to reference, or have some relationship with, "determinism" or
 "deterministic". As of 2020-01-30, that was 1,391 commits.
 
@@ -724,7 +724,7 @@ ID                                                     | Title                  
 [502]: https://stackoverflow.com/questions/52213325/are-tensorflow-random-values-guaranteed-to-be-the-same-inside-a-single-run#comment91376212_52213325
 [503]: https://github.com/horovod/horovod/pull/1130
 [504]: https://datascience.stackexchange.com/questions/14812/making-keras-tensorflow-code-execution-deterministic-on-a-gpu/
-[505]: ./test/gradient_injection.md
+[505]: ../test/gradient_injection.md
 [506]: https://github.com/tensorflow/community/blob/master/rfcs/20210119-determinism.md
 
 [1]: http://bit.ly/determinism-in-deep-learning

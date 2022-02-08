@@ -1,3 +1,13 @@
 theme: jekyll-theme-cayman
 plugins:
   - jekyll-sitemap
+exclude:
+  - fwd9m/
+  - fwd9m_reserve/
+  - test/
+  - RELEASE.md
+  - release_procedure.md
+  - tensorflow_status.md
+  - pytorch.md
+include:
+  - test/gradient_injection.md
