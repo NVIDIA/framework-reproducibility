@@ -1,5 +1,13 @@
 # TensorFlow Determinism
 
+## Latest News
+
+From TensorFlow version 2.8 onwards, op-determinism is enabled using
+`tf.config.experimental.enable_op_determinism`. For more information, see
+the [official documentation][9]. You may also want to refer to the
+[detailed status](./tensorflow_status.md) of GPU-determinism in TensorFlow in
+this current repository.
+
 ## Announcements
 
 ### Upcoming Patch Changes
@@ -37,26 +45,6 @@ To keep track of what is happening, you may wish to refer to the list of
 [pull reqests](#tensorflow-pull-requests) and/or the list of
 [confirmed sources and solutions](#confirmed-current-gpu-specific-sources-of-non-determinism-with-solutions)
 and associated notes.
-
-## Introduction
-
-This repository serves three purposes:
-
-  1. Provide up-to-date information (in this file) about non-determinism
-     sources and solutions in TensorFlow and beyond, with a focus on determinism
-     when running on GPUs. Info for PyTorch can be found [here](./pytorch.md).
-  2. Provide a set of patches to temporarily attain various levels of
-     GPU-specific determinism in stock TensorFlow (and, later, other
-     frameworks), via the installation of the `tensorflow-determinism` pip
-     package.
-  3. Be the location where a TensorFlow determinism debug tool will (hopefully,
-     one day) be released as part of the `tensorflow-determinism` pip package.
-
-For more information, please watch the video of the GTC 2019 talk
-[_Determinism in Deep Learning_][1]. The desciption under that video also
-includes links to the slides from the talk and to a poster presentation on this
-topic. Guidance on obtaining reproducible operation from TensorFlow, as well
-as the status as of 2021-08-06, can be found in [these slides][8].
 
 ## Installation
 
@@ -207,8 +195,11 @@ TensorFlow with GPU support.
 Deterministic op functionality, such as that enabled by
 `TF_DETERMINISTIC_OPS=1`, can only contribute to fully-deterministic operation
 of a model or training regime in the context of a deterministic system. The
-following are notes on various other items that must be addressed in order to
-ensure that your model trains or infers with prefect reproducibility.
+following are notes on various other items that may need to be addressed in
+order to ensure that your model trains or infers with prefect reproducibility.
+
+Guidance on obtaining reproducible operation from TensorFlow, as well as the
+status as of 2021-08-06, can be found in [these slides][8].
 
 #### Seeds ####
 
@@ -735,3 +726,4 @@ ID                                                     | Title                  
 [6]: https://www.tensorflow.org/guide/function#autograph_transformations
 [7]: https://www.tensorflow.org/guide/function#loops
 [8]: https://bit.ly/dl-determinism-slides-v3
+[9]: https://www.tensorflow.org/api_docs/python/tf/config/experimental/enable_op_determinism

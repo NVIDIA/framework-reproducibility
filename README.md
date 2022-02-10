@@ -2,14 +2,37 @@
 
 ## Introduction
 
-This repository provides documentation, status, patches, and tools related to
-determinism (bit-accurate, run-to-run reproducibility) in the deep learning
-frameworks, with a focus on determinism when running on GPUs.
+This repository is intended to provide documentation, status, patches, and
+tools related to determinism (bit-accurate, run-to-run reproducibility) in deep
+learning frameworks, with a focus on determinism when running on GPUs.
+
+Determinism is important when deep learning is used in applications in which
+processes must be reproducible, such as robotics (including autonomous
+vehicles), heathcare, and finance. Determinism also simplifies and accelerates
+both experimentation (by increasing the signal-to-noise ratio) and debugging.
+
+Currently, this repository primarily provides documentation and guidance on how
+to obtain deterministic functionality when using deep learning frameworks, and
+also, in some cases, the status of that functionality. In some cases, patches
+have been provided via installation of the associated PyPI package.
+
+For background, you may want to watch the video of the 2019 GTC talk
+[_Determinism in Deep Learning_][1]. The description under that video also
+includes links to the slides from the talk and to a poster presentation on this
+topic.
 
 ## Frameworks
 
   * [PyTorch](doc/pytorch.md)
   * [TensorFlow](doc/tensorflow.md)
+
+## Future
+
+The nondeterminism debug tool mentioned in the GTC 2019 talk
+[_Determinism in Deep Learning_][1] may be released via the associated PyPI
+package at some point in the future.
+
+[1]: http://bit.ly/determinism-in-deep-learning
 
 ## Credits
 

@@ -6,7 +6,7 @@ This page provides an up-to-date view of the status of GPU-related sources of
 nondeterminism in TensorFlow. This is almost exclusively focused on the
 determinsitic functionality of ops running on a GPU.
 
-For a broader view, see the [TensorFlow Determinism](./README.md) page.
+For a broader view, see the [TensorFlow Determinism](./tensorflow.md) page.
 
 ## Summary
 
