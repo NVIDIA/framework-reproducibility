@@ -596,6 +596,7 @@ GitHub issues in dependent or related projects:
  Keras        | [12800](https://github.com/keras-team/keras/issues/12800)       | Unable to get reproducible results using Keras / TF on GPU            | 2019-05-07  | Closed |
  Tensorpack   | [902](https://github.com/tensorpack/tensorpack/issues/902)      | How to run Tensorpack training with deterministic behavior            | 2018-09-20  | Closed |
  transformers | [5603](https://github.com/huggingface/transformers/issues/5063) | Non-deterministic training issue on GPU: TF-BERT                      | 2020-06-16  | Open   |
+ ONNX Runtime | [4611](https://github.com/microsoft/onnxruntime/issues/4611)    | Inference on GPU is not deterministic                                 | 2020-07-24  | Closed |
 
 ### TensorFlow Pull Requests
 
