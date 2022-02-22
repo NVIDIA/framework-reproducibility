@@ -584,7 +584,7 @@ Number                                                         | Title          
 [53771](https://github.com/tensorflow/tensorflow/issues/53771) | Deterministic selection of deterministic cuDNN<br>convolution algos removed in TF 2.5    | 2022-01-14  | Open   |
 [53792](https://github.com/tensorflow/tensorflow/issues/53792) | Use enable_op_determinism + Fixed seed + same<br>hardware still get diff results in 2.8. | 2022-01-17  | Open   |
 [53846](https://github.com/tensorflow/tensorflow/issues/53846) | tf.data.experimental.sample_from_datasets<br>non-deterministic in multi-GPU              | 2022-01-20  | Open   |
-[54259](https://github.com/tensorflow/tensorflow/issues/54259) | Possible issue with tf.data.Dataset in 2.7                                               | 2022-02-03  | Open   |
+[54259](https://github.com/tensorflow/tensorflow/issues/54259) | Possible issue with tf.data.Dataset in 2.7<br>(but probably Petastorm-related)           | 2022-02-03  | Closed |
 [54276](https://github.com/tensorflow/tensorflow/issues/54276) | Deterministic GPU impl of unsorted segment<br>reduction op not available on Windows      | 2022-02-04  | Open   |
 
 ### Related Project Issues
