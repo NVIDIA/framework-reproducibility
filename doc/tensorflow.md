@@ -586,6 +586,7 @@ Number                                                         | Title          
 [53846](https://github.com/tensorflow/tensorflow/issues/53846) | tf.data.experimental.sample_from_datasets<br>non-deterministic in multi-GPU              | 2022-01-20  | Open   |
 [54259](https://github.com/tensorflow/tensorflow/issues/54259) | Possible issue with tf.data.Dataset in 2.7<br>(but probably Petastorm-related)           | 2022-02-03  | Closed |
 [54276](https://github.com/tensorflow/tensorflow/issues/54276) | Deterministic GPU impl of unsorted segment<br>reduction op not available on Windows      | 2022-02-04  | Open   |
+[54442](https://github.com/tensorflow/tensorflow/issues/54442) | Reproducible init of trainable variables (TVs)<br>even when the number of TVs changes    | 2022-02-17  | Open   |
 
 ### Related Project Issues
 
