@@ -39,6 +39,7 @@ from the "Solution Available" column.
  `tf.image.crop_and_resize` backprop                                     | [NO](#crop-and-resize)       |
  `tf.image.resize` backprop when `method=ResizeMethod.BILINEAR`          | [YES](#resize-bilinear)      |
  `tf.image.resize` backprop when `method=ResizeMethod.NEAREST`           | [NO](#resize-nearest)        |
+ `tf.math.bincount`                                                      | [NO](#bincount)              |
  `tf.math.segment_prod` forward                                          | [YES](#segment-reduction)    |
  `tf.math.segment_sum` forward                                           | [YES](#segment-reduction)    |
  `tf.math.unsorted_segment_mean`                                         | [YES](#segment-reduction)    |
@@ -470,6 +471,27 @@ Stock TensorFlow version 2.6+ will throw a `tf.errors.UnimplementedError` if the
 nondeterministic paths through this op are used with the expectation of
 determinism (i.e. with `TF_DETERMINISTIC_OPS` set to `"true"` or `"1"`). See
 github/tensorflow/tensorflow pull request [48905][48905].
+
+---
+
+<a name="bincount"></a>
+## Bincount
+
+### Problem
+
+Use of `tf.math.bincount` may introduce truly random noise when run on GPU.
+
+### Solution
+
+There is currently no solution.
+
+### Additional Information
+
+Stock TensorFlow version 2.7+ will throw a `tf.errors.UnimplementedError` if
+this op is used with the expectation of determinism (i.e. with
+`TF_DETERMINISTIC_OPS` set to `"true"` or `"1"`). See
+github/tensorflow/tensorflow commit
+[f0e6c](https://github.com/tensorflow/tensorflow/commit/f0e6c2ff82d9892861572dd0802ff926a99b6320).
 
 ---
 
