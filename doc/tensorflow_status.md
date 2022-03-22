@@ -57,6 +57,7 @@ from the "Solution Available" column.
  `tf.nn.max_pool3d` backprop                                             | [YES](#max-pool)             |
  `tf.nn.softmax_cross_entropy_with_logits`                               | [YES](#softmax-xent)         |
  `tf.nn.sparse_softmax_cross_entropy_with_logits`                        | [YES](#softmax-xent)         |
+ `tf.raw_ops.DebugNumericSummaryV2`                                      | [NO](#debug-numeric-summary) |
  `tf.sparse.sparse_dense_matmul` forward                                 | [NO](#sparse-dense-matmul)   |
  XLA reductions on GPU                                                   | [YES](#xla-reductions)       |
 
@@ -602,6 +603,29 @@ github/tensorflow/tensorflow pull request [52227][52227]).
 
 Resolved in TF 2.6 (and possibly earlier versions). Use
 [TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS).
+
+---
+
+<a name="debug-numeric-summary"></a>
+## Debug Numeric Summary
+
+### Problem
+
+When running on GPU, `tf.raw_ops.DebugNumericSummaryV2` may inject truly random
+arithmetic noise in the forward direction when `tensor_debug_mode` is set to
+either `3` (`CONCISE_HEALTH`) or `4` (`FULL_HEALTH`).
+
+### Solution
+
+There is currently no solution apart from running the op on CPU.
+
+### Additional Information
+
+Stock TensorFlow version 2.7+ will throw a `tf.errors.UnimplementedError` if
+this op is used with `tensor_debug_mode set` to `3` or `4` and with the
+expectation of determinism (i.e. with `TF_DETERMINISTIC_OPS` set to `"true"` or
+`"1"`). See github/tensorflow/tensorflow commit
+[5a51f](https://github.com/tensorflow/tensorflow/commit/5a51fa12e54fd61ca7520fa82ad0cdd1c14591ee).
 
 ---
 

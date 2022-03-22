@@ -650,9 +650,10 @@ ID                                                           | Title            
 [a4b53][1008]<sup>1</sup>                                    | Raise error if random ops used with determinism<br>without seed        | merged | 2021-08-10  | 2.7     |
 [51140](https://github.com/tensorflow/tensorflow/pull/51140) | Add unimplemented exception to<br>tf.image.adjust_contrast             | merged | 2021-08-19  | 2.7     |
 [51392](https://github.com/tensorflow/tensorflow/pull/51392) | Add GPU-deterministic segment reductions                               | closed |             |         |
+[5a51f][1012]<sup>1</sup>                                    | Add determinism checks & tests for<br>DebugNumericSummaryV2            | merged | 2021-08-31  | 2.7     |
 [fc91e][1007]<sup>1</sup>                                    | Add make_deterministic grappler pass                                   | merged | 2021-09-03  | 2.7     |
 [51861](https://github.com/tensorflow/tensorflow/pull/51861) | Replacement for 51392 (w/ deterministic kernels<br>optionally enabled) | merged | 2021-09-07  | 2.7     |
-[51920](https://github.com/tensorflow/tensorflow/pull/51920) | Add d9m-unimplemented exception for tf.nn.depthwise_conv2d             | merged | 2021-09-15  | 2.7     |
+[51920](https://github.com/tensorflow/tensorflow/pull/51920) | Add d9m-unimplemented exception for<br>tf.nn.depthwise_conv2d          | merged | 2021-09-15  | 2.7     |
 [c0e2e][1009]<sup>1</sup>                                    | Handle MapAndBatch in make_deterministic<br>grappler pass              | merged | 2021-09-10  | 2.7     |
 [f0e6c][1011]<sup>1</sup>                                    | Add determinism exception to DenseBincount                             | merged | 2021-09-22  | 2.7     |
 [52227](https://github.com/tensorflow/tensorflow/pull/52227) | Add determinism tests for tf.nn.ctc_loss                               | merged | 2021-10-05  | 2.7     |
@@ -661,7 +662,7 @@ ID                                                           | Title            
 [ced76][1010]<sup>1</sup>                                    | Fix issue where convolutions were not<br>deterministic                 | merged | 2022-01-19  | 2.8     |
 [53826](https://github.com/tensorflow/tensorflow/pull/53826) | r2.8 cherry-pick req: Fix issue where<br>convs were not deterministic  | merged | 2022-01-20  | 2.8     |
 [53847](https://github.com/tensorflow/tensorflow/pull/53847) | Add release note about deterministic<br>selection of conv algos        | merged | 2022-01-21  | 2.8     |
-[54119](https://github.com/tensorflow/tensorflow/pull/54119) | Add disable for depthwise-conv d9m-unimplemented exception             | merged | 2022-02-01  | 2.9     |
+[54119](https://github.com/tensorflow/tensorflow/pull/54119) | Add disable for depthwise-conv d9m-unimplemented<br>exception          | merged | 2022-02-01  | 2.9     |
 
 Notes:
   1. These are individual commits.
@@ -677,6 +678,7 @@ Notes:
 [1009]: https://github.com/tensorflow/tensorflow/commit/c0e2e65e155fabd9bdfd5c41b4b816d9efac8e1f
 [1010]: https://github.com/tensorflow/tensorflow/commit/ced762bd4986dfad83ccf6d57e4e4fa3e47bd3fe
 [1011]: https://github.com/tensorflow/tensorflow/commit/f0e6c2ff82d9892861572dd0802ff926a99b6320
+[1012]: https://github.com/tensorflow/tensorflow/commit/5a51fa12e54fd61ca7520fa82ad0cdd1c14591ee
 
 ### Other TensorFlow Organization Pull Requests
 
