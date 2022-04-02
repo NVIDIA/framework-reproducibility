@@ -512,7 +512,6 @@ nondeterminism.
 * `maxpooling_op_gpu.cu.cc`
 * `multinomial_op_gpu.cu.cc`
 * `scatter_functor_gpu.cu.h`
-* `scatter_nd_op_gpu.cu.cc`
 * `stateful_random_ops_gpu.cu.cc`
 * `svd_op_gpu.cu.cc`
 
@@ -653,7 +652,9 @@ ID                                                           | Title            
 [5a51f][1012]<sup>1</sup>                                    | Add determinism checks & tests for<br>DebugNumericSummaryV2            | merged | 2021-08-31  | 2.7     |
 [fc91e][1007]<sup>1</sup>                                    | Add make_deterministic grappler pass                                   | merged | 2021-09-03  | 2.7     |
 [51861](https://github.com/tensorflow/tensorflow/pull/51861) | Replacement for 51392 (w/ deterministic kernels<br>optionally enabled) | merged | 2021-09-07  | 2.7     |
+[eb95f][1013]<sup>1</sup>                                    | Add d9m checks+tests for ScatterNd,<br>ScatterNdUpdate, & TensorScatter| merged | 2021-09-09  | 2.7     |
 [51920](https://github.com/tensorflow/tensorflow/pull/51920) | Add d9m-unimplemented exception for<br>tf.nn.depthwise_conv2d          | merged | 2021-09-15  | 2.7     |
+[03ba3][1014]<sup>1</sup>                                    | Make GPU scatter ND ops deterministic by running them on CPU           | merged | 2021-09-17  | 2.7     |
 [c0e2e][1009]<sup>1</sup>                                    | Handle MapAndBatch in make_deterministic<br>grappler pass              | merged | 2021-09-10  | 2.7     |
 [f0e6c][1011]<sup>1</sup>                                    | Add determinism exception to DenseBincount                             | merged | 2021-09-22  | 2.7     |
 [52227](https://github.com/tensorflow/tensorflow/pull/52227) | Add determinism tests for tf.nn.ctc_loss                               | merged | 2021-10-05  | 2.7     |
@@ -679,6 +680,8 @@ Notes:
 [1010]: https://github.com/tensorflow/tensorflow/commit/ced762bd4986dfad83ccf6d57e4e4fa3e47bd3fe
 [1011]: https://github.com/tensorflow/tensorflow/commit/f0e6c2ff82d9892861572dd0802ff926a99b6320
 [1012]: https://github.com/tensorflow/tensorflow/commit/5a51fa12e54fd61ca7520fa82ad0cdd1c14591ee
+[1013]: https://github.com/tensorflow/tensorflow/commit/eb95f6157f949cd848910cb63f8cd5b1767af5d2
+[1014]: https://github.com/tensorflow/tensorflow/commit/03ba364effe173d0b185977f0c14a48863d1f277
 
 ### Other TensorFlow Organization Pull Requests
 

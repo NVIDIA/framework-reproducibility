@@ -19,6 +19,7 @@ from the "Solution Available" column.
  Auto-tuning of cuDNN convolution algorithms                             | [YES](#auto-tuning)          |
  `tfa.image.dense_image_warp` backprop                                   | [YES](#dense-image-warp)     |
  `tf.compat.v1.nn.fused_batch_norm` backrop                              | [NO](#fused-batch-norm)      |
+ `tf.compat.v1.scatter_nd_update` forward                                | [YES](#scatter-nd)           |
  `tf.convert_to_tensor` forward, for `tf.IndexedSlices`                  | [YES](#convert-to-tensor)    |
  `tf.gather` backprop                                                    | [YES](#gather)               |
  `tf.keras.layers.BatchNormalization` backprop                           | [NO](#fused-batch-norm)      |
@@ -42,10 +43,10 @@ from the "Solution Available" column.
  `tf.math.bincount`                                                      | [NO](#bincount)              |
  `tf.math.segment_prod` forward                                          | [YES](#segment-reduction)    |
  `tf.math.segment_sum` forward                                           | [YES](#segment-reduction)    |
- `tf.math.unsorted_segment_mean`                                         | [YES](#segment-reduction)    |
- `tf.math.unsorted_segment_prod`                                         | [YES](#segment-reduction)    |
- `tf.math.unsorted_segment_sqrt_n`                                       | [YES](#segment-reduction)    |
- `tf.math.unsorted_segment_sum`                                          | [YES](#segment-reduction)    |
+ `tf.math.unsorted_segment_mean` forward                                 | [YES](#segment-reduction)    |
+ `tf.math.unsorted_segment_prod` forward                                 | [YES](#segment-reduction)    |
+ `tf.math.unsorted_segment_sqrt_n` forward                               | [YES](#segment-reduction)    |
+ `tf.math.unsorted_segment_sum` forward                                  | [YES](#segment-reduction)    |
  `tf.nn.bias_add` backprop                                               | [YES](#bias-addition)        |
  `tf.nn.conv1d` backprop                                                 | [YES](#cudnn-conv)           |
  `tf.nn.conv2d` backprop                                                 | [YES](#cudnn-conv)           |
@@ -58,7 +59,11 @@ from the "Solution Available" column.
  `tf.nn.softmax_cross_entropy_with_logits`                               | [YES](#softmax-xent)         |
  `tf.nn.sparse_softmax_cross_entropy_with_logits`                        | [YES](#softmax-xent)         |
  `tf.raw_ops.DebugNumericSummaryV2`                                      | [NO](#debug-numeric-summary) |
+ `tf.scatter_nd` forward                                                 | [YES](#scatter-nd)           |
  `tf.sparse.sparse_dense_matmul` forward                                 | [NO](#sparse-dense-matmul)   |
+ `tf.tensor_scatter_nd_add` forward                                      | [YES](#scatter-nd)           |
+ `tf.tensor_scatter_nd_sub` forward                                      | [YES](#scatter-nd)           |
+ `tf.tensor_scatter_nd_update` forward                                   | [YES](#scatter-nd)           |
  XLA reductions on GPU                                                   | [YES](#xla-reductions)       |
 
 Information for each source is listed below. To reduce repetition, the following
@@ -678,6 +683,35 @@ Stock TensorFlow version 2.6+ will throw a `tf.errors.UnimplementedError` if the
 nondeterministic path through this op is used with the expectation of
 determinism (i.e. with `TF_DETERMINISTIC_OPS` set to `"true"` or `"1"`). See
 github/tensorflow/tensorflow pull request [50355][50355].
+
+---
+
+<a name="scatter-nd"></a>
+## Scatter Nd
+
+### Problem
+
+`tf.scatter_nd` and other scatter-nd ops (such as `tf.tensor_scatter_nd_add`,
+`tf.tensor_scatter_nd_sub`, `tf.tensor_scatter_nd_update`, and
+`tf.compat.v1.scatter_nd_update`) may introduce random noise in the forward
+direction when running on GPU for floating-point data types when there are
+duplicated `indices`.
+
+### Solutions
+
+  * TF 2.7: [TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS)
+  * TF 2.8+: [enable_op_determinism](#enable_op_determinism)
+
+The above-referenced solution (see
+[this commit](https://github.com/tensorflow/tensorflow/commit/03ba364effe173d0b185977f0c14a48863d1f277)
+) transfers the data into CPU memory, runs the op on CPU, and then transfers the
+result back to GPU memory. For this reason, this solution should be expected
+to exhibit particularly low performance.
+
+### Additional Information
+
+The XLA implementation of the scatter-nd ops still operates
+nondeterministically.
 
 ---
 
