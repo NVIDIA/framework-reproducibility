@@ -65,6 +65,7 @@ from the "Solution Available" column.
  `tf.tensor_scatter_nd_sub` forward                                      | [YES](#scatter-nd)           |
  `tf.tensor_scatter_nd_update` forward                                   | [YES](#scatter-nd)           |
  XLA reductions on GPU                                                   | [YES](#xla-reductions)       |
+ XLA Scatter on GPU                                                      | [YES](#xla-scatter)          |
 
 Information for each source is listed below. To reduce repetition, the following
 abbreviations have been used throughout:
@@ -695,23 +696,24 @@ github/tensorflow/tensorflow pull request [50355][50355].
 `tf.tensor_scatter_nd_sub`, `tf.tensor_scatter_nd_update`, and
 `tf.compat.v1.scatter_nd_update`) may introduce random noise in the forward
 direction when running on GPU for floating-point data types when there are
-duplicated `indices`.
+duplicated `indices`, with or without XLA JIT compilation.
 
 ### Solutions
 
-  * TF 2.7: [TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS)
-  * TF 2.8+: [enable_op_determinism](#enable_op_determinism)
+  * TF 2.7: [TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS), except
+    `tf.function(jit_compile=True)`s that use `Scatter` (XLA nondeterministic).
+  * TF 2.8+: [enable_op_determinism](#enable_op_determinism), including
+    `tf.function(jit_compile=True)`s that use `Scatter` (XLA deterministic).
 
-The above-referenced solution (see
+The above-referenced non-XLA solution (see
 [this commit](https://github.com/tensorflow/tensorflow/commit/03ba364effe173d0b185977f0c14a48863d1f277)
 ) transfers the data into CPU memory, runs the op on CPU, and then transfers the
 result back to GPU memory. For this reason, this solution should be expected
 to exhibit particularly low performance.
 
-### Additional Information
-
-The XLA implementation of the scatter-nd ops still operates
-nondeterministically.
+See
+[this commit](https://github.com/tensorflow/tensorflow/commit/4dc6d4d59008b4558040afa1a5a5993f583bb48e)
+for the XLA-related solution.
 
 ---
 
@@ -727,6 +729,24 @@ nondeterministic noise.
 ### Solution
 
   * TF 2.2+: [TF_DETERMINISTIC_OPS](#TF_DETERMINISTIC_OPS)
+
+---
+
+<a name="xla-scatter"></a>
+## XLA Scatter on GPU
+
+## Problem
+
+XLA JIT compilation (i.e. use of `tf.function(jit_compile=True)`) that utilizes
+the XLA `Scatter` GPU operation will introduce truly random arithmetic noise in
+the forward direction.
+
+### Solution
+
+  * TF 2.8+: [enable_op_determinism](#enable_op_determinism)
+
+See
+[this commit](https://github.com/tensorflow/tensorflow/commit/4dc6d4d59008b4558040afa1a5a5993f583bb48e).
 
 ---
 

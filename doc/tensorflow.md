@@ -659,6 +659,7 @@ ID                                                           | Title            
 [f0e6c][1011]<sup>1</sup>                                    | Add determinism exception to DenseBincount                             | merged | 2021-09-22  | 2.7     |
 [52227](https://github.com/tensorflow/tensorflow/pull/52227) | Add determinism tests for tf.nn.ctc_loss                               | merged | 2021-10-05  | 2.7     |
 [52971](https://github.com/tensorflow/tensorflow/pull/52971) | Add op-determinism info to version 2.7<br>release notes                | merged | 2021-11-10  | 2.7     |
+[4dc6d][1015]<sup>1</sup>                                    | Have GpuScatterExpander always rewrite<br>Scatter when op-d9m enabled  | merged | 2021-12-16  | 2.8     |
 [53465](https://github.com/tensorflow/tensorflow/pull/53465) | Add v2.8 release notes                                                 | merged | 2021-12-22  | 2.8     |
 [ced76][1010]<sup>1</sup>                                    | Fix issue where convolutions were not<br>deterministic                 | merged | 2022-01-19  | 2.8     |
 [53826](https://github.com/tensorflow/tensorflow/pull/53826) | r2.8 cherry-pick req: Fix issue where<br>convs were not deterministic  | merged | 2022-01-20  | 2.8     |
@@ -682,6 +683,7 @@ Notes:
 [1012]: https://github.com/tensorflow/tensorflow/commit/5a51fa12e54fd61ca7520fa82ad0cdd1c14591ee
 [1013]: https://github.com/tensorflow/tensorflow/commit/eb95f6157f949cd848910cb63f8cd5b1767af5d2
 [1014]: https://github.com/tensorflow/tensorflow/commit/03ba364effe173d0b185977f0c14a48863d1f277
+[1015]: https://github.com/tensorflow/tensorflow/commit/4dc6d4d59008b4558040afa1a5a5993f583bb48e
 
 ### Other TensorFlow Organization Pull Requests
 
