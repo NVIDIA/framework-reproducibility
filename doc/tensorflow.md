@@ -665,6 +665,7 @@ ID                                                           | Title            
 [53826](https://github.com/tensorflow/tensorflow/pull/53826) | r2.8 cherry-pick req: Fix issue where<br>convs were not deterministic  | merged | 2022-01-20  | 2.8     |
 [53847](https://github.com/tensorflow/tensorflow/pull/53847) | Add release note about deterministic<br>selection of conv algos        | merged | 2022-01-21  | 2.8     |
 [54119](https://github.com/tensorflow/tensorflow/pull/54119) | Add disable for depthwise-conv d9m-unimplemented<br>exception          | merged | 2022-02-01  | 2.9     |
+[55657](https://github.com/tensorflow/tensorflow/pull/55657) | Add GPU-determinism to tf.nn.depthwise_conv2d                          | merged | 2022-04-26  | 2.10    |
 
 Notes:
   1. These are individual commits.

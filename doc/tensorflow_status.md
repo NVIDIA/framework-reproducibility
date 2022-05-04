@@ -26,7 +26,7 @@ from the "Solution Available" column.
  `tf.keras.layers.Conv1D` backprop                                       | [YES](#cudnn-conv)           |
  `tf.keras.layers.Conv2D` backprop                                       | [YES](#cudnn-conv)           |
  `tf.keras.layers.Conv3D` backprop                                       | [YES](#cudnn-conv)           |
- `tf.keras.layers.DepthwiseConv2D` backprop to `filter`                  | [NO](#depthwise-conv)        |
+ `tf.keras.layers.DepthwiseConv2D` backprop to `filter`                  | [YES](#depthwise-conv)       |
  `tf.keras.layers.MaxPool1D` backprop                                    | [YES](#max-pool)             |
  `tf.keras.layers.MaxPool2D` backprop                                    | [YES](#max-pool)             |
  `tf.keras.layers.MaxPool3D` backprop                                    | [YES](#max-pool)             |
@@ -52,7 +52,7 @@ from the "Solution Available" column.
  `tf.nn.conv2d` backprop                                                 | [YES](#cudnn-conv)           |
  `tf.nn.conv3d` backprop                                                 | [YES](#cudnn-conv)           |
  `tf.nn.ctc_loss` backprop                                               | [YES](#ctc-loss)             |
- `tf.nn.depthwise_conv2d` backprop to `filter`                           | [NO](#depthwise-conv)        |
+ `tf.nn.depthwise_conv2d` backprop to `filter`                           | [YES](#depthwise-conv)       |
  `tf.nn.max_pool1d` backprop                                             | [YES](#max-pool)             |
  `tf.nn.max_pool2d` backprop                                             | [YES](#max-pool)             |
  `tf.nn.max_pool3d` backprop                                             | [YES](#max-pool)             |
@@ -268,7 +268,8 @@ Functionality that is built on top of these ops is also affected, such as
 
 ### Problem
 
-`tf.nn.depthwise_conv2d` and `tf.keras.layers.DepthwiseConv2D` do not operate
+In versions of TensorFlow earlier than 2.10, `tf.nn.depthwise_conv2d` and
+`tf.keras.layers.DepthwiseConv2D` backprop to `filter` does not operate
 fully deterministically when running on GPU, even when the solutions for
 [cuDNN convolution](#cudnn-conv) are applied. The relatively complex story is
 explicated in the docstring of
@@ -276,15 +277,17 @@ explicated in the docstring of
 
 ### Solution
 
-As described in the aforementioned
-[gist](https://gist.github.com/duncanriach/4c18cb07a73510c5fcb2deb52adbffaa),
-for a single input channel the functionality may be determinstic using the
-solutions for [cuDNN convolution](#cudnn-conv). For other configurations, there
-is currently no solutiuon.
+`tf.nn.depthwise_conv2d` and `tf.keras.layers.DepthwiseConv2D` backprop to
+`filter` operates deterministically on GPU in TensorFlow version 2.10 and later
+(with cuDNN version 7.6 or later; note that the official TF 2.10 pip package
+build requires cuDNN version 8+). Enable with
+[enable_op_determinism](#enable_op_determinism). See
+github/tensorflow/tensorflow pull request [55657][55657]
 
-However, it may be possible to implement the required functionality, with
-reasonable performance, using multiple instances of regular convolution
-followed by an appropiate splicing of their outputs.
+In versions of TensorFlow prior to 2.10, as described in the aforementioned
+[gist](https://gist.github.com/duncanriach/4c18cb07a73510c5fcb2deb52adbffaa),
+for a single input channel the functionality may be determinstic on GPU using
+the solutions for [cuDNN convolution](#cudnn-conv).
 
 ### Additional Information
 
@@ -292,10 +295,13 @@ Stock TensorFlow version 2.7+ will throw a `tf.errors.UnimplementedError` if the
 non-cuDNN nondeterministic path through `tf.nn.depthwise_conv2d` is
 traversed with the expectation of determinism (i.e. with `TF_DETERMINISTIC_OPS`
 set to `"true"` or `"1"`). See github/tensorflow/tensorflow pull request
-[51920][51920]. In TensorFlow version 2.9+, this exception can be disabled (for
-debug) by setting the environment variable
+[51920][51920]. In TensorFlow version 2.9 (only), this exception can be disabled
+(for debug) by setting the environment variable
 `TF_DISABLE_DEPTHWISE_CONV_DETERMINISM_EXCEPTIONS` to `"true"` or `"1"`. See
-github/tensorflow/tensorflow pull request [54119][54119].
+github/tensorflow/tensorflow pull request [54119][54119]. In TensorFlow version
+2.10 and later, this exception will only be thrown if the backprop to `filter`
+of `tf.nn.depthwise_conv2d` is used on GPU with the expectation of determinism
+with a version of cuDNN earlier than 7.6.
 
 See these issues:
 
@@ -775,3 +781,4 @@ See
 [52227]: https://github.com/tensorflow/tensorflow/pull/52227
 [53771]: https://github.com/tensorflow/tensorflow/issues/53771
 [54119]: https://github.com/tensorflow/tensorflow/pull/54119
+[55657]: https://github.com/tensorflow/tensorflow/pull/55657
