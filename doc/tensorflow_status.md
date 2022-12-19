@@ -14,58 +14,58 @@ The following table indicates whether a solution is available for each source.
 For further information, see the later detailed notes, which are linked to
 from the "Solution Available" column.
 
- Source                                                                  | Solution Available           |
--------------------------------------------------------------------------|:-----------------------------|
- Auto-tuning of cuDNN convolution algorithms                             | [YES](#auto-tuning)          |
- `tfa.image.dense_image_warp` backprop                                   | [YES](#dense-image-warp)     |
- `tf.compat.v1.nn.fused_batch_norm` backrop                              | [NO](#fused-batch-norm)      |
- `tf.compat.v1.scatter_nd_update` forward                                | [YES](#scatter-nd)           |
- `tf.convert_to_tensor` forward, for `tf.IndexedSlices`                  | [YES](#convert-to-tensor)    |
- `tf.gather` backprop                                                    | [YES](#gather)               |
- `tf.keras.layers.BatchNormalization` backprop                           | [NO](#fused-batch-norm)      |
- `tf.keras.layers.Conv1D` backprop                                       | [YES](#cudnn-conv)           |
- `tf.keras.layers.Conv2D` backprop                                       | [YES](#cudnn-conv)           |
- `tf.keras.layers.Conv3D` backprop                                       | [YES](#cudnn-conv)           |
- `tf.keras.layers.DepthwiseConv2D` backprop to `filter`                  | [YES](#depthwise-conv)       |
- `tf.keras.layers.MaxPool1D` backprop                                    | [YES](#max-pool)             |
- `tf.keras.layers.MaxPool2D` backprop                                    | [YES](#max-pool)             |
- `tf.keras.layers.MaxPool3D` backprop                                    | [YES](#max-pool)             |
- `tf.keras.layers.UpSampling2D` backprop when `interpolation='bilinear'` | [YES](#resize-bilinear)      |
- `tf.keras.layers.UpSampling2D` backprop with `interpolation='nearest'`  | [NO](#resize-nearest)        |
- `tf.keras.losses.categorical_crossentropy` forward and backprop         | [YES](#softmax-xent)         |
- `tf.keras.losses.CategoricalCrossentropy` forward and backprop          | [YES](#softmax-xent)         |
- `tf.keras.losses.sparse_categorical_crossentropy` forward and backprop  | [YES](#softmax-xent)         |
- `tf.keras.losses.SparseCategoricalCrossentropy` forward and backprop    | [YES](#softmax-xent)         |
- `tf.image.adjust_contrast` forward                                      | [NO](#adjust-contrast)       |
- `tf.image.crop_and_resize` backprop                                     | [NO](#crop-and-resize)       |
- `tf.image.resize` backprop when `method=ResizeMethod.BILINEAR`          | [YES](#resize-bilinear)      |
- `tf.image.resize` backprop when `method=ResizeMethod.NEAREST`           | [NO](#resize-nearest)        |
- `tf.math.bincount`                                                      | [NO](#bincount)              |
- `tf.math.segment_prod` forward                                          | [YES](#segment-reduction)    |
- `tf.math.segment_sum` forward                                           | [YES](#segment-reduction)    |
- `tf.math.unsorted_segment_mean` forward                                 | [YES](#segment-reduction)    |
- `tf.math.unsorted_segment_prod` forward                                 | [YES](#segment-reduction)    |
- `tf.math.unsorted_segment_sqrt_n` forward                               | [YES](#segment-reduction)    |
- `tf.math.unsorted_segment_sum` forward                                  | [YES](#segment-reduction)    |
- `tf.nn.bias_add` backprop                                               | [YES](#bias-addition)        |
- `tf.nn.conv1d` backprop                                                 | [YES](#cudnn-conv)           |
- `tf.nn.conv2d` backprop                                                 | [YES](#cudnn-conv)           |
- `tf.nn.conv3d` backprop                                                 | [YES](#cudnn-conv)           |
- `tf.nn.ctc_loss` backprop                                               | [YES](#ctc-loss)             |
- `tf.nn.depthwise_conv2d` backprop to `filter`                           | [YES](#depthwise-conv)       |
- `tf.nn.max_pool1d` backprop                                             | [YES](#max-pool)             |
- `tf.nn.max_pool2d` backprop                                             | [YES](#max-pool)             |
- `tf.nn.max_pool3d` backprop                                             | [YES](#max-pool)             |
- `tf.nn.softmax_cross_entropy_with_logits`                               | [YES](#softmax-xent)         |
- `tf.nn.sparse_softmax_cross_entropy_with_logits`                        | [YES](#softmax-xent)         |
- `tf.raw_ops.DebugNumericSummaryV2`                                      | [NO](#debug-numeric-summary) |
- `tf.scatter_nd` forward                                                 | [YES](#scatter-nd)           |
- `tf.sparse.sparse_dense_matmul` forward                                 | [NO](#sparse-dense-matmul)   |
- `tf.tensor_scatter_nd_add` forward                                      | [YES](#scatter-nd)           |
- `tf.tensor_scatter_nd_sub` forward                                      | [YES](#scatter-nd)           |
- `tf.tensor_scatter_nd_update` forward                                   | [YES](#scatter-nd)           |
- XLA reductions on GPU                                                   | [YES](#xla-reductions)       |
- XLA Scatter on GPU                                                      | [YES](#xla-scatter)          |
+ Source                                                                  | Solution Available                              |
+-------------------------------------------------------------------------|:------------------------------------------------|
+ Auto-tuning of cuDNN convolution algorithms                             | :heavy_check_mark: [YES](#auto-tuning)          |
+ `tfa.image.dense_image_warp` backprop                                   | :heavy_check_mark: [YES](#dense-image-warp)     |
+ `tf.compat.v1.nn.fused_batch_norm` backrop                              | :x:                [NO](#fused-batch-norm)      |
+ `tf.compat.v1.scatter_nd_update` forward                                | :heavy_check_mark: [YES](#scatter-nd)           |
+ `tf.convert_to_tensor` forward, for `tf.IndexedSlices`                  | :heavy_check_mark: [YES](#convert-to-tensor)    |
+ `tf.gather` backprop                                                    | :heavy_check_mark: [YES](#gather)               |
+ `tf.keras.layers.BatchNormalization` backprop                           | :x:                [NO](#fused-batch-norm)      |
+ `tf.keras.layers.Conv1D` backprop                                       | :heavy_check_mark: [YES](#cudnn-conv)           |
+ `tf.keras.layers.Conv2D` backprop                                       | :heavy_check_mark: [YES](#cudnn-conv)           |
+ `tf.keras.layers.Conv3D` backprop                                       | :heavy_check_mark: [YES](#cudnn-conv)           |
+ `tf.keras.layers.DepthwiseConv2D` backprop to `filter`                  | :heavy_check_mark: [YES](#depthwise-conv)       |
+ `tf.keras.layers.MaxPool1D` backprop                                    | :heavy_check_mark: [YES](#max-pool)             |
+ `tf.keras.layers.MaxPool2D` backprop                                    | :heavy_check_mark: [YES](#max-pool)             |
+ `tf.keras.layers.MaxPool3D` backprop                                    | :heavy_check_mark: [YES](#max-pool)             |
+ `tf.keras.layers.UpSampling2D` backprop when `interpolation='bilinear'` | :heavy_check_mark: [YES](#resize-bilinear)      |
+ `tf.keras.layers.UpSampling2D` backprop with `interpolation='nearest'`  | :x:                [NO](#resize-nearest)        |
+ `tf.keras.losses.categorical_crossentropy` forward and backprop         | :heavy_check_mark: [YES](#softmax-xent)         |
+ `tf.keras.losses.CategoricalCrossentropy` forward and backprop          | :heavy_check_mark: [YES](#softmax-xent)         |
+ `tf.keras.losses.sparse_categorical_crossentropy` forward and backprop  | :heavy_check_mark: [YES](#softmax-xent)         |
+ `tf.keras.losses.SparseCategoricalCrossentropy` forward and backprop    | :heavy_check_mark: [YES](#softmax-xent)         |
+ `tf.image.adjust_contrast` forward                                      | :x:                [NO](#adjust-contrast)       |
+ `tf.image.crop_and_resize` backprop                                     | :x:                [NO](#crop-and-resize)       |
+ `tf.image.resize` backprop when `method=ResizeMethod.BILINEAR`          | :heavy_check_mark: [YES](#resize-bilinear)      |
+ `tf.image.resize` backprop when `method=ResizeMethod.NEAREST`           | :x:                [NO](#resize-nearest)        |
+ `tf.math.bincount`                                                      | :x:                [NO](#bincount)              |
+ `tf.math.segment_prod` forward                                          | :heavy_check_mark: [YES](#segment-reduction)    |
+ `tf.math.segment_sum` forward                                           | :heavy_check_mark: [YES](#segment-reduction)    |
+ `tf.math.unsorted_segment_mean` forward                                 | :heavy_check_mark: [YES](#segment-reduction)    |
+ `tf.math.unsorted_segment_prod` forward                                 | :heavy_check_mark: [YES](#segment-reduction)    |
+ `tf.math.unsorted_segment_sqrt_n` forward                               | :heavy_check_mark: [YES](#segment-reduction)    |
+ `tf.math.unsorted_segment_sum` forward                                  | :heavy_check_mark: [YES](#segment-reduction)    |
+ `tf.nn.bias_add` backprop                                               | :heavy_check_mark: [YES](#bias-addition)        |
+ `tf.nn.conv1d` backprop                                                 | :heavy_check_mark: [YES](#cudnn-conv)           |
+ `tf.nn.conv2d` backprop                                                 | :heavy_check_mark: [YES](#cudnn-conv)           |
+ `tf.nn.conv3d` backprop                                                 | :heavy_check_mark: [YES](#cudnn-conv)           |
+ `tf.nn.ctc_loss` backprop                                               | :heavy_check_mark: [YES](#ctc-loss)             |
+ `tf.nn.depthwise_conv2d` backprop to `filter`                           | :heavy_check_mark: [YES](#depthwise-conv)       |
+ `tf.nn.max_pool1d` backprop                                             | :heavy_check_mark: [YES](#max-pool)             |
+ `tf.nn.max_pool2d` backprop                                             | :heavy_check_mark: [YES](#max-pool)             |
+ `tf.nn.max_pool3d` backprop                                             | :heavy_check_mark: [YES](#max-pool)             |
+ `tf.nn.softmax_cross_entropy_with_logits`                               | :heavy_check_mark: [YES](#softmax-xent)         |
+ `tf.nn.sparse_softmax_cross_entropy_with_logits`                        | :heavy_check_mark: [YES](#softmax-xent)         |
+ `tf.raw_ops.DebugNumericSummaryV2`                                      | :x:                [NO](#debug-numeric-summary) |
+ `tf.scatter_nd` forward                                                 | :heavy_check_mark: [YES](#scatter-nd)           |
+ `tf.sparse.sparse_dense_matmul` forward                                 | :x:                [NO](#sparse-dense-matmul)   |
+ `tf.tensor_scatter_nd_add` forward                                      | :heavy_check_mark: [YES](#scatter-nd)           |
+ `tf.tensor_scatter_nd_sub` forward                                      | :heavy_check_mark: [YES](#scatter-nd)           |
+ `tf.tensor_scatter_nd_update` forward                                   | :heavy_check_mark: [YES](#scatter-nd)           |
+ XLA reductions on GPU                                                   | :heavy_check_mark: [YES](#xla-reductions)       |
+ XLA Scatter on GPU                                                      | :heavy_check_mark: [YES](#xla-scatter)          |
 
 Information for each source is listed below. To reduce repetition, the following
 abbreviations have been used throughout:
