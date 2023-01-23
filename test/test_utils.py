@@ -17,7 +17,7 @@ import sys
 import unittest
 
 sys.path.insert(0, '..')
-from fwd9m.utils import _Version as Version
+from fwrepro.utils import _Version as Version
 
 class TestUtils(unittest.TestCase):
 

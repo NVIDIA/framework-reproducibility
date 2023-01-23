@@ -11,7 +11,7 @@ Then delete the release branch.
 
 ## 2. Check Version Number
 
-Confirm that the version number in `fwd9m/version.py` is correct.
+Confirm that the version number in `fwrepro/version.py` is correct.
 
 ## 3. Run Tests
 

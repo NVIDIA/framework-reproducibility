@@ -44,7 +44,7 @@ expect () {
 
 VERSION=$(python get_version.py)
 DISTRIBUTION_NAME=framework-determinism
-PACKAGE_NAME=fwd9m
+PACKAGE_NAME=fwrepro
 
 OK=0
 ERROR=1

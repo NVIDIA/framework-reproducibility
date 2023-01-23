@@ -545,8 +545,8 @@ reduction ops, in TF 2.6+, which are also deterministic by default.
 
 We **do** have an unreleased patch for `tf.math.segment_sum` and
 `tf.math.unsorted_segment_sum` that can be used by cloning this current
-repository, installing the `fwd9m` package, and calling
-`fwd9m.tensorflow.enable_determinism`. However, this patch will not provide
+repository, installing the `fwrepro` package, and calling
+`fwrepro.tensorflow.enable_determinism`. However, this patch will not provide
 robust deterministic functionality and should not be relied upon. For more
 information, see github/tensorflow/tensorflow pull request [47749][47749], in
 which the approach used in this patch was discovered to be flawed.

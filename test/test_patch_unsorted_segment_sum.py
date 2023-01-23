@@ -57,7 +57,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from segment_reduction_helper import SegmentReductionHelper
 
 sys.path.insert(0, '..')
-import fwd9m.tensorflow as fwd9m_tensorflow
+import fwrepro.tensorflow as fwrepro_tensorflow
 import utils
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # Simplifies logging
@@ -203,7 +203,7 @@ class UnsortedSegmentSumTest(SegmentReductionHelper):
       for indices in indices_flat, indices_flat.reshape(5, 2):
         shape = indices.shape + (num_cols,)
         # test CPU and GPU as tf.gather behaves differently on each device
-        # fwd9m note: the upstream test uses test_util.use_gpu, which seems to
+        # fwrepro note: the upstream test uses test_util.use_gpu, which seems to
         # suffer from the same problem, and presumably does the same thing, as
         # self.session(force_gpu=true). So we replaced test_util.use_gpu with
         # utils.force_gpu_session(self).
@@ -445,5 +445,5 @@ class SegmentReductionTestMisc(test.TestCase):
                 % op.__name__)
 
 if __name__ == "__main__":
-  fwd9m_tensorflow.enable_determinism()
+  fwrepro_tensorflow.enable_determinism()
   test.main()

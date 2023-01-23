@@ -12,20 +12,20 @@ this current repository.
 
 ### Upcoming Patch Changes
 
-In the next release of this package (version `0.4.0`), the distribution name
-will be changed from `tensorflow-determinism` to `framework-determinism` and the
-package name will be changed from `tfdeterminism` to `fwd9m`. These changes
+In the next release of this package (version `0.5.0`), the distribution name
+will be changed from `tensorflow-determinism` to `framework-reproducibility` and the
+package name will be changed from `tfdeterminism` to `fwrepro`. These changes
 reflect an intention going forward for this repo to increasingly support
 determinism in multiple deep learning frameworks.
 
 Users of `tfdeterminism.patch` will need to use the to-be-deprecated
-`fwd9m.tensorflow.patch` and will be encouraged to migrate to using
-`fwd9m.tensorflow.enable_determinism` instead, which is intended to provide
+`fwrepro.tensorflow.patch` and will be encouraged to migrate to using
+`fwrepro.tensorflow.enable_determinism` instead, which is intended to provide
 compatibility, indefinitely, with future versions of TensorFlow.
 
 There is no ETA for this release. Resources are currently focused on making
 various determinism-related changes to stock TensorFlow. In the meantime, you
-may want to clone this repo and see if `fwd9m.tensorflow.enable_determinism` in
+may want to clone this repo and see if `fwrepro.tensorflow.enable_determinism` in
 it's current, unreleased, state (with patching for the segment reduction ops)
 does what you need. Please let me know how that goes.
 
@@ -79,7 +79,7 @@ TensorFlow for most deep learning applications:
 1. Use the lastest version of stock TensorFlow (currently version 2.4), which
    implements most of the currently-available deterministic op solutions. It
    does not require any officially released determinism patches.
-2. Clone this repo and call `fwd9m.tensorflow.enable_determinism` to apply the,
+2. Clone this repo and call `fwrepro.tensorflow.enable_determinism` to apply the,
    as-yet unreleased, patch for the segment reduction ops to your chosen
    version of TensorFlow. This code may not be fully regression tested; your
    results may vary.

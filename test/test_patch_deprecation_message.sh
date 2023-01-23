@@ -15,7 +15,7 @@
 # limitations under the License.
 # ========================================================================
 
-WARNING="WARNING: fwd9m.tensorflow.patch has been deprecated. Please use enable_determinism (which supports all versions of TensorFlow)."
+WARNING="WARNING: fwrepro.tensorflow.patch has been deprecated. Please use enable_determinism (which supports all versions of TensorFlow)."
 
 echo "Testing that patch produces a deprecation warning"
 if python test_patch_apply.py | grep -q "${WARNING}"; then

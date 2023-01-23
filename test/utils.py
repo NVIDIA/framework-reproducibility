@@ -1,5 +1,5 @@
 import tensorflow as tf
-from fwd9m.utils import _Version as Version
+from fwrepro.utils import _Version as Version
 
 # Notes about force_gpu_session:
 #

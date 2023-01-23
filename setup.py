@@ -16,9 +16,10 @@
 from setuptools import setup
 import os
 
-distribution_name = 'framework-determinism'
-package_name = 'fwd9m' + '_reserve'
-# package_name = 'fwd9m'
+distribution_name = 'framework-reproducibility'
+# package_name = 'fwrepro' + '_reserve'
+package_name = 'fwrepro'
+seeder_subpackage = 'fwrepro.seeder'
 
 # This file needs to be executed during installation. It's not possible to
 # import the full package during installation because it will fail to import if
@@ -27,18 +28,18 @@ package_name = 'fwd9m' + '_reserve'
 import sys
 sys.path.append(package_name)
 from version import __version__ as version
-from warning import message as warning_message
+# from warning import message as warning_message
 sys.path.remove(package_name)
 
-if warning_message:
-  long_description = warning_message
-else:
-  readme = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                        "README.md")
-  with open(readme, "r") as fp:
-    long_description = fp.read()
+# if warning_message:
+#   long_description = warning_message
+# else:
+readme = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                      "README.md")
+with open(readme, "r") as fp:
+  long_description = fp.read()
 
-description = ("Providing determinism in the DL frameworks")
+description = ("Providing reproducibility in the DL frameworks")
 url = "https://github.com/NVIDIA/%s" % distribution_name
 install_requires = [] # intentionally not including the framework packages
 
@@ -50,12 +51,12 @@ classifiers = [
     'Programming Language :: Python'
 ]
 
-keywords = "framework tensorflow gpu deep-learning determinism"
+keywords = "framework tensorflow gpu deep-learning determinism reproducibility"
 
 setup(
   name                          = distribution_name,
   version                       = version,
-  packages                      = [package_name],
+  packages                      = [package_name, seeder_subpackage],
   url                           = url,
   license                       = 'Apache 2.0',
   author                        = 'NVIDIA',
@@ -66,5 +67,5 @@ setup(
   install_requires              = install_requires,
   classifiers                   = classifiers,
   keywords                      = keywords,
-  platforms                     = ['TensorFlow']
+  platforms                     = ['TensorFlow', 'PyTorch (seeder only)', 'PaddlePaddle (seeder only)']
 )

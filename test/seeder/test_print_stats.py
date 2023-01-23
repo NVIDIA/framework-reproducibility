@@ -1,4 +1,4 @@
-# Copyright 2019 NVIDIA Corporation. All Rights Reserved
+# Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,12 +13,29 @@
 # limitations under the License.
 # ========================================================================
 
-import sys
-sys.path.insert(0,'../fwrepro')
-from version import __version__
+import argparse
+import pandas as pd
+from print_stats import print_stats
 
-def get_version():
-  return __version__
+def parse_args():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "--log-file",
+        type=str,
+        help="Input log file",
+    )
+    return parser
+
+
+def main():
+
+    parser = parse_args()
+    args = parser.parse_args()
+
+    pdata = pd.read_csv(args.log_file, index_col=0)
+    print_stats(pdata)
+    
 
 if __name__ == "__main__":
-  print(__version__)
+    main()

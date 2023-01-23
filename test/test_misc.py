@@ -17,14 +17,14 @@ import sys
 import unittest
 
 sys.path.insert(0, '..')
-import fwd9m
+import fwrepro
 import get_version
 
 class TestMisc(unittest.TestCase):
 
   def test_version(self):
     expected_version = get_version.get_version()
-    self.assertEqual(fwd9m.__version__, expected_version)
+    self.assertEqual(fwrepro.__version__, expected_version)
 
 if __name__ == '__main__':
   unittest.main()

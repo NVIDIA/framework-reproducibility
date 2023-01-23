@@ -1,15 +1,21 @@
-# Framework Determinism
+# Framework Reproducibility
 
 ## Introduction
 
-This repository is intended to provide documentation, status, patches, and
-tools related to determinism (bit-accurate, run-to-run reproducibility) in deep
-learning frameworks, with a focus on determinism when running on GPUs.
+This repository is intended to:
+* provide documentation, status, patches, and tools related to determinism (bit-accurate, run-to-run reproducibility),
+with a focus on determinism when running on GPUs, and 
+* provide variance reduction tool and guideline in deep learning frameworks.
 
 Determinism is important when deep learning is used in applications in which
 processes must be reproducible, such as robotics (including autonomous
 vehicles), heathcare, and finance. Determinism also simplifies and accelerates
 both experimentation (by increasing the signal-to-noise ratio) and debugging.
+
+Variance reduction, implemented in `seeder` module, which is based on deterministic 
+seeding strategy, reduces the number of runs needed to catch regressions. Variance 
+reduction with seeder is an experimental feature, you can read more about it 
+[here](doc/seeder.md). 
 
 Currently, this repository primarily provides documentation and guidance on how
 to obtain deterministic functionality when using deep learning frameworks, and

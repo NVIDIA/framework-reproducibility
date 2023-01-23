@@ -1,3 +1,9 @@
+# Release 0.5.0
+
+* Rename distribution to from framework-determinism to
+  framework-reproducibility and rename package from fwd9m to fwrepro.
+* Add seeder tool for variance reduction. This is an experimental feature.
+
 # Release 0.4.0 (not yet released)
 
 This is tracking changes that have been made in the master branch that will be

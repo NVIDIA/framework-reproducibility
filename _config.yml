@@ -2,8 +2,8 @@ theme: jekyll-theme-cayman
 plugins:
   - jekyll-sitemap
 exclude:
-  - fwd9m/
-  - fwd9m_reserve/
+  - fwrepro/
+  - fwrepro_reserve/
   - test/README.md
   - RELEASE.md
   - release_procedure.md

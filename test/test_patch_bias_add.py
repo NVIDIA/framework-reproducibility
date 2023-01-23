@@ -40,8 +40,8 @@ import numpy as np
 import tensorflow as tf
 
 from . import utils as test_utils
-from fwd9m import utils as package_utils
-from fwd9m import tensorflow as fwd9m_tensorflow
+from fwrepro import utils as package_utils
+from fwrepro import tensorflow as fwrepro_tensorflow
 from tensorflow.python.eager import backprop
 from tensorflow.python.eager import context
 from tensorflow.python.framework import constant_op
@@ -436,5 +436,5 @@ class BiasAddTestMisc(test.TestCase):
 
 
 if __name__ == "__main__":
-  fwd9m_tensorflow.enable_determinism()
+  fwrepro_tensorflow.enable_determinism()
   test.main()

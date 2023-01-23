@@ -17,6 +17,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-# What follows is the public API for fwd9m.tensorflow
+# What follows is the public API for fwrepro.tensorflow
 from .enable_determinism import _enable_determinism as enable_determinism
 from .patch import _patch as patch # deprecated

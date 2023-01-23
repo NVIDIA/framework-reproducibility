@@ -57,7 +57,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from segment_reduction_helper import SegmentReductionHelper
 
 sys.path.insert(0, '..')
-import fwd9m.tensorflow as fwd9m_tensorflow
+import fwrepro.tensorflow as fwrepro_tensorflow
 import utils
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # Simplifies logging
@@ -382,5 +382,5 @@ class SegmentReductionTestMisc(test.TestCase):
 
 
 if __name__ == "__main__":
-  fwd9m_tensorflow.enable_determinism()
+  fwrepro_tensorflow.enable_determinism()
   test.main()

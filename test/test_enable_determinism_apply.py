@@ -23,5 +23,5 @@ import tensorflow as tf
 
 sys.path.insert(0, '..')
 
-from fwd9m.tensorflow import enable_determinism
+from fwrepro.tensorflow import enable_determinism
 enable_determinism()
