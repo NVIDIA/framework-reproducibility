@@ -1,4 +1,6 @@
-# Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved.
+#!/bin/bash
+
+# Copyright 2020 NVIDIA Corporation. All Rights Reserved
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,29 +15,18 @@
 # limitations under the License.
 # ========================================================================
 
-import argparse
-import pandas as pd
-from convergence_stats import get_convergence_stats
+# Expecting sub-scripts to complete successfully
+set -e
+set -o pipefail
 
-def parse_args():
-    parser = argparse.ArgumentParser()
+WARNING=("WARNING: fwr13y.d9m.tensorflow.patch has been deprecated. "
+         "Please use enable_determinism "
+         "(which supports all versions of TensorFlow) xxx.")
 
-    parser.add_argument(
-        "--log-file",
-        type=str,
-        help="Input log file",
-    )
-    return parser
-
-
-def main():
-
-    parser = parse_args()
-    args = parser.parse_args()
-
-    pdata = pd.read_csv(args.log_file, index_col=0)
-    get_convergence_stats(pdata)
-
-
-if __name__ == "__main__":
-    main()
+echo "Testing that patch produces a deprecation warning"
+if python test_patch_apply.py | tee grep "${WARNING}"; then
+   echo "Expected warning produced"
+else
+   echo "Either expected warning NOT produced or exception"
+   exit 1
+fi

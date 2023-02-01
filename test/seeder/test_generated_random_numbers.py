@@ -21,8 +21,8 @@ import torch
 from os.path import abspath, dirname
 import sys
 
-sys.path.append(dirname(abspath(__file__)) + "/../")
-import seeder.pyt as seeder
+sys.path.append(dirname(abspath(__file__)) + "/../../")
+import fwr13y.seeder.pyt as seeder
 
 
 class GetSeed:

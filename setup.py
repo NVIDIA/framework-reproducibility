@@ -18,8 +18,7 @@ import os
 
 distribution_name = 'framework-reproducibility'
 # package_name = 'fwrepro' + '_reserve'
-package_name = 'fwrepro'
-seeder_subpackage = 'fwrepro.seeder'
+package_name = 'fwr13y'
 
 # This file needs to be executed during installation. It's not possible to
 # import the full package during installation because it will fail to import if
@@ -51,12 +50,15 @@ classifiers = [
     'Programming Language :: Python'
 ]
 
-keywords = "framework tensorflow gpu deep-learning determinism reproducibility"
+keywords = ("framework tensorflow gpu deep-learning determinism "
+            "reproducibility pytorch seed seeder noise noise-reduction "
+            "variance-reduction atomics ngc gpu-determinism deterministic-ops "
+            "frameworks gpu-support d9m r13y fwr13y")
 
 setup(
   name                          = distribution_name,
   version                       = version,
-  packages                      = [package_name, seeder_subpackage],
+  packages                      = [package_name],
   url                           = url,
   license                       = 'Apache 2.0',
   author                        = 'NVIDIA',
@@ -67,5 +69,5 @@ setup(
   install_requires              = install_requires,
   classifiers                   = classifiers,
   keywords                      = keywords,
-  platforms                     = ['TensorFlow', 'PyTorch (seeder only)', 'PaddlePaddle (seeder only)']
+  platforms                     = ['TensorFlow', 'PyTorch', 'PaddlePaddle']
 )

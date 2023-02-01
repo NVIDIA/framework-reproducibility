@@ -1,4 +1,6 @@
-# Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved.
+#!/bin/bash
+
+# Copyright 2023 NVIDIA Corporation. All Rights Reserved
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,29 +15,8 @@
 # limitations under the License.
 # ========================================================================
 
-import argparse
-import pandas as pd
-from convergence_stats import get_convergence_stats
+set -e # All the following tests should return a zero exit code
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument(
-        "--log-file",
-        type=str,
-        help="Input log file",
-    )
-    return parser
-
-
-def main():
-
-    parser = parse_args()
-    args = parser.parse_args()
-
-    pdata = pd.read_csv(args.log_file, index_col=0)
-    get_convergence_stats(pdata)
-
-
-if __name__ == "__main__":
-    main()
+# The following should be run in any container
+python test_misc.py
+python test_utils.py

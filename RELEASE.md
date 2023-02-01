@@ -1,20 +1,12 @@
-# Release 0.5.0
-
-* Rename distribution to from framework-determinism to
-  framework-reproducibility and rename package from fwd9m to fwrepro.
-* Add seeder tool for variance reduction. This is an experimental feature.
-
-# Release 0.4.0 (not yet released)
-
-This is tracking changes that have been made in the master branch that will be
-included in the next release tag (and PyPI version).
+# Release 0.4.0
 
 ## Enhanced Functionality
 
-  * WIP: Rename distribution to from tensorflow-determinism to
-    framework-determinism and rename package from tfdeterminism to fwd9m.
-  * WIP: Add `enable_determinism`, which provides best-effort to enable
-    determinism in whichever version of TensorFlow is being used.
+  * Add seeder tool for variance reduction. This is an experimental feature.
+  * Rename distribution to from tensorflow-determinism to
+    framework-reproducibility and rename package from tfdeterminism to fwrepro.
+  * Add `enable_determinism`, which provides best-effort to enable determinism
+    in whichever version of TensorFlow is being used (not thoroughly tested).
   * Add script to find commits in the TensorFlow repo related to determinism.
   * `patch` throws more specific exceptions.
 

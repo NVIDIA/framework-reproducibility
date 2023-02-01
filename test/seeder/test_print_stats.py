@@ -35,7 +35,7 @@ def main():
 
     pdata = pd.read_csv(args.log_file, index_col=0)
     print_stats(pdata)
-    
+
 
 if __name__ == "__main__":
     main()

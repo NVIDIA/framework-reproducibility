@@ -1,0 +1,2 @@
+WARNING: fwr13y.d9m.tensorflow.patch has been deprecated. Please use enable_determinism (which supports all versions of TensorFlow).
+TensorFlow version 1.14.0 has been patched using fwr13y.d9m.tensorflow.patch version 0.4.0

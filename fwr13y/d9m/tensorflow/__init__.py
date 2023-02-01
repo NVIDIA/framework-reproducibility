@@ -1,4 +1,4 @@
-# Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright 2019 NVIDIA. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,29 +13,10 @@
 # limitations under the License.
 # ========================================================================
 
-import argparse
-import pandas as pd
-from convergence_stats import get_convergence_stats
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument(
-        "--log-file",
-        type=str,
-        help="Input log file",
-    )
-    return parser
-
-
-def main():
-
-    parser = parse_args()
-    args = parser.parse_args()
-
-    pdata = pd.read_csv(args.log_file, index_col=0)
-    get_convergence_stats(pdata)
-
-
-if __name__ == "__main__":
-    main()
+# What follows is the public API for fwr13y.tensorflow
+from .enable_determinism import _enable_determinism as enable_determinism
+from .patch import _patch as patch # deprecated
