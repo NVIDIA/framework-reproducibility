@@ -63,3 +63,6 @@ def force_gpu_session(test_object):
 
 def tf_version_in_list(list_of_versions):
   return Version(tf.version.VERSION).in_list(list_of_versions)
+
+def tf_version_at_least(version):
+  return Version(tf.version.VERSION).at_least(version)

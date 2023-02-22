@@ -79,25 +79,23 @@ expect $OK    "${PACKAGE_NAME}.d9m.tensorflow.enable_determinism (version ${VERS
               ./container.sh tensorflow/tensorflow:2.0.0-gpu python test_enable_determinism_apply.py
 # fi
 
-CONTAINERS=(                                          \
+CONTAINERS=(                                            \
             # See https://catalog.ngc.nvidia.com/orgs/nvidia/containers/tensorflow/tags
-            # nvcr.io/nvidia/tensorflow:19.06-py2     \ # failing bias_add only - unknown reason #3 (shape mismatch)
-            # nvcr.io/nvidia/tensorflow:19.06-py3     \ # failing bias_add only - unknown reason #3 (shape mismatch)
+            nvcr.io/nvidia/tensorflow:19.06-py2       \
+            nvcr.io/nvidia/tensorflow:19.06-py3       \
             nvcr.io/nvidia/tensorflow:19.07-py2       \
             nvcr.io/nvidia/tensorflow:19.07-py3       \
-            # 19.10: final release with only TF1
             nvcr.io/nvidia/tensorflow:19.10-py2       \
             nvcr.io/nvidia/tensorflow:19.10-py3       \
-            # 19:11: first release with TF1 & TF2
             nvcr.io/nvidia/tensorflow:19.11-tf1-py3   \
             nvcr.io/nvidia/tensorflow:19.11-tf2-py3   \
             nvcr.io/nvidia/tensorflow:20.12-tf1-py3   \
             nvcr.io/nvidia/tensorflow:20.12-tf2-py3   \
             nvcr.io/nvidia/tensorflow:21.12-tf1-py3   \
             nvcr.io/nvidia/tensorflow:21.12-tf2-py3   \
-            # Note to self: noticed CUDA version warnings starting in 22.02 (driver 465.01/CUDA11.3; built with CUDA 11.6)
+            nvcr.io/nvidia/tensorflow:22.01-tf2-py3   \
             # nvcr.io/nvidia/tensorflow:22.12-tf1-py3 \ # failing segment_sum (sorted and unsorted) only - unknown reason #2 (AssertionError: 2 != 1)
-            # nvcr.io/nvidia/tensorflow:22.12-tf2-py3 \ # failing segment_sum (sorted and unsorted) only - unknown reason #1 (AssertionError: 0 != 1)
+            nvcr.io/nvidia/tensorflow:22.12-tf2-py3   \
             # nvcr.io/nvidia/tensorflow:23.01-tf1-py3 \ # failing - CUDA driver version insufficient
             # nvcr.io/nvidia/tensorflow:23.01-tf2-py3 \ # failing - CUDA driver version insufficient
             #
@@ -111,11 +109,11 @@ CONTAINERS=(                                          \
             tensorflow/tensorflow:2.4.0-gpu           \
             tensorflow/tensorflow:2.5.0-gpu           \
             tensorflow/tensorflow:2.6.0-gpu           \
-            # tensorflow/tensorflow:2.7.0-gpu         \ # failing segment_sum (sorted and unsorted) only - unknown reason #1 (AssertionError: 0 != 1)
-            # tensorflow/tensorflow:2.8.0-gpu         \ # failing segment_sum (sorted and unsorted) only - unknown reason #1 (AssertionError: 0 != 1)
-            # tensorflow/tensorflow:2.9.0-gpu         \ # failing segment_sum (sorted and unsorted) only - unknown reason #1 (AssertionError: 0 != 1)
-            # tensorflow/tensorflow:2.10.0-gpu        \ # failing segment_sum (sorted and unsorted) only - unknown reason #1 (AssertionError: 0 != 1)
-            # tensorflow/tensorflow:2.11.0-gpu        \ # failing segment_sum (sorted and unsorted) only - unknown reason #1 (AssertionError: 0 != 1)
+            tensorflow/tensorflow:2.7.0-gpu           \
+            tensorflow/tensorflow:2.8.0-gpu           \
+            tensorflow/tensorflow:2.9.0-gpu           \
+            tensorflow/tensorflow:2.10.0-gpu          \
+            tensorflow/tensorflow:2.11.0-gpu          \
 )
 
 for CONTAINER in ${CONTAINERS[@]};

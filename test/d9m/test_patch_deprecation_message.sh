@@ -24,7 +24,7 @@ WARNING=("WARNING: fwr13y.d9m.tensorflow.patch has been deprecated. "
          "(which supports all versions of TensorFlow) xxx.")
 
 echo "Testing that patch produces a deprecation warning"
-if python test_patch_apply.py | tee grep "${WARNING}"; then
+if python test_patch_apply.py | grep "${WARNING}"; then
    echo "Expected warning produced"
 else
    echo "Either expected warning NOT produced or exception"

@@ -105,7 +105,7 @@ package at some point in the future.
 
 [1]: http://bit.ly/determinism-in-deep-learning
 [2]: ./pytorch.md
-[3]: .//tensorflow.md
+[3]: ./tensorflow.md
 
 ## Credits
 
