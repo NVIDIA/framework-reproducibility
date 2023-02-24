@@ -49,7 +49,6 @@ PACKAGE_NAME=fwr13y
 OK=0
 ERROR=1
 
-# if false; then
 echo -e "\nTesting package installation"
 expect $OK    "Successfully installed ${DISTRIBUTION_NAME}" \
               ./install_package.sh
@@ -77,9 +76,8 @@ expect $OK    "Expected warning produced" \
 echo -e "\nTesting that ${PACKAGE_NAME}.d9m.tensorflow.enable_determinism can be applied to TF 2.0.0"
 expect $OK    "${PACKAGE_NAME}.d9m.tensorflow.enable_determinism (version ${VERSION}) has been applied to TensorFlow version 2.0.0" \
               ./container.sh tensorflow/tensorflow:2.0.0-gpu python test_enable_determinism_apply.py
-# fi
 
-CONTAINERS=(                                            \
+CONTAINERS=(                                          \
             # See https://catalog.ngc.nvidia.com/orgs/nvidia/containers/tensorflow/tags
             nvcr.io/nvidia/tensorflow:19.06-py2       \
             nvcr.io/nvidia/tensorflow:19.06-py3       \
@@ -93,11 +91,15 @@ CONTAINERS=(                                            \
             nvcr.io/nvidia/tensorflow:20.12-tf2-py3   \
             nvcr.io/nvidia/tensorflow:21.12-tf1-py3   \
             nvcr.io/nvidia/tensorflow:21.12-tf2-py3   \
+            nvcr.io/nvidia/tensorflow:22.01-tf1-py3   \
             nvcr.io/nvidia/tensorflow:22.01-tf2-py3   \
-            # nvcr.io/nvidia/tensorflow:22.12-tf1-py3 \ # failing segment_sum (sorted and unsorted) only - unknown reason #2 (AssertionError: 2 != 1)
+            nvcr.io/nvidia/tensorflow:22.12-tf1-py3   \
             nvcr.io/nvidia/tensorflow:22.12-tf2-py3   \
-            # nvcr.io/nvidia/tensorflow:23.01-tf1-py3 \ # failing - CUDA driver version insufficient
-            # nvcr.io/nvidia/tensorflow:23.01-tf2-py3 \ # failing - CUDA driver version insufficient
+            # TODO: Update CUDA driver version and confirm that the following
+            #       two tests pass (error message: CUDA driver version
+            #       insufficient)
+            # nvcr.io/nvidia/tensorflow:23.01-tf1-py3 \
+            # nvcr.io/nvidia/tensorflow:23.01-tf2-py3 \
             #
             # See https://hub.docker.com/r/tensorflow/tensorflow/tags
             tensorflow/tensorflow:1.14.0-gpu          \

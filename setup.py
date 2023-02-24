@@ -34,11 +34,11 @@ sys.path.remove(package_name)
 #   long_description = warning_message
 # else:
 readme = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                      "README.md")
+                      "pypi_description.md")
 with open(readme, "r") as fp:
   long_description = fp.read()
 
-description = ("Providing reproducibility in the DL frameworks")
+description = ("Providing reproducibility in deep learning frameworks")
 url = "https://github.com/NVIDIA/%s" % distribution_name
 install_requires = [] # intentionally not including the framework packages
 

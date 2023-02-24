@@ -23,5 +23,5 @@ This repository is intended to:
   ([Seeder][3]]) in deep learning frameworks.
 
 [1]: https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository
-[2]: https://github.com/NVIDIA/framework-reproducibility/doc/d9m/README.md
-[3]: https://github.com/NVIDIA/framework-reproducibility/doc/seeder/README.md
+[2]: ./doc/d9m/README.md
+[3]: ./doc/seeder/README.md

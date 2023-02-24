@@ -439,8 +439,11 @@ class UnsortedSegmentSumDeterministicTest(SegmentReductionHelper):
             warnings.simplefilter("always")
             s = tf_op(tf_x, indices, num_segments)
             self.evaluate(s)
-            self.assertEqual(len(w), 1)
-            self.assertIsInstance(w[0].message, UserWarning)
+            # In NGC TF1 containers from 22.03 onwards, this op generates an
+            # extra warning ["tostring() is deprecated"]. In all other
+            # containers, only the expected warning is generated.
+            self.assertGreater(len(w), 0)
+            self.assertIsInstance(w[-1].message, UserWarning)
             self.assertTrue("GPU-determinism" in str(w[-1].message))
 
 

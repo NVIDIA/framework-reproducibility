@@ -2,15 +2,19 @@
 
 ## Enhanced Functionality
 
-  * Add seeder tool for variance reduction. This is an experimental feature.
-  * Rename distribution to from tensorflow-determinism to
-    framework-reproducibility and rename package from tfdeterminism to fwrepro.
-  * Add `enable_determinism`, which provides best-effort to enable determinism
-    in whichever version of TensorFlow is being used (not thoroughly tested).
-  * Add script to find commits in the TensorFlow repo related to determinism.
-  * `patch` throws more specific exceptions.
+  * Add the Seeder tool for variance reduction. This is an experimental feature.
+  * Rename the distribution from tensorflow-determinism to
+    framework-reproducibility and rename the package from tfdeterminism to
+    fwr13y.
+  * Add `fwr13y.d9m.tensorflow.enable_determinism`, which makes a best-effort
+    to enable determinism in whichever version of TensorFlow is being used.
+  * Add a script to find commits in the TensorFlow repo related to determinism.
+  * `fwr13y.d9m.tensorflow.patch` throws more specific exceptions.
 
 ## Enhanced Testing / Higher Quality
+
+  * Test patched determinism over a wider range of stock TensorFlow and NGC
+    TensorFlow versions.
 
 # Release 0.3.0
 

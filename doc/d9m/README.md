@@ -35,9 +35,9 @@ topic.
 
 ## Myths About Determinism
 
-"You just have to set the seeds"
+MYTH: "You just have to set the seeds"
 
-False. Setting the seeds (which means reproducibly resetting) the various
+FACT: Setting the seeds (which means reproducibly resetting) the various
 pseudo-random number generators in a software system is necessary but not
 necessarily sufficient to obtain deterministic functionality. In deep learning
 frameworks, it is often also necessary to have available and selectable
@@ -48,30 +48,30 @@ is the most commonly occuring and often the hardest to address. It has required
 significant additional software development work in the deep learning frameworks
 to provide this functionality.
 
-"Setting the seeds is not enough, so there must be a seed somewhere thart's not
-getting set."
+MYTH: "Setting the seeds is not enough, so there must be a seed somewhere
+      that's not getting set."
 
-Usually false. This is an extension of the previous assumption that obtaining
+FACT: This is an extension of the previous assumption that obtaining
 determinism is only about setting seeds. After setting all the seeds,
 remaining nondeterminism could be due to a missing seed, but probably not.
 
-"Deterministic ops are slower."
+MYTH: "Deterministic ops are slower."
 
-Mostly False. For most of the ops in the deep learning frameworks, the default
-and fastest known implementation of the op is deterministic. For a few ops,
-the fastest implemented version is, or was, nondeterminsitic. In those cases,
-a potentially slower implementation has been (or will be) developed that
-provides deterministic functionality. In many cases, when the implementation of
-an op has been revisisted in depth, the newly crafted determinsitic
-implementation has been faster than the preexisting, and potentially
-hastily-implemented, nondeterminsitic implementation. In these cases, as with
-most DL ops, the determinsitic implementation has been set to always-selected.
+FACT: For most of the ops in the deep learning frameworks, the default and
+fastest known implementation of the op is deterministic. For a few ops, the
+fastest implemented version is, or was, nondeterminsitic. In those cases, a
+potentially slower implementation has been (or will be) developed that provides
+deterministic functionality. In many cases, when the implementation of an op has
+been revisisted in depth, the newly crafted determinsitic implementation has
+been faster than the preexisting, and potentially hastily-implemented,
+nondeterminsitic implementation. In these cases, as with most DL ops, the
+determinsitic implementation has been set to always-selected.
 
-"The uncontrollable nondeterminism in the DL frameworks is necessary / useful
-for deep learning."
+MYTH: "The uncontrollable nondeterminism in the DL frameworks is necessary or
+       useful for deep learning."
 
-While this is stictly true, it's based on, and supports, the presumption that
-nondeterminism cannot, and should not, be addressed. In fact, stochastic
+FACT: While this is stictly true, it's based on, and supports, the presumption
+that nondeterminism cannot, and should not, be addressed. In fact, stochastic
 gradient descent (and other similar methods) do benefit from randomness, but
 that randomness need not be uncontrollable. Pseudo-random number generators can
 be, and are, used to introduce noise and variance into training data to increase
@@ -85,9 +85,9 @@ introduce reproducible noise into our system, exactly what type, and exactly how
 much. Also, if we cannot disable the noise, it's very hard to determine whether
 it is truly beneficial or not.
 
-"GPUs are inherently nondeterministic"
+MYTH: "GPUs are inherently nondeterministic"
 
-False. Any system that utilizes asynchronous parallelism can, theoretically, be
+FACT: Any system that utilizes asynchronous parallelism can, theoretically, be
 configured to convert asynchronous parallelism into truly random noise. GPUs
 *can* introduce truly random noise, as *can* many other parallel computing
 systems. That doesn't mean that it has to be, or should be, done; it's optional.
