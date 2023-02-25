@@ -54,7 +54,7 @@ def generate_random_numbers(
         csv_data.append(["random value"])
     else:
         csv_data.append(["seed", "random value"])
-        
+
     for s in seeds:
         seed_fn(s)
         for i in range(num_iterations_per_seed):
