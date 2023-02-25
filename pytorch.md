@@ -1,1 +1,1 @@
-This file has been moved to [doc/pytorch.md](doc/pytorch.md).
+This file has been moved to [doc/d9m/pytorch.md](./doc/d9m/pytorch.md).

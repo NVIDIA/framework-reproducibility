@@ -2,10 +2,14 @@ theme: jekyll-theme-cayman
 plugins:
   - jekyll-sitemap
 exclude:
-  - fwrepro/
-  - fwrepro_reserve/
+  - doc/pytorch.md
+  - doc/tensorflow_status.md
+  - fwr13y/
+  - fwd9m_reserve/
   - test/README.md
+  - might_do_menu.md
+  - pypi_description.md
+  - pytorch.md
   - RELEASE.md
   - release_procedure.md
   - tensorflow_status.md
-  - pytorch.md
