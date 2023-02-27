@@ -20,7 +20,7 @@ This repository is intended to:
   [determinism][2] (bit-accurate, run-to-run reproducibility) in deep learning
   frameworks, with a focus on determinism when running on GPUs, and
 * provide a tool, and related guidelines, for reducing variance
-  ([Seeder][3]]) in deep learning frameworks.
+  ([Seeder][3]) in deep learning frameworks.
 
 [1]: https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository
 [2]: ./doc/d9m/README.md

@@ -12,11 +12,11 @@ this current repository.
 
 ### Patch Changes
 
-In the most recent release of this package (version `0.4.0`), the distribution
-name changed from `tensorflow-determinism` to `framework-reproducibility` and
-the package name changed from `tfdeterminism` to `fwr13y`. These changes
-reflect an intention going forward for this repo to increasingly support
-reproducibility in multiple deep learning frameworks.
+In version `0.4.0` of this package, the distribution name changed from
+`tensorflow-determinism` to `framework-reproducibility` and the package name
+changed from `tfdeterminism` to `fwr13y`. These changes reflect an intention
+going forward for this repo to increasingly support reproducibility in multiple
+deep learning frameworks.
 
 Users of `tfdeterminism.patch` will need to use the to-be-deprecated
 `fwr13y.d9m.tensorflow.patch` and will be encouraged to migrate to using
@@ -25,10 +25,10 @@ compatibility, indefinitely, with future versions of TensorFlow.
 
 ## Best-Effort Determinism
 
-The most recent release of this package (version 0.4.0) includes an
-`enable_determinism` function that can be applied to any version of TensorFlow
-to obtain the latest and best solutions, including any new patches (including
-for earlier versions of TensorFlow).
+Version 0.4.0 (and later versions) of this package include a function
+(`fwr13y.d9m.tensorflow.enable_determinism`) that can be applied to any version
+of TensorFlow to obtain the latest and best solutions, including any new patches
+(including for earlier versions of TensorFlow).
 
 It may be instructive to view
 [the code](../../fwr13y/d9m/tensorflow/enable_determinism.py) of this relatively
@@ -68,8 +68,8 @@ via the NGC TensorFlow container images, the long-term intention and plan is to
 continue upstreaming all solutions into stock TensorFlow, or, more likely,
 implementing solutions directly in stock TensorFlow initially and only.
 
-What follows in this section is a high-level view of the status GPU-determinism
-in different versions of TensorFlow.
+What follows in this section is a high-level view of the status of
+GPU-determinism in different versions of TensorFlow.
 
 ### Stock TensorFlow Version 2.11+
 

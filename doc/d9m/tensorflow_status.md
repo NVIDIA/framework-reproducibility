@@ -2,11 +2,16 @@
 
 ## Introduction
 
-This page provides an up-to-date view of the status of GPU-related sources of
-nondeterminism in TensorFlow. This is almost exclusively focused on the
-determinsitic functionality of ops running on a GPU.
+This page intends to provides an up-to-date view of the status of GPU-related
+sources of nondeterminism in TensorFlow. This is almost exclusively focused on
+the determinsitic functionality of ops running on a GPU.
 
 For a broader view, see the [TensorFlow Determinism](./tensorflow.md) page.
+
+Note that I have a lot of updates, in a documentation queue, to make to this
+page. At the time you're reading this, the status of determinism in TensorFlow
+is probably better than what is documented below. I recommend starting by
+testing if your model operates deterministically.
 
 ## Summary
 

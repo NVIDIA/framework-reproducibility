@@ -35,27 +35,28 @@ topic.
 
 ## Myths About Determinism
 
-MYTH: "You just have to set the seeds"
+MYTH: **"You just have to set the seeds"**
 
-FACT: Setting the seeds (which means reproducibly resetting) the various
-pseudo-random number generators in a software system is necessary but not
-necessarily sufficient to obtain deterministic functionality. In deep learning
-frameworks, it is often also necessary to have available and selectable
-determinstic versions of all the underlying algorithms that are utilized by the
-model and other parts of the program (such as input datapaths). While there are
-many other potential sources of nondeterminism in a deep learning program, this
-is the most commonly occuring and often the hardest to address. It has required
-significant additional software development work in the deep learning frameworks
-to provide this functionality.
+FACT: Setting the seeds of the various pseudo-random number generators in a
+software system, which is another way of saying reproducibly resetting the
+pseudo-random number generators, is necessary but not necessarily sufficient to
+obtain deterministic functionality. In deep learning frameworks, it is often
+also necessary to have available and selectable determinstic versions of all the
+underlying algorithms that are utilized by the model and other parts of the
+program (such as input datapaths). While there are many other potential sources
+of nondeterminism in a deep learning program, the presence of nondeterministic
+algorithms is the most commonly occuring and often the hardest to address. It
+has required significant additional software development effort in the deep
+learning frameworks to provide this functionality.
 
-MYTH: "Setting the seeds is not enough, so there must be a seed somewhere
-      that's not getting set."
+MYTH: **"Setting the seeds is not enough, so there must be a seed somewhere
+      that's not getting set."**
 
 FACT: This is an extension of the previous assumption that obtaining
 determinism is only about setting seeds. After setting all the seeds,
 remaining nondeterminism could be due to a missing seed, but probably not.
 
-MYTH: "Deterministic ops are slower."
+MYTH: **"Deterministic ops are slower."**
 
 FACT: For most of the ops in the deep learning frameworks, the default and
 fastest known implementation of the op is deterministic. For a few ops, the
@@ -67,8 +68,8 @@ been faster than the preexisting, and potentially hastily-implemented,
 nondeterminsitic implementation. In these cases, as with most DL ops, the
 determinsitic implementation has been set to always-selected.
 
-MYTH: "The uncontrollable nondeterminism in the DL frameworks is necessary or
-       useful for deep learning."
+MYTH: **"The uncontrollable nondeterminism in the DL frameworks is necessary or
+       useful for deep learning."**
 
 FACT: While this is stictly true, it's based on, and supports, the presumption
 that nondeterminism cannot, and should not, be addressed. In fact, stochastic
@@ -85,7 +86,7 @@ introduce reproducible noise into our system, exactly what type, and exactly how
 much. Also, if we cannot disable the noise, it's very hard to determine whether
 it is truly beneficial or not.
 
-MYTH: "GPUs are inherently nondeterministic"
+MYTH: **"GPUs are inherently nondeterministic"**
 
 FACT: Any system that utilizes asynchronous parallelism can, theoretically, be
 configured to convert asynchronous parallelism into truly random noise. GPUs

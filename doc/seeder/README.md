@@ -12,7 +12,9 @@ Seeder is an experimental feature.
 
 ## Installation
 
+```
 pip install framework-reproducibility --upgrade
+```
 
 ## Frameworks Supported
 
