@@ -31,16 +31,40 @@ For seeder: *to-be-completed*
 python3 setup.py sdist
 ```
 
-Note that to install the source distribution, the user will need to have
-pip installed a new-enough version of `setuptools` and also `wheel`.
+This will generate an appropriately-named `.tar.gz` source distribution file in
+the `dist` directory.
 
-## 5. Create a Universal Weel
+After creating the source distribution, check that it contains all the packages,
+sub-packages, modules, and other files that are expected (and no others). This
+can be done by viewing the `stdout` of `python3 setup.py sdist`, by viewing
+`framework_reproducibility.egg-info/SOURCES.txt`, or by running `tar -xf` on the
+source distribution file and examing the resuling directory structure.
+
+Note that `framework-reproducibility.egg-info/SOURCES.txt` is read in, modified,
+and written back out by `python3 setup.py sdist`. Because of this, if any items
+are to be excluded from the distribution (e.g. via `MANIFEST.in` or the
+`packages` parameter of `setup()` in `setup.py`) then
+`framework-reproducibility.egg-info` must be deleted prior to running
+`python3 setup.py sdist`, otherwise the exluded items will remain.
+
+Note that to install the source distribution, the user will need to have `pip`
+installed a new-enough version of `setuptools` and also `wheel`.
+
+## 5. Create a Universal Wheel
 
 ```
 python3 setup.py bdist_wheel
 ```
 
+This will generate an appopriately-named wheel in the `dist` directory, with a
+`.whl` filename extension. Since this is actually a zip file, its contents can
+be viewed using `zipinfo`. Use `zipinfo` to check that all the expected files
+(and no unexpected files) are present in the wheel.
+
 Note that `setup.cfg` specifies that wheels are universal by default.
+
+[Common Python Packaging Mistakes][2] is a particularly useful resource that I
+used in preparing the above two steps.
 
 ## 6. Upload to PyPI
 
@@ -101,3 +125,4 @@ Finally, on GitHub, create a new release with an appropriate version tag
 (e.g. `v0.4.0`).
 
 [1]: https://packaging.python.org/guides/distributing-packages-using-setuptools/
+[2]: https://jwodder.github.io/kbits/posts/pypkg-mistakes/
