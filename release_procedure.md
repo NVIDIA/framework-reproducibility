@@ -92,29 +92,34 @@ username: <username>
 
 
 ```
-twine upload --repository testpypi dist/framework-reproducibility-<version>*
-twine upload --repository testpypi dist/framework_reproducibility-<version>*
+twine upload --repository testpypi dist/framework-reproducibility-<version>.tar.gz
+twine upload --repository testpypi dist/framework_reproducibility-<version>-py2.py3-none-any.whl
 ```
 
-Review the release online and try installing it.
+Review the release online (using the link given in the `twine` output).
+
+Try to install it. As of 2023-02-28, the `pip` command given on the web page
+for the package does not work. Instead, use the following `pip` command.
 
 ```
 cd ~/temp
 python3 -m venv venv
-venv/bin/pip install -i https://test.pypi.org/simple/framework-reproducibility
+venv/bin/pip install -i https://test.pypi.org/pypi/ framework-reproducibility
 ```
 
 ### 6b. Real PyPI Server
 
 ```
-twine upload --repository pypi dist/framework-reproducibility-<version>*
-twine upload --repository pypi dist/framework_reproducibility-<version>*
+twine upload --repository pypi dist/framework-reproducibility-<version>.tar.gz
+twine upload --repository pypi dist/framework_reproducibility-<version>-py2.py3-none-any.whl
 ```
 
-Again, review the release online and try installing it.
+Again, review the release online (using the link given in the `twine` output)
+and try to install it, as follows.
 
 ```
 cd ~/temp
+rm -rf venv
 python3 -m venv venv
 venv/bin/pip install framework-reproducibility
 ```
