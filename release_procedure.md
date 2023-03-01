@@ -105,6 +105,7 @@ for the package does not work. Instead, use the following `pip` command.
 cd ~/temp
 python3 -m venv venv
 venv/bin/pip install -i https://test.pypi.org/pypi/ framework-reproducibility
+rm -rf venv
 ```
 
 ### 6b. Real PyPI Server
@@ -119,9 +120,9 @@ and try to install it, as follows.
 
 ```
 cd ~/temp
-rm -rf venv
 python3 -m venv venv
 venv/bin/pip install framework-reproducibility
+rm -rf venv
 ```
 
 ## 7. Create GitHub Release
