@@ -25,7 +25,11 @@ $./all.sh
 
 For seeder: *to-be-completed*
 
-## 4. Create a Source Distribution
+## 4. Tag the Release
+
+Tag the state of the repo with the release version (e.g. `v0.4.0`) in GitHub.
+
+## 5. Create a Source Distribution
 
 ```
 python3 setup.py sdist
@@ -50,7 +54,7 @@ are to be excluded from the distribution (e.g. via `MANIFEST.in` or the
 Note that to install the source distribution, the user will need to have `pip`
 installed a new-enough version of `setuptools` and also `wheel`.
 
-## 5. Create a Universal Wheel
+## 6. Create a Universal Wheel
 
 ```
 python3 setup.py bdist_wheel
@@ -66,7 +70,7 @@ Note that `setup.cfg` specifies that wheels are universal by default.
 [Common Python Packaging Mistakes][2] is a particularly useful resource that I
 used in preparing the above two steps.
 
-## 6. Upload to PyPI
+## 7. Upload to PyPI
 
 Upload the source distribution and the universal wheel to the Python Package
 Index (PyPI).
@@ -88,7 +92,7 @@ repository: https://test.pypi.org/legacy/
 username: <username>
 ```
 
-### 6a. Test PyPI Server
+### 7a. Test PyPI Server
 
 
 ```
@@ -108,7 +112,7 @@ venv/bin/pip install -i https://test.pypi.org/pypi/ framework-reproducibility
 rm -rf venv
 ```
 
-### 6b. Real PyPI Server
+### 7b. Real PyPI Server
 
 ```
 twine upload --repository pypi dist/framework-reproducibility-<version>.tar.gz
@@ -125,9 +129,9 @@ venv/bin/pip install framework-reproducibility
 rm -rf venv
 ```
 
-## 7. Create GitHub Release
+## 8. Create the GitHub Release
 
-Finally, on GitHub, create a new release with an appropriate version tag
+Finally, on GitHub, create a new release using the version tag created earlier
 (e.g. `v0.4.0`).
 
 [1]: https://packaging.python.org/guides/distributing-packages-using-setuptools/
