@@ -35,7 +35,7 @@ topic.
 
 ## Myths About Determinism
 
-MYTH: **"You just have to set the seeds"**
+MYTH: **"You just have to set the seeds."**
 
 FACT: Setting the seeds of the various pseudo-random number generators in a
 software system, which is another way of saying reproducibly resetting the
@@ -49,8 +49,9 @@ algorithms is the most commonly occuring and often the hardest to address. It
 has required significant additional software development effort in the deep
 learning frameworks to provide this functionality.
 
-MYTH: **"Setting the seeds is not enough, so there must be a seed somewhere
-      that's not getting set."**
+MYTH: **"I already set all the seeds I know about, but there is still
+         nondeterminism, so there must be another seed somewhere that isn't
+         getting set."**
 
 FACT: This is an extension of the previous assumption that obtaining
 determinism is only about setting seeds. After setting all the seeds,
