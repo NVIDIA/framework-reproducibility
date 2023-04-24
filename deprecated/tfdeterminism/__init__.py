@@ -1,4 +1,4 @@
-# Copyright 2020 NVIDIA. All Rights Reserved.
+# Copyright 2023 NVIDIA Corporation. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,17 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from .version import __version__
-from .warning import message
+distribution_name = "tensorflow-determinism"
 
-print(message)
+version = "0.4.0"
+
+long_description = """
+The `tensorflow-determinism` PyPI distribution has been deprecated and the
+`tfdeterminism` package in this distribution contains no code.
+
+Please install the latest version of the
+[framework-reproducibility](https://pypi.org/project/framework-reproducibility/)
+PyPI distribution.
+"""
+
+print(long_description)

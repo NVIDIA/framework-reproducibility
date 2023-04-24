@@ -1,4 +1,4 @@
-# Copyright 2020 NVIDIA Corporation. All Rights Reserved
+# Copyright 2023 NVIDIA Corporation. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,16 +13,21 @@
 # limitations under the License.
 # ========================================================================
 
-message = """
-WARNING:
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
-framework-determinism version 0.0.0 is a placeholder distribution that is
-intended only to reserve the distribution name in the Python Package Index
-(PyPI).
+distribution_name = "framework-determinism"
 
-The fwrepro package has not yet been populated in this PyPI distribution.
-Install a newer version of this distribution (if one now exists) or install the
-latest version of the tensorflow-determinism PyPI distribution, which is the
-distribution that will evolve (or has evolved) into the framework-determinism
+version = "0.1.0"
+
+long_description = """
+The `framework-determinism` PyPI distribution has been deprecated and the
+`fwd9m` package in this distribution contains no code.
+
+Please install the latest version of the
+[framework-reproducibility](https://pypi.org/project/framework-reproducibility/)
 PyPI distribution.
 """
+
+print(long_description)

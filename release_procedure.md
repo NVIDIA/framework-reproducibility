@@ -52,7 +52,7 @@ are to be excluded from the distribution (e.g. via `MANIFEST.in` or the
 `python3 setup.py sdist`, otherwise the exluded items will remain.
 
 Note that to install the source distribution, the user will need to have `pip`
-installed a new-enough version of `setuptools` and also `wheel`.
+installed, a new-enough version of `setuptools` and also `wheel`.
 
 ## 6. Create a Universal Wheel
 
@@ -111,6 +111,19 @@ python3 -m venv venv
 venv/bin/pip install -i https://test.pypi.org/pypi/ framework-reproducibility
 rm -rf venv
 ```
+
+A couple of notes related to the PyPI server functionality, as observed from
+playing with the test server:
+
+1. You have to upload the source distribution (the `.tar.gz` file) before the
+wheel in order for the description to be intepreted as markdown. Presumably,
+the source format is not been into the wheel, at least in the way it's created
+here, and once it's been set for a given version it cannot be changed.
+
+2. It can take a few minutes for the versioning seen by `pip` to be updated. So
+waiting for a few minutes can resolve issues where it seems that the latest
+version is not yet available to install, even though you can see it should be
+availble according to the web page for the distribution.
 
 ### 7b. Real PyPI Server
 

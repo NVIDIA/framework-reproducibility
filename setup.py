@@ -17,7 +17,6 @@ from setuptools import setup, find_packages
 import os
 
 distribution_name = 'framework-reproducibility'
-# package_name = 'fwrepro' + '_reserve'
 package_name = 'fwr13y'
 
 # This file needs to be executed during installation. It's not possible to
@@ -27,12 +26,8 @@ package_name = 'fwr13y'
 import sys
 sys.path.append(package_name)
 from version import __version__ as version
-# from warning import message as warning_message
 sys.path.remove(package_name)
 
-# if warning_message:
-#   long_description = warning_message
-# else:
 readme = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                       "pypi_description.md")
 with open(readme, "r") as fp:
@@ -55,18 +50,10 @@ keywords = ("framework tensorflow gpu deep-learning determinism "
             "variance-reduction atomics ngc gpu-determinism deterministic-ops "
             "frameworks gpu-support d9m r13y fwr13y")
 
-# `find_packages(exclude=['fwd9m_reserve'])` is used instead of adding
-# `exclude fwd9m_reserve/*` to `MANIFEST.in` because even though `MANIFEST.in`
-# is attended to in the creation of the source distribution, it is ignored in
-# the creation of the wheel. Folks generally seem to think that
-# `include_package_data=True` is needed to make the exclusions from the contents
-# of the wheel match those of the source distribution, but it doesn't seem to
-# make any difference.
-
 setup(
   name                          = distribution_name,
   version                       = version,
-  packages                      = find_packages(exclude=['fwd9m_reserve']),
+  packages                      = ['fwr13y'],
   url                           = url,
   license                       = 'Apache 2.0',
   author                        = 'NVIDIA',
