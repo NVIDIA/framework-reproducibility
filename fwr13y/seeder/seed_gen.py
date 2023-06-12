@@ -29,10 +29,19 @@ class SeedGen:
         self._used_seeds = set()
         self._rng = random.Random(0)
 
-    def __call__(self, task, epoch):
-        seed = (
-            self.master_seed + (epoch * self.ngpus + self.local_rank)
-        ) * self.ntasks + task
+    def __call__(self, task, epoch, shared_seed=False):
+        if shared_seed:
+            # Use the same seed for every rank
+            # Constant at the beginning so that the values do not repeat with not shared seeds
+            seed = 2 * (
+                self.master_seed + epoch
+            ) * self.ntasks + task
+        else:
+            # Use different seed for every rank
+            seed = (
+                self.master_seed + (epoch * self.ngpus + self.local_rank)
+            ) * self.ntasks + task
+
         if seed in self._used_seeds:
             print(
                 "Warning!!! seed has been generated more than once!!!", file=sys.stderr
