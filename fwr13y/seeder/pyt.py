@@ -24,11 +24,12 @@ class Seeder:
 
         self.master_seed_was_none = master_seed is None
         if master_seed is None and local_rank == 0:
-            print('INFO: master_seed is None in seeder.init, random master_seed will be generated (different one for each worker).')
+            print('INFO: master_seed is None in seeder.init, random '
+                  'master_seed will be generated (different one for '
+                  'each worker).')
 
-        self.master_seed = (
-            master_seed if master_seed is not None else generate_master_seed_randomly()
-        )
+        self.master_seed = (master_seed if master_seed is not None
+                            else generate_master_seed_randomly())
         self.seed_gen = SeedGen(self.master_seed, ngpus, local_rank)
         self._ext_generators = []
         self._ext_generators_shared = []
@@ -36,7 +37,8 @@ class Seeder:
     def register_generator(self, gen, shared=False):
         if shared:
             if self.master_seed_was_none:
-                raise Exception('master_seed was None during seeder.init, seeds shared among workers cannot be used.')
+                raise Exception('master_seed was None during seeder.init, '
+                                'seeds shared among workers cannot be used.')
             self._ext_generators_shared.append(gen)
         else:
             self._ext_generators.append(gen)
