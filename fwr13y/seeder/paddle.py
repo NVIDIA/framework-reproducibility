@@ -21,11 +21,11 @@ from .seed_gen import SeedGen, generate_master_seed_randomly
 
 class Seeder:
     def __init__(self, master_seed, ngpus, local_rank):
-        
+
         self.master_seed_was_none = master_seed is None
         if master_seed is None and local_rank == 0:
             print('INFO: master_seed is None in seeder.init, random master_seed will be generated (different one for each worker).')
-        
+
         self.master_seed = (
             master_seed if master_seed is not None else generate_master_seed_randomly()
         )
