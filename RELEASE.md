@@ -1,3 +1,9 @@
+# Release 0.5.0
+
+In Seeder, add the ability to reseed generators with either
+  1. a different seed for each worker (the existing functionality) or
+  2. the same seed for each worker (added functionality).
+
 # Release 0.4.0
 
 ## Enhanced Functionality
