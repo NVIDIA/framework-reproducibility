@@ -27,7 +27,12 @@ For seeder: *to-be-completed*
 
 ## 4. Tag the Release
 
-Tag the state of the repo with the release version (e.g. `v0.4.0`) in GitHub.
+Tag the state of the repo with the release version (e.g. `v0.5.0`) in GitHub.
+
+```
+git tag v0.5.0
+git push origin v0.5.0
+```
 
 ## 5. Create a Source Distribution
 
@@ -117,8 +122,8 @@ playing with the test server:
 
 1. You have to upload the source distribution (the `.tar.gz` file) before the
 wheel in order for the description to be intepreted as markdown. Presumably,
-the source format is not been into the wheel, at least in the way it's created
-here, and once it's been set for a given version it cannot be changed.
+the source format has not been captured in the wheel, at least in the way it's
+created here, and once it's been set for a given version it cannot be changed.
 
 2. It can take a few minutes for the versioning seen by `pip` to be updated. So
 waiting for a few minutes can resolve issues where it seems that the latest
