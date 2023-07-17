@@ -1,3 +1,8 @@
+# Release 0.6.0
+
+This is a re-release of version 0.5.0, which was accidentally released with
+stale files.
+
 # Release 0.5.0
 
 In Seeder, add the ability to reseed generators with either

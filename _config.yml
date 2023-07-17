@@ -5,8 +5,8 @@ exclude:
   - doc/pytorch.md
   - doc/tensorflow_status.md
   - fwr13y/
-  - fwd9m_reserve/
-  - test/README.md
+  - test/d9m/README.md
+  - test/d9m/might_do_menu.md
   - might_do_menu.md
   - pypi_description.md
   - pytorch.md

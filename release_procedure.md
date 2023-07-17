@@ -34,7 +34,13 @@ git tag v0.5.0
 git push origin v0.5.0
 ```
 
-## 5. Create a Source Distribution
+## 5. Clean the Build Environment
+
+```
+rm -rf build dist *.egg-info
+```
+
+## 6. Create a Source Distribution
 
 ```
 python3 setup.py sdist
@@ -49,17 +55,17 @@ can be done by viewing the `stdout` of `python3 setup.py sdist`, by viewing
 `framework_reproducibility.egg-info/SOURCES.txt`, or by running `tar -xf` on the
 source distribution file and examing the resuling directory structure.
 
-Note that `framework-reproducibility.egg-info/SOURCES.txt` is read in, modified,
-and written back out by `python3 setup.py sdist`. Because of this, if any items
-are to be excluded from the distribution (e.g. via `MANIFEST.in` or the
-`packages` parameter of `setup()` in `setup.py`) then
+Note that `framework-reproducibility.egg-info/SOURCES.txt` is read in (if it
+exists), modified, and written back out by `python3 setup.py sdist`. Because of
+this, if any items are to be excluded from the distribution (e.g. via
+`MANIFEST.in` or the `packages` parameter of `setup()` in `setup.py`) then
 `framework-reproducibility.egg-info` must be deleted prior to running
 `python3 setup.py sdist`, otherwise the exluded items will remain.
 
 Note that to install the source distribution, the user will need to have `pip`
 installed, a new-enough version of `setuptools` and also `wheel`.
 
-## 6. Create a Universal Wheel
+## 7. Create a Universal Wheel
 
 ```
 python3 setup.py bdist_wheel
@@ -75,7 +81,7 @@ Note that `setup.cfg` specifies that wheels are universal by default.
 [Common Python Packaging Mistakes][2] is a particularly useful resource that I
 used in preparing the above two steps.
 
-## 7. Upload to PyPI
+## 8. Upload to PyPI
 
 Upload the source distribution and the universal wheel to the Python Package
 Index (PyPI).
@@ -97,7 +103,7 @@ repository: https://test.pypi.org/legacy/
 username: <username>
 ```
 
-### 7a. Test PyPI Server
+### 8a. Test PyPI Server
 
 
 ```
@@ -130,7 +136,7 @@ waiting for a few minutes can resolve issues where it seems that the latest
 version is not yet available to install, even though you can see it should be
 availble according to the web page for the distribution.
 
-### 7b. Real PyPI Server
+### 8b. Real PyPI Server
 
 ```
 twine upload --repository pypi dist/framework-reproducibility-<version>.tar.gz
@@ -147,7 +153,7 @@ venv/bin/pip install framework-reproducibility
 rm -rf venv
 ```
 
-## 8. Create the GitHub Release
+## 9. Create the GitHub Release
 
 Finally, on GitHub, create a new release using the version tag created earlier
 (e.g. `v0.4.0`).
