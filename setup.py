@@ -28,6 +28,10 @@ sys.path.append(package_name)
 from version import __version__ as version
 sys.path.remove(package_name)
 
+packages = (
+    ['fwr13y'] + ['fwr13y.' +
+                  subpackage for subpackage in find_packages(where='fwr13y')])
+
 readme = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                       "pypi_description.md")
 with open(readme, "r") as fp:
@@ -53,7 +57,7 @@ keywords = ("framework tensorflow gpu deep-learning determinism "
 setup(
   name                          = distribution_name,
   version                       = version,
-  packages                      = ['fwr13y'],
+  packages                      = packages,
   url                           = url,
   license                       = 'Apache 2.0',
   author                        = 'NVIDIA',

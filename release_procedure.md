@@ -134,7 +134,10 @@ created here, and once it's been set for a given version it cannot be changed.
 2. It can take a few minutes for the versioning seen by `pip` to be updated. So
 waiting for a few minutes can resolve issues where it seems that the latest
 version is not yet available to install, even though you can see it should be
-availble according to the web page for the distribution.
+availble according to the web page for the distribution. This issue seems to be
+more common and/or significant on the real/production server. You might also
+be able to speed things up by using the `--no-cache-dir` option of
+`pip install`.
 
 ### 8b. Real PyPI Server
 
